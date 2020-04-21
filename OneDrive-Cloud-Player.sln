@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29418.71
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneDrive-Cloud-Player", "OneDrive-Cloud-Player.csproj", "{4A98807B-A032-4687-A37F-EF6BE641F0CC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4A98807B-A032-4687-A37F-EF6BE641F0CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A98807B-A032-4687-A37F-EF6BE641F0CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A98807B-A032-4687-A37F-EF6BE641F0CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A98807B-A032-4687-A37F-EF6BE641F0CC}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F170320B-DB49-4C52-954D-2994F8A0AA34}
+	EndGlobalSection
+EndGlobal
