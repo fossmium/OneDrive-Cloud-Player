@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29418.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneDrive-Cloud-Player", "OneDrive-Cloud-Player.csproj", "{4A98807B-A032-4687-A37F-EF6BE641F0CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthTutorial", "..\AuthTutorial\AuthTutorial.csproj", "{F3EDE602-6C61-4604-9E0A-09A6D6C7F1F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthTutorial", "..\AuthTutorial\AuthTutorial.csproj", "{F3EDE602-6C61-4604-9E0A-09A6D6C7F1F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tim-WebUI", "..\Tim-WebUI\Tim-WebUI.csproj", "{D5DA8803-B07F-41C0-AC9E-2BA714D9DAA0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{F3EDE602-6C61-4604-9E0A-09A6D6C7F1F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3EDE602-6C61-4604-9E0A-09A6D6C7F1F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F3EDE602-6C61-4604-9E0A-09A6D6C7F1F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D5DA8803-B07F-41C0-AC9E-2BA714D9DAA0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D5DA8803-B07F-41C0-AC9E-2BA714D9DAA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D5DA8803-B07F-41C0-AC9E-2BA714D9DAA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D5DA8803-B07F-41C0-AC9E-2BA714D9DAA0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
