@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>OneDrive_Cloud_Player</RootNamespace>
     <UseWPF>true</UseWPF>
     <UserSecretsId>1327468f-ef86-48f2-9afe-4d5f09ed837d</UserSecretsId>
