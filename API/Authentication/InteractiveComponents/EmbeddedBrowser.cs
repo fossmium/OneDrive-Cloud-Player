@@ -1,11 +1,11 @@
-﻿using OneDrive_Cloud_Player.Login.Internal;
-using Microsoft.Identity.Client.Extensibility;
+﻿using Microsoft.Identity.Client.Extensibility;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using OneDrive_Cloud_Player.API.Authentication.InteractiveComponents.Internal;
 
-namespace OneDrive_Cloud_Player.Login
+namespace OneDrive_Cloud_Player.API.Authentication.InteractiveComponents
 {
     /// <summary>
     /// Provides embedded web ui for WPF on .NET Core.

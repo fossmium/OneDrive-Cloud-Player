@@ -1,15 +1,8 @@
-﻿using OneDrive_Cloud_Player;
+﻿
 using Microsoft.Identity.Client;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using System.Windows;
-using System.Windows.Automation;
-using System.Windows.Interop;
-using System.Threading;
+
 
 namespace OneDrive_Cloud_Player
 {
@@ -19,6 +12,7 @@ namespace OneDrive_Cloud_Player
         {
             CreateScopedPublicClientApplicationInstance();
             //TestAccountAsync();
+            
 
         }
 
@@ -49,30 +43,5 @@ namespace OneDrive_Cloud_Player
 
 
         }
-        private async Task TestAccountAsync()
-        {
-            
-            AuthenticationResult result;
-
-            var accounts = await PublicClientApplication.GetAccountsAsync();
-
-            IAccount account = accounts.First();
-            // for instance accounts.FirstOrDefault
-            // if the app manages is at most one account  
-            try
-            {
-                result = await PublicClientApplication.AcquireTokenSilent(Scopes, account)
-                                  .ExecuteAsync();
-                Debug.Write("Access token silent: " + result.AccessToken + "\n");
-            }
-            catch (MsalUiRequiredException ex)
-            {
-                //result = await PublicClientApplication.AcquireTokenInteractive(ScrollAmount, account)
-                //                  .WithOptionalParameterXXX(parameter)
-                //                  .ExecuteAsync();
-                Debug.Write("EXEPTION SILENT");
-            }
-        }
-
     }
 }

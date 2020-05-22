@@ -15,6 +15,13 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="API\Authentication\Interactive\Internal\" />
+    <Compile Update="API\Authentication\InteractiveComponents\Internal\EmbeddedWebUI.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="API\Authentication\InteractiveComponents\Internal\EmbeddedWebUI.xaml">
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
 </Project>

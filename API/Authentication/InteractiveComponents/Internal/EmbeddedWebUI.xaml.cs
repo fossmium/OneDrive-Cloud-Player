@@ -7,7 +7,7 @@ using System.Web;
 using System.Windows;
 using System.Windows.Navigation;
 
-namespace OneDrive_Cloud_Player.Login.Internal
+namespace OneDrive_Cloud_Player.API.Authentication.InteractiveComponents.Internal
 {
     public partial class EmbeddedWebUI : Window
     {
