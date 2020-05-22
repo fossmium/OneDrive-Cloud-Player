@@ -38,12 +38,12 @@ namespace OneDrive_Cloud_Player.Login
             return true;
         }
 
-        private async void ExecuteMethod(object parameter)
+        private void ExecuteMethod(object parameter)
         {
             Authenticate Auth = new Authenticate();
             Auth.GetAccessTokenWithLogin();
         }
-        
+
         private bool CanExecuteMethod2(object parameter)
         {
             return true;
@@ -52,7 +52,7 @@ namespace OneDrive_Cloud_Player.Login
         private async void ExecuteMethod2(object parameter)
         {
             Authenticate Auth = new Authenticate();
-            Auth.AcquireAccessToken();
+            await Auth.AcquireAccessToken();
         }
     }
 

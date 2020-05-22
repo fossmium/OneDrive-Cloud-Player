@@ -69,7 +69,7 @@ namespace OneDrive_Cloud_Player.API
             {
                 Debug.WriteLine($"Error Acquiring Token Silently:{System.Environment.NewLine}{ex}");
                 Debug.WriteLine("\nLocalResult is NULL.\n");
-                return "";
+                return null;
             }
 
             if (LocalResult != null)
@@ -80,10 +80,10 @@ namespace OneDrive_Cloud_Player.API
 
             //Return null when the method failed to acquire a token.
             Debug.WriteLine("\nLocalResult is NULL.\n");
-            return "";
+            return null;
         }
 
-        public async Task<string> GetAccessTokenWithLogin()
+        public async void GetAccessTokenWithLogin()
         {
             AuthenticationResult LocalResult = null;
 
@@ -95,17 +95,12 @@ namespace OneDrive_Cloud_Player.API
                 .AcquireTokenInteractive(InitProgram.Current.Scopes)
                 .WithCustomWebUi(new EmbeddedBrowser(InitProgram.Current.MainWindow))
                 .ExecuteAsync();
-                if (LocalResult != null)
-                {
-                    return LocalResult.AccessToken;
-                }
             }
             catch (MsalException msalex)
             {
                 Console.WriteLine($"Error Acquiring Token:{System.Environment.NewLine}{msalex}");
                 Debug.WriteLine("\nLocalResult is NULL.\n");
             }
-            return "";
         }
     }
 }
