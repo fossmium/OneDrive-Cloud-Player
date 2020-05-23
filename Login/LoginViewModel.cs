@@ -43,6 +43,10 @@ namespace OneDrive_Cloud_Player.Login
         }
 
         /// <summary>
+        /// Contains test and example code and is meant to give you an idea how the api calls can be used. 
+        /// Do not just copy this over to production code.
+        /// When using graph calls, try to find a way to cache or save results so you have to call as little as possible.
+        /// The API is to SLOW!!! to handle useless requests.
         /// </summary>
         /// <param name="parameter"></param>
         private async void ExecuteTestToken(object parameter)
@@ -90,9 +94,6 @@ namespace OneDrive_Cloud_Player.Login
                 //IO stream containing the photo.
                 //More information on how to work with the photo you can find here: https://stackoverflow.com/questions/42126660/c-sharp-how-to-get-office-365-user-photo-using-microsoft-graph-api
                 Stream OwnerPhoto = await graph.GetOneDriveOwnerPhotoAsync();
-
-
-
 
             }
             catch (Exception e)
