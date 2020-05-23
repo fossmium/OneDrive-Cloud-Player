@@ -1,3 +1,3 @@
 # OneDrive-Cloud-Player 
  
- A dedicated video player to stream directly from OneDrive.
+ A dedicated player to stream video content directly from OneDrive.
