@@ -11,9 +11,6 @@ namespace OneDrive_Cloud_Player
         public InitProgram()
         {
             CreateScopedPublicClientApplicationInstance();
-            //TestAccountAsync();
-            
-
         }
 
         public static new InitProgram Current => (InitProgram)Application.Current;
@@ -25,8 +22,6 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         private void CreateScopedPublicClientApplicationInstance()
         {
-
-
             PublicClientApplication = PublicClientApplicationBuilder.Create("cfc49d19-b88e-4986-8862-8b5de253d0fd")
                 .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
                 .Build();
@@ -38,11 +33,6 @@ namespace OneDrive_Cloud_Player
                     "user.read",
                     "Files.Read.All"
                 };
-
-            
-            //var token = PublicClientApplication.AcquireTokenSilentAsync(Scopes, PublicClientApplication.Users.First());
-
-
         }
     }
 }

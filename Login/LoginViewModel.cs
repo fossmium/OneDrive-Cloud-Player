@@ -55,32 +55,43 @@ namespace OneDrive_Cloud_Player.Login
             LockAuthCall = true;
             try
             {
-                Drive DriveInformation = await graph.GetDriveInformationAsync("b!MFdcYTQb50KRsCG7n7NTZLiOhD1-AB1Kj2aUdVa53fBBD1J-dnclTaEaS6tBko9-");
-                Console.WriteLine("Drive Name: " + DriveInformation.Name);
+                User OwnerInformation = await graph.GetOneDriveOwnerInformationAsync();
+                //Display the full name of the OneDrive owner that called the graph api.
+                Console.WriteLine("OneDrive Owner Display Name: " + OwnerInformation.GivenName);
 
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItem("01V3DWMJRSJGFGHNXT5JCJPQ4PZRGDBEQM");
+                Drive YourDriveInformation = await graph.GetDriveInformationAsync();
+                //Get the name of the owner of the caller his OneDrive.
+                Console.WriteLine("Drive Owner Name: " + YourDriveInformation.Owner.User.DisplayName);
+
+
+                IDriveSharedWithMeCollectionPage SharedItems = await graph.GetSharedItemsAsync();
+                //Get the name of the first shared folder.
+                Console.WriteLine("Shared item name: " + SharedItems[0].RemoteItem.Name);
+                //Store the drive id from the shared folder.
+                string SharedDriveId = SharedItems[0].RemoteItem.ParentReference.DriveId;
+                //Store the itemid (file and folders are items)
+                string SharedItemId = SharedItems[0].RemoteItem.Id;
+
+
+                Drive SharedDriveInformation = await graph.GetDriveInformationAsync(SharedDriveId);
+                //Display the owner of the shared item.
+                Console.WriteLine("Shared Drive Owner Name: " + SharedDriveInformation.Owner.User.DisplayName);
+
+
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItem(SharedItemId, SharedDriveId);
+                //Display all children inside the shared folder.
                 foreach (var child in Children)
                 {
                     Console.WriteLine(child.Name);
                 }
 
-                User OwnerInformation = await graph.GetOneDriveOwnerInformationAsync();
-                Console.WriteLine("Owner Information: " + OwnerInformation.Drive);
 
+                //Get the profile picture of the OneDrive owner.
                 //IO stream containing the photo.
-                //More information how to work with the photo you can find here: https://stackoverflow.com/questions/42126660/c-sharp-how-to-get-office-365-user-photo-using-microsoft-graph-api
+                //More information on how to work with the photo you can find here: https://stackoverflow.com/questions/42126660/c-sharp-how-to-get-office-365-user-photo-using-microsoft-graph-api
                 Stream OwnerPhoto = await graph.GetOneDriveOwnerPhotoAsync();
 
-                //IDriveSharedWithMeCollectionPage SharedItems = await graph.GetSharedItemsAsync();
-                //Console.WriteLine("Shared item names: ");
-                //foreach (var item in SharedItems)
-                //{
-                //    //Only display the shared items that are of type folder.
-                //    if (item.Folder != null)
-                //    {
-                //        Console.WriteLine(" " + item.Name);
-                //    }
-                //}
+
 
 
             }
