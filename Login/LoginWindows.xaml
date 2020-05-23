@@ -10,9 +10,9 @@
         <local:LoginViewModel x:Key="vm"/>
     </Window.Resources>
     <Grid>
-        <Button Content="Login" FontSize="30" Command="{Binding MyCommand, Source={StaticResource vm}}"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="253" Margin="0,307,0,0"/>
+        <Button Content="Login" Name="LoginButn" FontSize="30" Command="{Binding MyCommand, Source={StaticResource vm}}"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="253" Margin="0,307,0,0"/>
         <Label Content="Please login." FontSize="30" HorizontalAlignment="Center" Margin="0,180,0,0" VerticalAlignment="Top"/>
-        <Button Content="Test Token" FontSize="30" Command="{Binding MyCommand2, Source={StaticResource vm}}"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="253" Margin="0,30,0,0"/>
+        <Button Content="Test Token" FontSize="30" Command="{Binding MyCommand2, Source={StaticResource vm}}" HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="253" Margin="0,30,0,0"/>
 
     </Grid>
 </Window>

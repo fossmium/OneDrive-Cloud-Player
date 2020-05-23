@@ -14,18 +14,12 @@ namespace OneDrive_Cloud_Player.API
 
         public AuthenticationResult AuthResult { get; set; }
 
-
-        public Authenticate()
-        {
-
-        }
+        public Authenticate() { }
 
         //private async string getAccessToken
         public async Task<string> AcquireAccessToken()
         {
-
             AuthenticationResult LocalResult = null;
-
             try
             {
                 var accounts = await InitProgram.Current.PublicClientApplication.GetAccountsAsync();
@@ -35,7 +29,7 @@ namespace OneDrive_Cloud_Player.API
 
                 if (LocalResult != null)
                 {
-                    Console.WriteLine("Silent Acquire successfull.");
+                    Console.WriteLine(" + Silent Acquire successfull.");
                 }
             }
             catch (MsalUiRequiredException ex)
@@ -43,21 +37,14 @@ namespace OneDrive_Cloud_Player.API
                 // A MsalUiRequiredException happened on AcquireTokenSilent.
                 // This indicates you need to call AcquireTokenInteractive to acquire a token
                 Debug.WriteLine($"MsalUiRequiredException: {ex.Message}");
-
-
                 try
                 {
-                    Console.WriteLine("Cannot do silent acquire. Trying interactive instead.");
+                    Console.WriteLine(" + Cannot do silent acquire. Trying interactive instead.");
                     LocalResult = await InitProgram.Current
                     .PublicClientApplication
                     .AcquireTokenInteractive(InitProgram.Current.Scopes)
                     .WithCustomWebUi(new EmbeddedBrowser(InitProgram.Current.MainWindow))
                     .ExecuteAsync();
-
-                    if (LocalResult != null)
-                    {
-                        Console.WriteLine("Interactive acquire successfull.");
-                    }
                 }
                 catch (MsalException msalex)
                 {
@@ -86,15 +73,17 @@ namespace OneDrive_Cloud_Player.API
         public async void GetAccessTokenWithLogin()
         {
             AuthenticationResult LocalResult = null;
-
             try
             {
-
                 LocalResult = await InitProgram.Current
                 .PublicClientApplication
                 .AcquireTokenInteractive(InitProgram.Current.Scopes)
                 .WithCustomWebUi(new EmbeddedBrowser(InitProgram.Current.MainWindow))
                 .ExecuteAsync();
+                if (LocalResult != null)
+                {
+                    Console.WriteLine("Logged in using interaction.");
+                }
             }
             catch (MsalException msalex)
             {

@@ -35,7 +35,8 @@ namespace OneDrive_Cloud_Player
                     "offline_access",
                     "openid",
                     "profile",
-                    "user.read"
+                    "user.read",
+                    "Files.Read.All"
                 };
 
             

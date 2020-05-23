@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using OneDrive_Cloud_Player.API.Authentication.InteractiveComponents.Internal;
+using System.Windows.Threading;
 
 namespace OneDrive_Cloud_Player.API.Authentication.InteractiveComponents
 {
@@ -28,6 +29,7 @@ namespace OneDrive_Cloud_Player.API.Authentication.InteractiveComponents
             int windowHeight = DefaultWindowHeight,
             WindowStartupLocation windowStartupLocation = WindowStartupLocation.CenterOwner)
         {
+            Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
             _title = title;
             _windowWidth = windowWidth;

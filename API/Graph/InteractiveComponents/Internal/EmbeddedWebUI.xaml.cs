@@ -52,7 +52,6 @@ namespace OneDrive_Cloud_Player.API.Authentication.InteractiveComponents.Interna
                     new MsalExtensionException(
                         $"An error occurred, error: {query.Get("error")}, error_description: {query.Get("error_description")}"));
             }
-
             Close();
         }
 

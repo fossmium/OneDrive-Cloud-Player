@@ -1,19 +1,8 @@
-﻿using Microsoft.Graph;
-using System;
-using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
+﻿using System;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using Microsoft.Identity.Client.Extensibility;
-using System.Diagnostics;
-using Microsoft.Identity.Client;
-using System.Linq;
-using System.Threading;
-using System.Timers;
-using OneDrive_Cloud_Player.API.Authentication.InteractiveComponents;
+using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
 
 namespace OneDrive_Cloud_Player.Login
@@ -23,13 +12,17 @@ namespace OneDrive_Cloud_Player.Login
         public ICommand MyCommand { get; set; }
         public ICommand MyCommand2 { get; set; }
 
-        public string NewAccessToken { get; set; }
+        private Graph graph { get; set; }
+
+        private bool LockAuthCall { get; set; }
 
         public LoginViewModel()
-        { 
-            MyCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
+        {
+            graph = new Graph();
+            LockAuthCall = false;
 
-            MyCommand2 = new CommandHandler(ExecuteMethod2, CanExecuteMethod2);
+            MyCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
+            MyCommand2 = new CommandHandler(ExecuteTestToken, CanExecuteMethod2);
         }
 
 
@@ -49,10 +42,53 @@ namespace OneDrive_Cloud_Player.Login
             return true;
         }
 
-        private async void ExecuteMethod2(object parameter)
+        /// <summary>
+        /// </summary>
+        /// <param name="parameter"></param>
+        private async void ExecuteTestToken(object parameter)
         {
-            Authenticate Auth = new Authenticate();
-            await Auth.AcquireAccessToken();
+            //Check if a request is already executing.
+            if (LockAuthCall)
+            {
+                return;
+            }
+            LockAuthCall = true;
+            try
+            {
+                Drive DriveInformation = await graph.GetDriveInformationAsync("b!MFdcYTQb50KRsCG7n7NTZLiOhD1-AB1Kj2aUdVa53fBBD1J-dnclTaEaS6tBko9-");
+                Console.WriteLine("Drive Name: " + DriveInformation.Name);
+
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItem("01V3DWMJRSJGFGHNXT5JCJPQ4PZRGDBEQM");
+                foreach (var child in Children)
+                {
+                    Console.WriteLine(child.Name);
+                }
+
+                User OwnerInformation = await graph.GetOneDriveOwnerInformationAsync();
+                Console.WriteLine("Owner Information: " + OwnerInformation.Drive);
+
+                //IO stream containing the photo.
+                //More information how to work with the photo you can find here: https://stackoverflow.com/questions/42126660/c-sharp-how-to-get-office-365-user-photo-using-microsoft-graph-api
+                Stream OwnerPhoto = await graph.GetOneDriveOwnerPhotoAsync();
+
+                //IDriveSharedWithMeCollectionPage SharedItems = await graph.GetSharedItemsAsync();
+                //Console.WriteLine("Shared item names: ");
+                //foreach (var item in SharedItems)
+                //{
+                //    //Only display the shared items that are of type folder.
+                //    if (item.Folder != null)
+                //    {
+                //        Console.WriteLine(" " + item.Name);
+                //    }
+                //}
+
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("\n" + e + "\n Error" + "\n");
+            }
+            LockAuthCall = false;
         }
     }
 
