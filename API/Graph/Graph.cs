@@ -1,13 +1,6 @@
 ﻿using Microsoft.Graph;
-using OneDrive_Cloud_Player.DataStructure;
-using OneDrive_Cloud_Player.Login;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Net.Http.Headers;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 
 
@@ -61,12 +54,10 @@ namespace OneDrive_Cloud_Player.API
             {
                 return await GraphClient.Me.Drives[DriveId].Request().GetAsync();
             }
-               
-               
         }
 
         /// <summary>
-        /// Get the information of the owner of the onedrive. ex: jobTitle, givenName and mail. It returns a <c>User</c> type.
+        /// Get the information of the owner of the onedrive.
         /// </summary>
         /// <returns></returns>
         public async Task<User> GetOneDriveOwnerInformationAsync()
@@ -122,7 +113,5 @@ namespace OneDrive_Cloud_Player.API
             //Return photo of the owner in binary data.
             return await GraphClient.Me.Photo.Content.Request().GetAsync();
         }
-
-
     }
 }

@@ -14,7 +14,7 @@ namespace OneDrive_Cloud_Player.API
 
         public AuthenticationResult AuthResult { get; set; }
 
-        public Authenticate() { }
+        public  Authenticate() { }
 
         //private async string getAccessToken
         public async Task<string> AcquireAccessToken()
