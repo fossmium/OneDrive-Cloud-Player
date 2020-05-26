@@ -17,8 +17,6 @@
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <!-- As MovieList is out Itemsource, we can bind to the objects in that list (Movie) and their properties. -->
                         <TextBlock Text="{Binding Title}" Margin="0,0,5,0"/>
-                        <TextBlock Text="|" Margin="0,0,5,0"/>
-                        <TextBlock Text="{Binding Genre}" Margin="0,0,5,0"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

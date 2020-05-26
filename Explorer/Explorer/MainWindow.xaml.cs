@@ -24,5 +24,10 @@ namespace Explorer
         {
             InitializeComponent();
         }
+
+        private void ShowsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
