@@ -3,12 +3,11 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:wpf="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         xmlns:local="clr-namespace:OneDrive_Cloud_Player"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <DockPanel>
-        <Viewbox>
-            <TextBlock x:Name="textBlockOutput" />
-        </Viewbox>
-    </DockPanel>
+	<Grid>
+		<wpf:VideoView x:Name="videoView"/>
+	</Grid>
 </Window>
