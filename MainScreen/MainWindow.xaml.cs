@@ -1,6 +1,8 @@
-﻿using System.Windows;
+﻿
 
-namespace OneDrive_Cloud_Player
+using System.Windows;
+
+namespace OneDrive_Cloud_Player.MainScreen
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
