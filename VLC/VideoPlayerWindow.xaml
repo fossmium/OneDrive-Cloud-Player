@@ -6,16 +6,28 @@
         xmlns:local="clr-namespace:OneDrive_Cloud_Player.VLC" 
         xmlns:wpf="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         mc:Ignorable="d"
-        Title="VideoPlayerWindow" Height="450" Width="800">
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="VideoPlayerWindow" Height="450" Width="688">
     <Window.Resources>
         <local:VideoPlayerViewModel x:Key="VideoPlayerVM"/>
     </Window.Resources>
     <Grid>
         <wpf:VideoView x:Name="videoView" Panel.ZIndex="1">
             <StackPanel Orientation="Horizontal" x:Name="test">
-                <Button Name="PlayButton" Content="PLAY" Height="25" Width="50" Command="{Binding PlayVideoCommand, Source={StaticResource VideoPlayerVM}}"  VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PlayButton_Click"/>
-                <Button Content="STOP" Height="25" Width="50"  Command="{Binding StopVideoCommand, Source={StaticResource VideoPlayerVM}}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
+                <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
+                <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
+                <Button Content="NEW" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="NewVideoButton_Click" />
             </StackPanel>
         </wpf:VideoView>
     </Grid>
+
+    <!--<StackPanel>
+            <Button Content="Play" Width="60" Height="20" Command="{Binding PlayVideoCommand, Source={StaticResource VideoPlayerVM}}" />
+            <Button Content="Stop" Width="60" Height="20" Command="{Binding StopVideoCommand, Source={StaticResource VideoPlayerVM}}"/>
+            <Button Content="Pause" Width="60" Height="20" Command="{Binding PauseVideoCommand, Source={StaticResource VideoPlayerVM}}"/>
+        </StackPanel>
+
+
+        <local:VideoPlayerControls Grid.Column="2" HorizontalAlignment="Left" Height="0" Margin="517,150,0,0" VerticalAlignment="Top" Width="12"/>-->
+
 </Window>

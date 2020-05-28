@@ -7,6 +7,7 @@ using System.Windows.Media;
 using OneDrive_Cloud_Player.VLC;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using LibVLCSharp.WPF;
+using System.Threading;
 
 namespace OneDrive_Cloud_Player.VLC
 {
@@ -15,11 +16,14 @@ namespace OneDrive_Cloud_Player.VLC
 
 		private MediaPlayer _mediaPlayer;
 		private LibVLC _libVLC;
+		private string VideoURL;
+		public string ButtonTitle { set; get; }
 
-		public VideoPlayerWindow()
+		public VideoPlayerWindow(string VideoURL)
 		{
-
 			InitializeComponent();
+			ButtonTitle = "TestPause";
+			this.VideoURL = VideoURL;
 			var label = new Label
 			{
 				Content = "TEwdsdasST",
@@ -33,32 +37,30 @@ namespace OneDrive_Cloud_Player.VLC
 
 			_libVLC = new LibVLC();
 			_mediaPlayer = new MediaPlayer(_libVLC);
-			// we need the VideoView to be fully loaded before setting a MediaPlayer on it.
+			//we need the VideoView to be fully loaded before setting a MediaPlayer on it.
 			videoView.Loaded += (sender, e) => videoView.MediaPlayer = _mediaPlayer;
+
+			
 		}
 
-
-		void StopButton_Click(object sender, RoutedEventArgs e)
+		private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (videoView.MediaPlayer.IsPlaying)
-			{
-				videoView.MediaPlayer.Stop();
-			}
+			VideoPlayerViewModel.PauseContinueButton(_libVLC, videoView);
 		}
 
-		void PlayButton_Click(object sender, RoutedEventArgs e)
+		private void StopButton_Click(object sender, RoutedEventArgs e)
 		{
-			if (!videoView.MediaPlayer.IsPlaying)
-			{
-				videoView.MediaPlayer.Play(new Media(_libVLC,
-					"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", FromType.FromLocation));
-			}
+			VideoPlayerViewModel.StopButton(videoView);
 		}
+
 		protected override void OnClosed(EventArgs e)
 		{
 			videoView.Dispose();
 		}
 
-
+		private void NewVideoButton_Click(object sender, RoutedEventArgs e)
+		{
+			VideoPlayerViewModel.NewVideoButton(_libVLC, videoView, this.VideoURL);
+		}
 	}
 }

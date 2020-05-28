@@ -13,63 +13,73 @@ using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using LibVLCSharp.WPF;
 using System.Diagnostics;
 using Microsoft.Graph;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace OneDrive_Cloud_Player.VLC
 {
    partial class VideoPlayerViewModel : Window
-    {
-        public ICommand PlayVideoCommand { get; set; }
-        public ICommand StopVideoCommand { get; set; }
-        //public VideoView videoView { get; private set; }
+   {
 
+        private static string pausePlayButtonTitle = "PLAY";
 
-        public VideoPlayerViewModel()
+        
+
+        public static string PausePlayButtonTitle
         {
-           
-            PlayVideoCommand = new VideoPlayerModel(PlayVideo, CanExecutePlayVideo);
-            StopVideoCommand = new VideoPlayerModel(StopVideo, CanExecutePlayStopVideo);
-
-
-            //var label = new Label
-            //{
-            //    Content = "TEwdsdasST",
-            //    HorizontalAlignment = HorizontalAlignment.Right,
-            //    VerticalAlignment = VerticalAlignment.Bottom,
-            //    Foreground = new SolidColorBrush(Colors.Red)
-            //};
-            //test.Children.Add(label);
-
-            //Core.Initialize();
-
-            //_libVLC = new LibVLC();
-            //_mediaPlayer = new MediaPlayer(_libVLC);
-
-
-            //videoView.Loaded += VideoView_Loaded;
-
-            // we need the VideoView to be fully loaded before setting a MediaPlayer on it.
-            //videoView.Loaded += (sender, e) => videoView.MediaPlayer = _mediaPlayer;
+            get { return pausePlayButtonTitle; }
+            set { pausePlayButtonTitle = value;
+                //@Todo: uitzoeken waarom het hier niet werkt.
+                NotifyStaticPropertyChanged("PausePlayButtonTitle");
+            }
 
         }
 
-        private bool CanExecutePlayStopVideo(object arg)
+
+        public static void PauseContinueButton(LibVLC _libVLC, VideoView VideoView)
         {
-            return true;
+            Console.WriteLine("CanPause: " + VideoView.MediaPlayer.CanPause);
+
+            if (!VideoView.MediaPlayer.IsPlaying)
+            {
+                VideoView.MediaPlayer.Play();
+                pausePlayButtonTitle = "PAUSE";
+                NotifyStaticPropertyChanged("PausePlayButtonTitle");
+            }
+            else
+            {
+                VideoView.MediaPlayer.Pause();
+                pausePlayButtonTitle = "PLAY";
+                NotifyStaticPropertyChanged("PausePlayButtonTitle");
+            }
+        }
+        
+        public static void NewVideoButton(LibVLC _libVLC, VideoView VideoView, string VideoURL)
+        {
+            //If video is pausable play video.
+            if (!VideoView.MediaPlayer.IsPlaying)
+            {
+                VideoView.MediaPlayer.Play(new Media(_libVLC,
+                    VideoURL, FromType.FromLocation));
+                pausePlayButtonTitle = "PAUSE";
+                NotifyStaticPropertyChanged("PausePlayButtonTitle");
+            }
         }
 
-        private bool CanExecutePlayVideo(object arg)
+        public static void StopButton(VideoView VideoView)
         {
-            return true;
+            if (VideoView.MediaPlayer.IsPlaying)
+            {
+                VideoView.MediaPlayer.Stop();
+            }
         }
 
-        private void StopVideo(object parameter)
-        {
-            Console.WriteLine("Stop video");
-        }
+        public static event PropertyChangedEventHandler StaticPropertyChanged;
 
-        private void PlayVideo(object parameter)
+        private static void NotifyStaticPropertyChanged(
+            [CallerMemberName] string propertyName = null)
         {
-
+            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -6,8 +6,8 @@
         xmlns:local="clr-namespace:OneDrive_Cloud_Player.VLC"
         mc:Ignorable="d">
     <StackPanel Orientation="Horizontal">
-        <!--<Button Content="PLAY" x:Name="PlayButton" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left"></Button>
-        <Button Content="STOP" x:Name="StopButton" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Aqua"></Button>-->
+        <Button Content="PLAY" x:Name="PlayButton" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left"></Button>
+        <Button Content="STOP" x:Name="StopButton" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Background="Aqua"></Button>
     </StackPanel>
 
 </UserControl>

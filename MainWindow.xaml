@@ -7,7 +7,9 @@
         xmlns:local="clr-namespace:OneDrive_Cloud_Player"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-	<Grid>
-		<wpf:VideoView x:Name="VideoView"/>
-	</Grid>
+    <Grid>
+        <wpf:VideoView x:Name="VideoView">
+            <Button Content="Open Video Window" HorizontalAlignment="Left" Margin="271,301,0,0" VerticalAlignment="Top" Click="OpenVideoWindow_Click"/>
+        </wpf:VideoView>
+    </Grid>
 </Window>
