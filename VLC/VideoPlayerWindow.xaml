@@ -12,15 +12,21 @@
         <local:VideoPlayerViewModel x:Key="VideoPlayerVM"/>
     </Window.Resources>
     <Grid>
-        <wpf:VideoView x:Name="videoView" Panel.ZIndex="1">
-            <StackPanel Orientation="Horizontal" x:Name="test">
-                <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
-                <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
-                <Button Content="NEW" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="NewVideoButton_Click" />
-            </StackPanel>
+        <wpf:VideoView x:Name="videoView" Panel.ZIndex="0">
+
+            <Grid x:Name="test" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
+                <DockPanel x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
+                    <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
+                    <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
+                    <Button Content="NEW" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="NewVideoButton_Click" />
+                    <Slider Maximum="200" Height="25" Width="100" Margin="20,0,0,0" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
+                    <TextBox Height="25" Width="100" Margin="20,0,0,0" Text="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
+                </DockPanel>
+               
+
+            </Grid>
         </wpf:VideoView>
     </Grid>
-
     <!--<StackPanel>
             <Button Content="Play" Width="60" Height="20" Command="{Binding PlayVideoCommand, Source={StaticResource VideoPlayerVM}}" />
             <Button Content="Stop" Width="60" Height="20" Command="{Binding StopVideoCommand, Source={StaticResource VideoPlayerVM}}"/>
