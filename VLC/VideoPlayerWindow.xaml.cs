@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows.Input;
+using Microsoft.Graph;
 
 namespace OneDrive_Cloud_Player.VLC
 {
@@ -19,7 +20,7 @@ namespace OneDrive_Cloud_Player.VLC
     {
         private DispatcherTimer dispatcherTimer;
         private MediaPlayer _mediaPlayer;
-        private LibVLC _libVLC;
+        public LibVLC _libVLC;
         private string VideoURL;
         private bool RunDispatcher;
         public string ButtonTitle { set; get; }
@@ -27,6 +28,7 @@ namespace OneDrive_Cloud_Player.VLC
         public VideoPlayerWindow(string VideoURL)
         {
             InitializeComponent();
+
             //Create a timer with interval of 2 secs
             dispatcherTimer = new DispatcherTimer();
             RunDispatcher = true;
@@ -52,18 +54,20 @@ namespace OneDrive_Cloud_Player.VLC
             //videoView.Loaded += (sender, e) => videoView.MediaPlayer = _mediaPlayer;
 
             //Set videoview field int the static VideoPlayerViewModel class.
-            VideoPlayerViewModel.VideoView = videoView;
-
 
             videoView.MediaPlayer = _mediaPlayer;
 
+            VideoPlayerViewModel.Initialize(videoView);
+
             AutoStartVideo();
         }
+
         private void OnCaptureMouseRequest(object sender, RoutedEventArgs e)
         {
             Mouse.Capture(test);
             Console.WriteLine("MoveMent");
         }
+
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
         {
             VideoPlayerViewModel.PauseContinueButton(_libVLC);
@@ -72,6 +76,8 @@ namespace OneDrive_Cloud_Player.VLC
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             VideoPlayerViewModel.StopButton();
+            this.Close();
+            VideoPlayerViewModel.DisposeVLC();
         }
 
         protected override void OnClosed(EventArgs e)
@@ -79,25 +85,25 @@ namespace OneDrive_Cloud_Player.VLC
             VideoPlayerViewModel.DisposeVLC();
         }
 
-        private void NewVideoButton_Click(object sender, RoutedEventArgs e)
-        {
-            VideoPlayerViewModel.NewVideoButton(_libVLC, this.VideoURL);
-        }
+        //private void NewVideoButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    VideoPlayerViewModel.NewVideoButton(_libVLC, this.VideoURL);
+        //}
 
         private void AutoStartVideo()
         {
-            VideoPlayerViewModel.AutoStartVideo(this._libVLC, this.VideoURL);
+            VideoPlayerViewModel.StartVideo(this._libVLC, this.VideoURL);
         }
 
-       /// <summary>
-       /// Event for when the move moves. Resets the dispatcherTimer for hiding the controls.
-       /// </summary>
-       /// <param name="sender"></param>
-       /// <param name="e"></param>
+        /// <summary>
+        /// Event for when the move moves. Resets the dispatcherTimer for hiding the controls.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void VideoControls_MouseMove(object sender, MouseEventArgs e)
         {
+            //Make controls anc cursor visible again
             VideoControls.Visibility = Visibility.Visible;
-            //Shows cursor again.
             Mouse.OverrideCursor = null;
             //Resets timer if its running when you move.
             //Console.WriteLine(Mouse.GetPosition(test));
@@ -110,7 +116,6 @@ namespace OneDrive_Cloud_Player.VLC
                 //Start the timer
                 dispatcherTimer.Start();
             }
-
         }
 
         /// <summary>
@@ -140,12 +145,27 @@ namespace OneDrive_Cloud_Player.VLC
             Console.WriteLine("Enter");
             RunDispatcher = false;
             StopDispatcher();
+
+            //WindowStyle = WindowStyle.None;
+            //WindowState = WindowState.Maximized;
         }
 
         private void VideoControls_MouseLeave(object sender, MouseEventArgs e)
         {
             Console.WriteLine("Leave");
             RunDispatcher = true;
+        }
+
+        private void Slider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            VideoPlayerViewModel.StartSeeking();
+            Console.WriteLine("Started seekingnee");
+        }
+
+        private void Slider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            VideoPlayerViewModel.StopSeeking();
+            Console.WriteLine("Stopped seekingnee");
         }
     }
 }

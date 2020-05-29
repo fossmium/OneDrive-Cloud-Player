@@ -15,14 +15,18 @@ using System.Diagnostics;
 using Microsoft.Graph;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace OneDrive_Cloud_Player.VLC
 {
     partial class VideoPlayerViewModel : Window
     {
 
-        private static string pausePlayButtonTitle = "PLAY";
+        public static VideoView videoView { get; set; }
 
+        private static string pausePlayButtonTitle = "PLAY";
 
         public static string PausePlayButtonTitle
         {
@@ -41,116 +45,181 @@ namespace OneDrive_Cloud_Player.VLC
         public static int VolumeValue
         {
             get { return volumeValue; }
-            set { volumeValue = value;
+            set
+            {
+                volumeValue = value;
                 NotifyStaticPropertyChanged("VolumeValue");
                 SetVolume(value);
-                Console.WriteLine("New Volume Value!: " + volumeValue);
+                //Console.WriteLine("New Volume Value!: " + volumeValue);
             }
         }
 
+        private static long timeLineValue;
 
-        public static VideoView VideoView {get;set;}
+        public static long TimeLineValue
+        {
+            get { return timeLineValue; }
+            set
+            {
+                timeLineValue = value;
+                NotifyStaticPropertyChanged("TimeLineValue");
+            }
+        }
 
+        private static long timeLineMaxLength;
+
+        public static long TimeLineMaxLength
+        {
+            get { return timeLineMaxLength; }
+            set
+            {
+                timeLineMaxLength = value;
+                NotifyStaticPropertyChanged("TimeLineMaxLength");
+                //Console.WriteLine(videoView.MediaPlayer.Time);
+                //Console.WriteLine(videoView.MediaPlayer.Length);
+                //Console.WriteLine("New timelinemaxlength Length!: " + timeLineMaxLength);
+            }
+        }
+
+        private static bool isSeeking;
+
+        public static bool IsSeeking
+        {
+            get { return isSeeking; }
+            set { isSeeking = value; }
+        }
+
+
+        public static void Initialize(VideoView videoView)
+        {
+            VideoPlayerViewModel.videoView = videoView;
+        }
 
         public static void PauseContinueButton(LibVLC _libVLC)
         {
-            Console.WriteLine("CanPause: " + VideoView.MediaPlayer.CanPause);
+            Console.WriteLine("CanPause: " + videoView.MediaPlayer.CanPause);
 
-            if (!VideoView.MediaPlayer.IsPlaying)
+            if (!videoView.MediaPlayer.IsPlaying)
             {
-                VideoView.MediaPlayer.Play();
-                pausePlayButtonTitle = "PAUSE";
-                NotifyStaticPropertyChanged("PausePlayButtonTitle");
+                videoView.MediaPlayer.Play();
+                PausePlayButtonTitle = "PAUSE";
 
-                VideoView.MediaPlayer.Play();
-
+                videoView.MediaPlayer.Play();
             }
             else
             {
-                VideoView.MediaPlayer.Pause();
-                pausePlayButtonTitle = "PLAY";
-                NotifyStaticPropertyChanged("PausePlayButtonTitle");
+                videoView.MediaPlayer.Pause();
+                PausePlayButtonTitle = "PLAY";
             }
         }
 
-        public static async void NewVideoButton(LibVLC _libVLC, string VideoURL)
+        public static async void StartVideo(LibVLC _libVLC, string VideoURL)
         {
-            //If video is pausable play video.
-            if (!VideoView.MediaPlayer.IsPlaying)
+            //If video is not playing play video.
+            if (!videoView.MediaPlayer.IsPlaying)
             {
-                //Sets volume on startup.
-                VideoView.MediaPlayer.Volume = VolumeValue;
+                //Thread.Sleep(2000);
+                Console.WriteLine("HWND: " + videoView.MediaPlayer.Hwnd);
 
-                VideoView.MediaPlayer.Play(new Media(_libVLC,
-                VideoURL, FromType.FromLocation));
-
-
-                pausePlayButtonTitle = "PAUSE";
-                NotifyStaticPropertyChanged("PausePlayButtonTitle");
-
-                //await VideoView.MediaPlayer.Media.Parse();
-                await VideoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
-
-                //Print Track information.
-                Console.WriteLine("\nTracks: \n");
-                foreach (var item in VideoView.MediaPlayer.Media.Tracks)
+                //Subscribe to IsPlaying event to set the TimeLineMaxLength only when the video is actually loaded.
+                videoView.MediaPlayer.Playing += (sender, args) =>
                 {
-                    Console.WriteLine();
-                    Console.WriteLine("ID:              |   " + item.Id);
-                    Console.WriteLine("Type:            |   " + item.TrackType);
-                    Console.WriteLine("Description:     |   " + item.Description);
-                    Console.WriteLine("Data:            |   " + item.Data);
-                    Console.WriteLine("Codec:           |   " + item.Codec);
-                    Console.WriteLine("Language:        |   " + item.Language);
-                    Console.WriteLine("Profile:         |   " + item.Profile);
-                    Console.WriteLine("OriginalFourcc:  |   " + item.OriginalFourcc);
+                    App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        TimeLineMaxLength = videoView.MediaPlayer.Length;
+                        PausePlayButtonTitle = "PAUSE";
+                    }));
+                };
 
-                }
-                Console.WriteLine("TrackS:::: " + VideoView.MediaPlayer.Media.Tracks);
+                //Sets volume on startup.
+                videoView.MediaPlayer.Volume = VolumeValue;
+                Console.WriteLine("Seekable: " + VideoPlayerViewModel.videoView.MediaPlayer.IsSeekable);
+
+                //Plays the video from the url.
+                videoView.MediaPlayer.Play(new Media(_libVLC, VideoURL, FromType.FromLocation));
+
+                
+
+                //Waits for the stream to be parsed so we do not raise a nullpointer exception.
+                await videoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+
+
+              
+               
+
+                //@todo Hier gebleven
+                videoView.MediaPlayer.TimeChanged += (sender, args) =>
+                {
+                    App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        //Console.WriteLine("Time: " + videoView.MediaPlayer.Time + "Time changed");//Console.WriteLine("Time Changed!");
+                        if (!IsSeeking)
+                        {
+                            TimeLineValue = videoView.MediaPlayer.Time;
+                        }
+                    }));
+                };
             }
         }
 
-        public static void AutoStartVideo(LibVLC _libVLC, string VideoURL)
+        private static void PrintTrackDetails()
         {
-            //If video is pausable play video.
-            if (!VideoView.MediaPlayer.IsPlaying)
+            //Print Track information.
+            Console.WriteLine("\nTracks: \n");
+            foreach (var item in videoView.MediaPlayer.Media.Tracks)
             {
                 Console.WriteLine();
-                VideoView.MediaPlayer.Play(new Media(_libVLC, VideoURL, FromType.FromLocation));
+                Console.WriteLine("ID:              |   " + item.Id);
+                Console.WriteLine("Type:            |   " + item.TrackType);
+                Console.WriteLine("Description:     |   " + item.Description);
+                Console.WriteLine("Data:            |   " + item.Data);
+                Console.WriteLine("Codec:           |   " + item.Codec);
+                Console.WriteLine("Language:        |   " + item.Language);
+                Console.WriteLine("Profile:         |   " + item.Profile);
+                Console.WriteLine("OriginalFourcc:  |   " + item.OriginalFourcc);
 
-
-                VideoPlayerViewModel.NewVideoButton(_libVLC, VideoURL);
-                Console.WriteLine("Hardware Decoding: " + VideoView.MediaPlayer.EnableHardwareDecoding);
             }
+            Console.WriteLine("TrackS:::: " + videoView.MediaPlayer.Media.Tracks);
         }
 
         private static void SetVolume(int Volume)
         {
-            VideoView.MediaPlayer.Volume = Volume;
+            videoView.MediaPlayer.Volume = Volume;
         }
 
         public static void StopButton()
         {
-            if (VideoView.MediaPlayer.IsPlaying)
+            if (videoView.MediaPlayer.IsPlaying)
             {
-                VideoView.MediaPlayer.Stop();
+                videoView.MediaPlayer.Stop();
             }
         }
 
         public static void DisposeVLC()
         {
-            VideoView.MediaPlayer.Stop();
-            VideoView.Dispose();
+            videoView.MediaPlayer.Stop();
+            videoView.Dispose();
+        }
+
+        public static void StartSeeking()
+        {
+            IsSeeking = true;
+        }
+
+        public static void StopSeeking()
+        {
+            var newVideoTime = TimeLineValue;
+            
+            // Set video time to seek time
+            IsSeeking = false;
+            videoView.MediaPlayer.Time = newVideoTime;
         }
 
         public static event PropertyChangedEventHandler StaticPropertyChanged;
 
-        private static void NotifyStaticPropertyChanged(
-            [CallerMemberName] string propertyName = null)
+        private static void NotifyStaticPropertyChanged([CallerMemberName] string propertyName = null)
         {
             StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
         }
-
-
     }
 }
