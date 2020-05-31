@@ -12,10 +12,16 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Explorer\mal.jpg" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.3" />
     <PackageReference Include="Microsoft.Graph" Version="3.5.0" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.14.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Explorer\mal.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="API\Graph\InteractiveComponents\Internal\EmbeddedWebUI.xaml.cs">

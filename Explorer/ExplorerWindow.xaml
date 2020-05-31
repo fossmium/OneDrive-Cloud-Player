@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Explorer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="SASP 0.1 Alpha" Height="450" Width="800">
     <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                <GradientStop Color="#1E2931" Offset="0.0" />
+                <GradientStop Color="#384D5A" Offset="1.0" />
+            </LinearGradientBrush>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"></ColumnDefinition>
             <ColumnDefinition Width="4*"></ColumnDefinition>
@@ -16,11 +22,11 @@
                 <RowDefinition Height="1*"></RowDefinition>
                 <RowDefinition Height="5*"></RowDefinition>
             </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="1">
-                <TextBox x:Name="FolderHolder" Text="{Binding ItemId}" TextWrapping="Wrap" Grid.Column="0" Grid.Row="1"/>
-            </StackPanel>
-            <Button x:Name="Back" Content="Back"></Button>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" Grid.Column="0" Grid.Row="1"/>
+            <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Margin="10,7,80,42"/>
+            <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Margin="80,7,10,42"/>
+            <!-- Grid background gradiant-->
         </Grid>
-        <TextBox x:Name="DescriptionHolder" Text="Text" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0"/>
+        <TextBox x:Name="DescriptionHolder" Text="Text" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" Visibility="Visible" Background="Transparent"/>
     </Grid>
 </Window>
