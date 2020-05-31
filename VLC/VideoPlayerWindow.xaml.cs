@@ -38,9 +38,9 @@ namespace OneDrive_Cloud_Player.VLC
             this.VideoURL = VideoURL;
             var label = new Label
             {
-                Content = "TEwdsdasST",
+                Content = "v0.7.0-alpha1",
                 HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Bottom,
+                VerticalAlignment = VerticalAlignment.Top,
                 Foreground = new SolidColorBrush(Colors.Red)
             };
             test.Children.Add(label);
