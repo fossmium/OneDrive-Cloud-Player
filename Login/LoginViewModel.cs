@@ -82,7 +82,7 @@ namespace OneDrive_Cloud_Player.Login
                 Console.WriteLine("Shared Drive Owner Name: " + SharedDriveInformation.Owner.User.DisplayName);
 
 
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItem(SharedItemId, SharedDriveId);
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SharedDriveId);
                 //Display all children inside the shared folder.
                 foreach (var child in Children)
                 {
