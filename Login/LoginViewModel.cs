@@ -95,6 +95,7 @@ namespace OneDrive_Cloud_Player.Login
                 //More information on how to work with the photo you can find here: https://stackoverflow.com/questions/42126660/c-sharp-how-to-get-office-365-user-photo-using-microsoft-graph-api
                 Stream OwnerPhoto = await graph.GetOneDriveOwnerPhotoAsync();
 
+
             }
             catch (Exception e)
             {
