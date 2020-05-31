@@ -75,7 +75,7 @@ namespace OneDrive_Cloud_Player.API
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
         /// <returns></returns>
-        public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItem(string ItemId, string DriveId = null)
+        public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItemAsync(string ItemId, string DriveId = null)
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
@@ -121,7 +121,7 @@ namespace OneDrive_Cloud_Player.API
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
         /// <returns></returns>
-        public async Task<DriveItem> GetItemInformation(string ItemId, string DriveId)
+        public async Task<DriveItem> GetItemInformationAsync(string ItemId, string DriveId)
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
