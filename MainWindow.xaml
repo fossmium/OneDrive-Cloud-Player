@@ -3,12 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+		xmlns:wpf="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         xmlns:local="clr-namespace:OneDrive_Cloud_Player"
         mc:Ignorable="d"
+        
         Title="MainWindow" Height="450" Width="800">
-    <DockPanel>
-        <Viewbox>
-            <TextBlock x:Name="textBlockOutput" />
-        </Viewbox>
-    </DockPanel>
+    <Grid>
+        <!--<Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>-->
+        <!--<Rectangle x:Name="TopPart" MouseEnter="TopPart_MouseEnter"  MouseLeave="TopPart_MouseLeave"  Fill="Transparent" Grid.Row="0" Margin="0,0,0,232" Grid.RowSpan="2" />
+            <StackPanel x:Name="RestOfContent" Grid.Row="0" Grid.RowSpan="2"/>-->
+        <!--<wpf:VideoView x:Name="VideoView" >-->
+        <Button Content="Open Video Window" HorizontalAlignment="Left" Margin="271,301,0,0" VerticalAlignment="Top" Click="OpenVideoWindow_Click"/>
+        <!--</wpf:VideoView>-->
+    </Grid>
+
 </Window>
