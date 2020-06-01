@@ -60,7 +60,8 @@ namespace OneDrive_Cloud_Player.VLC
 
             videoView.MediaPlayer = _mediaPlayer;
 
-            VideoPlayerViewModel.Initialize(videoView);
+            //Set the videoview in the viewmodel.
+            VideoPlayerViewModel.videoView = videoView;
 
             AutoStartVideo();
 
@@ -70,10 +71,6 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void OnCaptureMouseRequest(object sender, RoutedEventArgs e)
         {
-            Mouse.Capture(VideoGrid);
-            Console.WriteLine("MoveMent");
-        }
-
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
         {
             VideoPlayerViewModel.PauseContinueButton(_libVLC);

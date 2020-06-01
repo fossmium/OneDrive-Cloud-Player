@@ -26,8 +26,6 @@ namespace OneDrive_Cloud_Player.VLC
 
         public static VideoView videoView { get; set; }
 
-        private static string pausePlayButtonTitle = "PLAY";
-
         public static string PausePlayButtonTitle
         {
             get { return pausePlayButtonTitle; }
@@ -89,11 +87,8 @@ namespace OneDrive_Cloud_Player.VLC
             set { isSeeking = value; }
         }
 
+        private static string pausePlayButtonTitle = "PLAY";
 
-        public static void Initialize(VideoView videoView)
-        {
-            VideoPlayerViewModel.videoView = videoView;
-        }
 
         public static void PauseContinueButton(LibVLC _libVLC)
         {
