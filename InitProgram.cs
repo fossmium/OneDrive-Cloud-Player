@@ -1,4 +1,5 @@
 ﻿
+using active_directory_wpf_msgraph_v2;
 using Microsoft.Identity.Client;
 
 using System.Windows;
@@ -25,6 +26,10 @@ namespace OneDrive_Cloud_Player
             PublicClientApplication = PublicClientApplicationBuilder.Create("cfc49d19-b88e-4986-8862-8b5de253d0fd")
                 .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
                 .Build();
+
+            //Caches the login and keeps the user logged in after an application restart.
+            TokenCacheHelper.EnableSerialization(PublicClientApplication.UserTokenCache);
+
             Scopes = new[]
                 {
                     "offline_access",
