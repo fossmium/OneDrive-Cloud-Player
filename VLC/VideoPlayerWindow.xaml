@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
     Title="VideoPlayerWindow" Height="450" Width="688">
-    
+
     <Window.Resources>
         <local:VideoPlayerViewModel x:Key="VideoPlayerVM"/>
         <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
@@ -92,15 +92,18 @@
 
     <Grid>
         <wpf:VideoView x:Name="videoView" Panel.ZIndex="0">
-
-            <Grid x:Name="test" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
-                <DockPanel x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
+            <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="177*"/>
+                    <ColumnDefinition Width="511*"/>
+                </Grid.ColumnDefinitions>
+                <DockPanel x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave" Grid.ColumnSpan="2">
                     <Slider Maximum="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Bottom" PreviewMouseDown="Slider_PreviewMouseDown" PreviewMouseUp="Slider_PreviewMouseUp" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineValue}" Width="300" Margin="5,0,5,0"></Slider>
                     <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
                     <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
                     <Slider VerticalAlignment="Bottom" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" Width="100" Margin="5,0,5,0" Maximum="100"></Slider>
                     <TextBox Height="25" Width="100" Margin="20,0,0,0" Text="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
-                    
+
                 </DockPanel>
             </Grid>
         </wpf:VideoView>
