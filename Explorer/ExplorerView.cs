@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
@@ -38,7 +39,7 @@ namespace Explorer
             await TestCallAsync();
         }
 
-        public async System.Threading.Tasks.Task TestCallAsync()
+        public async Task TestCallAsync()
         {
             IDriveSharedWithMeCollectionPage SharedItems = await graph.GetSharedItemsAsync();
             //Get the name of the first shared folder.
