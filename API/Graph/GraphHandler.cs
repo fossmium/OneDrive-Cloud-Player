@@ -4,7 +4,6 @@ using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-
 namespace OneDrive_Cloud_Player.API
 {
     /// <summary>

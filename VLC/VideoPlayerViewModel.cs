@@ -1,23 +1,10 @@
 ﻿using LibVLCSharp.Shared;
-using OneDrive_Cloud_Player.Login;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-
-using OneDrive_Cloud_Player.VLC;
-using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using LibVLCSharp.WPF;
-using System.Diagnostics;
-using Microsoft.Graph;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
-using System.Threading.Tasks;
-using System.Threading;
 
 namespace OneDrive_Cloud_Player.VLC
 {

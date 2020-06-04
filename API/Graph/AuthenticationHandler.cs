@@ -5,9 +5,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using Microsoft.Graph;
-using System.Windows;
 
 namespace OneDrive_Cloud_Player.API
 {
@@ -72,7 +69,6 @@ namespace OneDrive_Cloud_Player.API
             Debug.WriteLine("\nLocalResult is NULL.\n");
             return null;
         }
-
 
         /// <summary>
         /// Tries to acquire the acces token by forcing to use an interactive window.
