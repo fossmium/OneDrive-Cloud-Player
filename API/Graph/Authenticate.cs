@@ -10,9 +10,9 @@ namespace OneDrive_Cloud_Player.API
 {
     class Authenticate
     {
-        public string AuthAccessToken { get; set; }
+        private string AuthAccessToken { get; set; }
 
-        public AuthenticationResult AuthResult { get; set; }
+        private AuthenticationResult AuthResult { get; set; }
 
         public  Authenticate() { }
 

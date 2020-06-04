@@ -82,7 +82,7 @@ namespace OneDrive_Cloud_Player.Login
                 Console.WriteLine("Shared Drive Owner Name: " + SharedDriveInformation.Owner.User.DisplayName);
 
 
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItem(SharedItemId, SharedDriveId);
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SharedDriveId);
                 //Display all children inside the shared folder.
                 foreach (var child in Children)
                 {
@@ -94,6 +94,7 @@ namespace OneDrive_Cloud_Player.Login
                 //IO stream containing the photo.
                 //More information on how to work with the photo you can find here: https://stackoverflow.com/questions/42126660/c-sharp-how-to-get-office-365-user-photo-using-microsoft-graph-api
                 Stream OwnerPhoto = await graph.GetOneDriveOwnerPhotoAsync();
+
 
             }
             catch (Exception e)

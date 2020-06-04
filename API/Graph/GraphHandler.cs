@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graph;
+using System;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -74,7 +75,7 @@ namespace OneDrive_Cloud_Player.API
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
         /// <returns></returns>
-        public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItem(string ItemId, string DriveId = null)
+        public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItemAsync(string ItemId, string DriveId = null)
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
@@ -112,6 +113,20 @@ namespace OneDrive_Cloud_Player.API
             await CreateGraphClientAsync();
             //Return photo of the owner in binary data.
             return await GraphClient.Me.Photo.Content.Request().GetAsync();
+        }
+
+        /// <summary>
+        /// Get information about a Item that is inside a given Drive.
+        /// </summary>
+        /// <param name="ItemId"></param>
+        /// <param name="DriveId"></param>
+        /// <returns></returns>
+        public async Task<DriveItem> GetItemInformationAsync(string ItemId, string DriveId)
+        {
+            //Create a new GraphServiceClient.
+            await CreateGraphClientAsync();
+           //Return information about an item that resides in the given drive id.
+            return await GraphClient.Me.Drives[DriveId].Items[ItemId].Request().GetAsync();
         }
     }
 }
