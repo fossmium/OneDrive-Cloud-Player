@@ -15,11 +15,11 @@ namespace OneDrive_Cloud_Player.API
     {
         private GraphServiceClient GraphClient { get; set; }
 
-        private Authenticate Auth { get; set; }
+        private AuthenticationHandler Auth { get; set; }
 
         public GraphHandler()
         {
-            Auth = new Authenticate();
+            Auth = new AuthenticationHandler();
         }
 
         /// <summary>
@@ -28,7 +28,7 @@ namespace OneDrive_Cloud_Player.API
         private async Task CreateGraphClientAsync()
         {
             //Acquire accesstoken.
-            string AccessToken = await Auth.AcquireAccessToken();
+            string AccessToken = await Auth.GetAccessToken();
 
             GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider((requestMessage) =>
             {
