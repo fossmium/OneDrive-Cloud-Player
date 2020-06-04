@@ -1,18 +1,11 @@
 ﻿using System;
 using LibVLCSharp.Shared;
-
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using OneDrive_Cloud_Player.VLC;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
-using LibVLCSharp.WPF;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows.Input;
-using Microsoft.Graph;
 
 namespace OneDrive_Cloud_Player.VLC
 {
@@ -28,11 +21,11 @@ namespace OneDrive_Cloud_Player.VLC
         public VideoPlayerWindow(string VideoURL)
         {
             InitializeComponent();
-            
+
             RunDispatcher = true;
 
             //Create a timer with interval of 2 secs
-            dispatcherTimer = new DispatcherTimer();    
+            dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(DispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
 
@@ -69,8 +62,6 @@ namespace OneDrive_Cloud_Player.VLC
             dispatcherTimer.Start();
         }
 
-        private void OnCaptureMouseRequest(object sender, RoutedEventArgs e)
-        {
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
         {
             VideoPlayerViewModel.PauseContinueButton(_libVLC);
@@ -166,7 +157,5 @@ namespace OneDrive_Cloud_Player.VLC
             VideoPlayerViewModel.StopSeeking();
             Console.WriteLine("Stopped seekingnee");
         }
-
-
     }
 }

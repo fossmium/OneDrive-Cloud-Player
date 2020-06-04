@@ -12,13 +12,13 @@ namespace OneDrive_Cloud_Player.Login
         public ICommand MyCommand { get; set; }
         public ICommand MyCommand2 { get; set; }
 
-        private Graph graph { get; set; }
+        private GraphHandler graph { get; set; }
 
         private bool LockAuthCall { get; set; }
 
         public LoginViewModel()
         {
-            graph = new Graph();
+            graph = new GraphHandler();
             LockAuthCall = false;
 
             MyCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);

@@ -10,13 +10,13 @@ namespace OneDrive_Cloud_Player.API
     /// Used to create calls and retrieve information from the graph api.
     /// Try to save this data and use this class as little as possible for speed purposes.
     /// </summary>
-    class Graph
+    class GraphHandler
     {
         private GraphServiceClient GraphClient { get; set; }
 
         private Authenticate Auth { get; set; }
 
-        public Graph()
+        public GraphHandler()
         {
             Auth = new Authenticate();
         }

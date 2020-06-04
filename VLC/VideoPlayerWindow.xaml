@@ -98,7 +98,8 @@
                     <ColumnDefinition Width="511*"/>
                 </Grid.ColumnDefinitions>
                 <DockPanel x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave" Grid.ColumnSpan="2">
-                    <Slider Maximum="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" VerticalAlignment="Bottom" PreviewMouseDown="Slider_PreviewMouseDown" PreviewMouseUp="Slider_PreviewMouseUp" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineValue}" Width="300" Margin="5,0,5,0"></Slider>
+                    <Slider Maximum="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" IsMoveToPointEnabled="True" VerticalAlignment="Bottom" PreviewMouseDown="Slider_PreviewMouseDown" PreviewMouseUp="Slider_PreviewMouseUp" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineValue}" Width="300" Margin="5,0,5,0"></Slider>
+
                     <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
                     <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
                     <Slider VerticalAlignment="Bottom" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" Width="100" Margin="5,0,5,0" Maximum="100"></Slider>
