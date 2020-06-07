@@ -1,18 +1,11 @@
 ﻿using System;
 using LibVLCSharp.Shared;
-
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using OneDrive_Cloud_Player.VLC;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
-using LibVLCSharp.WPF;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using System.Windows.Threading;
 using System.Windows.Input;
-using Microsoft.Graph;
 
 namespace OneDrive_Cloud_Player.VLC
 {
@@ -29,21 +22,24 @@ namespace OneDrive_Cloud_Player.VLC
         {
             InitializeComponent();
 
+            RunDispatcher = true;
+
             //Create a timer with interval of 2 secs
             dispatcherTimer = new DispatcherTimer();
-            RunDispatcher = true;
             dispatcherTimer.Tick += new EventHandler(DispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
-            ButtonTitle = "TestPause";
+
+            //Sets the url of the video.
             this.VideoURL = VideoURL;
+
             var label = new Label
             {
-                Content = "v0.7.0-alpha1",
+                Content = "v0.7.2-alpha1",
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 Foreground = new SolidColorBrush(Colors.Red)
             };
-            test.Children.Add(label);
+            VideoGrid.Children.Add(label);
 
             Core.Initialize();
 
@@ -57,15 +53,13 @@ namespace OneDrive_Cloud_Player.VLC
 
             videoView.MediaPlayer = _mediaPlayer;
 
-            VideoPlayerViewModel.Initialize(videoView);
+            //Set the videoview in the viewmodel.
+            VideoPlayerViewModel.videoView = videoView;
 
             AutoStartVideo();
-        }
 
-        private void OnCaptureMouseRequest(object sender, RoutedEventArgs e)
-        {
-            Mouse.Capture(test);
-            Console.WriteLine("MoveMent");
+            //Start the timer
+            dispatcherTimer.Start();
         }
 
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
@@ -85,18 +79,13 @@ namespace OneDrive_Cloud_Player.VLC
             VideoPlayerViewModel.DisposeVLC();
         }
 
-        //private void NewVideoButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    VideoPlayerViewModel.NewVideoButton(_libVLC, this.VideoURL);
-        //}
-
         private void AutoStartVideo()
         {
             VideoPlayerViewModel.StartVideo(this._libVLC, this.VideoURL);
         }
 
         /// <summary>
-        /// Event for when the move moves. Resets the dispatcherTimer for hiding the controls.
+        /// Event for when the mouse moves. Resets the dispatcherTimer for hiding the controls.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -105,12 +94,8 @@ namespace OneDrive_Cloud_Player.VLC
             //Make controls anc cursor visible again
             VideoControls.Visibility = Visibility.Visible;
             Mouse.OverrideCursor = null;
-            //Resets timer if its running when you move.
-            //Console.WriteLine(Mouse.GetPosition(test));
-            if (dispatcherTimer.IsEnabled)
-            {
-                dispatcherTimer.Stop();
-            }
+
+            //Starts dispatcher timer.
             if (RunDispatcher)
             {
                 //Start the timer
@@ -128,8 +113,13 @@ namespace OneDrive_Cloud_Player.VLC
             //Things which happen after 1 timer interval
             VideoControls.Visibility = System.Windows.Visibility.Collapsed;
 
-            //Hides Cursor.
-            Mouse.OverrideCursor = Cursors.None;
+            //Only hide cursor when it is directly above the video grid.
+            if (Mouse.DirectlyOver == this.VideoGrid)
+            {
+                //Hides Cursor.
+                Mouse.OverrideCursor = Cursors.None;
+            }
+
 
             //Disable the timer
             dispatcherTimer.IsEnabled = false;

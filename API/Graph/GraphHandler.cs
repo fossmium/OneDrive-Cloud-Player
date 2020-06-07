@@ -4,22 +4,21 @@ using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-
 namespace OneDrive_Cloud_Player.API
 {
     /// <summary>
     /// Used to create calls and retrieve information from the graph api.
     /// Try to save this data and use this class as little as possible for speed purposes.
     /// </summary>
-    class Graph
+    class GraphHandler
     {
         private GraphServiceClient GraphClient { get; set; }
 
-        private Authenticate Auth { get; set; }
+        private AuthenticationHandler Auth { get; set; }
 
-        public Graph()
+        public GraphHandler()
         {
-            Auth = new Authenticate();
+            Auth = new AuthenticationHandler();
         }
 
         /// <summary>
@@ -28,7 +27,7 @@ namespace OneDrive_Cloud_Player.API
         private async Task CreateGraphClientAsync()
         {
             //Acquire accesstoken.
-            string AccessToken = await Auth.AcquireAccessToken();
+            string AccessToken = await Auth.GetAccessToken();
 
             GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider((requestMessage) =>
             {

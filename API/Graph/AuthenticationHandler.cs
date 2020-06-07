@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace OneDrive_Cloud_Player.API
 {
-    class Authenticate
+    class AuthenticationHandler
     {
-        private string AuthAccessToken { get; set; }
 
-        private AuthenticationResult AuthResult { get; set; }
+        public AuthenticationHandler() { }
 
-        public  Authenticate() { }
-
-        //private async string getAccessToken
-        public async Task<string> AcquireAccessToken()
+        /// <summary>
+        /// Tries to  silently retrieve the acces token without user interaction. If that fails it tries to retrieve the access token with an interactive login window.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GetAccessToken()
         {
             AuthenticationResult LocalResult = null;
             try
@@ -70,7 +70,10 @@ namespace OneDrive_Cloud_Player.API
             return null;
         }
 
-        public async void GetAccessTokenWithLogin()
+        /// <summary>
+        /// Tries to acquire the acces token by forcing to use an interactive window.
+        /// </summary>
+        public async void GetAccessTokenForcedInteractive()
         {
             AuthenticationResult LocalResult = null;
             try
@@ -89,6 +92,27 @@ namespace OneDrive_Cloud_Player.API
             {
                 Console.WriteLine($"Error Acquiring Token:{System.Environment.NewLine}{msalex}");
                 Debug.WriteLine("\nLocalResult is NULL.\n");
+            }
+        }
+
+        /// <summary>
+        /// Signs out a user. It removes the account from the token cache.
+        /// </summary>
+        public async void SignOut()
+        {
+            var accounts = await InitProgram.Current.PublicClientApplication.GetAccountsAsync();
+
+            //Checks if any account is inside the token cache.
+            if (accounts.Any())
+            {
+                try
+                {
+                    await InitProgram.Current.PublicClientApplication.RemoveAsync(accounts.FirstOrDefault());
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error while trying to sign out.");
+                }
             }
         }
     }

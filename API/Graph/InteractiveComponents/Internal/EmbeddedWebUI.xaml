@@ -11,6 +11,6 @@
         Title="EmbeddedWebUiWindow" Height="450" Width="800">
     <Grid>
         <WebBrowser x:Name="webBrowser"
-                    Navigating="WebBrowser_Navigating" />
+                    Navigating="WebBrowser_Navigating"/>
     </Grid>
 </Window>

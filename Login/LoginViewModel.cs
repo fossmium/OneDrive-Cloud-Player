@@ -11,20 +11,27 @@ namespace OneDrive_Cloud_Player.Login
     {
         public ICommand MyCommand { get; set; }
         public ICommand MyCommand2 { get; set; }
+        public ICommand MyCommand3 { get; set; }
 
-        private Graph graph { get; set; }
+        private GraphHandler graph { get; set; }
 
         private bool LockAuthCall { get; set; }
 
         public LoginViewModel()
         {
-            graph = new Graph();
+            graph = new GraphHandler();
             LockAuthCall = false;
 
             MyCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
             MyCommand2 = new CommandHandler(ExecuteTestToken, CanExecuteMethod2);
+            MyCommand3 = new CommandHandler(ExecuteLogout, CanExecuteMethod2);
         }
 
+        private void ExecuteLogout(object obj)
+        {
+            API.AuthenticationHandler auth = new API.AuthenticationHandler();
+            auth.SignOut();
+        }
 
         private bool CanExecuteMethod(object parameter)
         {
@@ -33,8 +40,8 @@ namespace OneDrive_Cloud_Player.Login
 
         private void ExecuteMethod(object parameter)
         {
-            Authenticate Auth = new Authenticate();
-            Auth.GetAccessTokenWithLogin();
+            API.AuthenticationHandler auth = new API.AuthenticationHandler();
+            auth.GetAccessTokenForcedInteractive();
         }
 
         private bool CanExecuteMethod2(object parameter)
