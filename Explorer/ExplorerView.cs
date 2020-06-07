@@ -19,7 +19,7 @@ namespace Explorer
 
         public ICommand TestCallCommand { get; set; }
 
-        private Graph graph;
+        private GraphHandler graph;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -40,7 +40,7 @@ namespace Explorer
         {
             driveItemList = null;
 
-            this.graph = new Graph();
+            this.graph = new GraphHandler();
             TestCallCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
         }
 
@@ -57,30 +57,6 @@ namespace Explorer
         public async Task TestCallAsync()
         {
             DriveItemList = await graph.GetSharedItemsAsync();
-            //Get the name of the first shared folder.
-
-           // List<string> x = new List<string>();
-           /* foreach (DriveItem SharedDrive in SharedItems)
-            {
-
-                Console.WriteLine(SharedDrive.RemoteItem.Name);
-                x.Add(SharedDrive.RemoteItem.Name);
-            }
-            DriveItemList = x;*/
-
-            //Console.WriteLine("Shared item name: " + SharedItems[0].RemoteItem.Name);
-            ////Store the drive id from the shared folder.
-            //string SharedDriveId = SharedItems[0].RemoteItem.ParentReference.DriveId;
-            ////Store the itemid (file and folders are items)
-            //string SharedItemId = SharedItems[0].RemoteItem.Id;
-
-            //Drive SharedDriveInformation = await graph.GetDriveInformationAsync(SharedDriveId);
-            ////Display the owner of the shared item.
-            //Console.WriteLine("Shared Drive Owner Name: " + SharedDriveInformation.Owner.User.DisplayName);
-
-            //IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SharedDriveId);
-            ////Display all children inside the shared folder.
-            ///
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")

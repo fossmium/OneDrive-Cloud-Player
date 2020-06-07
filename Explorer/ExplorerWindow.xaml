@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Explorer"
         mc:Ignorable="d"
-        Title="SASP 0.1 Alpha" Height="450" Width="800">
+        Title="One Drive Cloud Player" Height="450" Width="800">
     <Window.DataContext>
         <local:ExplorerView/>
     </Window.DataContext>
@@ -25,23 +25,23 @@
                 <RowDefinition Height="1*"/>
                 <RowDefinition Height="5*"/>
             </Grid.RowDefinitions>
-            <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Margin="10,7,80,42"/>
-            <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Margin="80,7,10,42"/>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="5*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Grid.Column="0"/>
+            <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Grid.Column="2"/>
             <Button Grid.Column="0" Grid.Row="1" Command="{Binding TestCallCommand}" Margin="414,146,-414,180"></Button>
-            <!--<Button Command="{Binding CreateList, Source={StaticResource ExplorerVM}}" Margin="212,36,-212,323" Grid.RowSpan="2"/>-->
-            <ListBox ItemsSource="{Binding DriveItemList}" Margin="0,72,0,290" Grid.RowSpan="2">
+            <ListBox ItemsSource="{Binding DriveItemList}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <!--<TextBlock Text="{Binding Title}"></TextBlock>-->
                             <TextBlock Text="{Binding RemoteItem.Name}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
-            <!--<Button "Log Name="LoginButn" FontSize="15" MouseDown="{Binding TestCallCommand, Source={StaticResource ExplorerVM}}"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="26" Width="70" Margin="0,36,0,0"/> -->
         </Grid>
-        <!--<TextBox x:Name="DescriptionHolder" Text="Text" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" Visibility="Visible" Background="Transparent"/>-->
     </Grid>
 </Window>
