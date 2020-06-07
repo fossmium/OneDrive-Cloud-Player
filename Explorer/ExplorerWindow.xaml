@@ -6,9 +6,9 @@
         xmlns:local="clr-namespace:Explorer"
         mc:Ignorable="d"
         Title="SASP 0.1 Alpha" Height="450" Width="800">
-    <Window.Resources>
-        <local:ExplorerView x:Key="ExplorerVM"/>
-    </Window.Resources>
+    <Window.DataContext>
+        <local:ExplorerView/>
+    </Window.DataContext>
     <Grid>
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -27,12 +27,14 @@
             </Grid.RowDefinitions>
             <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Margin="10,7,80,42"/>
             <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Margin="80,7,10,42"/>
-            <Button Grid.Column="0" Grid.Row="0" Command="{Binding TestCallCommand, Source={StaticResource ExplorerVM}}" Margin="0,36,0,0"></Button>
-            <ListBox Grid.Row="1" Background="Transparent" ItemsSource="{Binding Children}">
+            <Button Grid.Column="0" Grid.Row="1" Command="{Binding TestCallCommand}" Margin="414,146,-414,180"></Button>
+            <!--<Button Command="{Binding CreateList, Source={StaticResource ExplorerVM}}" Margin="212,36,-212,323" Grid.RowSpan="2"/>-->
+            <ListBox ItemsSource="{Binding DriveItemList}" Margin="0,72,0,290" Grid.RowSpan="2">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <TextBlock x:Name="FolderBlock" Text="{Binding child}"></TextBlock>
+                            <!--<TextBlock Text="{Binding Title}"></TextBlock>-->
+                            <TextBlock Text="{Binding RemoteItem.Name}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -40,6 +42,6 @@
 
             <!--<Button "Log Name="LoginButn" FontSize="15" MouseDown="{Binding TestCallCommand, Source={StaticResource ExplorerVM}}"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="26" Width="70" Margin="0,36,0,0"/> -->
         </Grid>
-        <TextBox x:Name="DescriptionHolder" Text="Text" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" Visibility="Visible" Background="Transparent"/>
+        <!--<TextBox x:Name="DescriptionHolder" Text="Text" TextWrapping="Wrap" Grid.Column="1" Grid.Row="0" Visibility="Visible" Background="Transparent"/>-->
     </Grid>
 </Window>

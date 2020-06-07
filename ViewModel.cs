@@ -8,6 +8,11 @@ namespace OneDrive_Cloud_Player
 	class ViewModel
 	{
 
+		public ViewModel()
+        {
+			DataModel = new DataModel();
+        }
+
 		private DataModel dataModel;
 
 		public DataModel DataModel {
@@ -15,5 +20,5 @@ namespace OneDrive_Cloud_Player
 			set { dataModel = value; }
 		}
 
-	}
+    }
 }
