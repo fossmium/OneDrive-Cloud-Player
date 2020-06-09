@@ -6,6 +6,7 @@ using System.Windows.Media;
 using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 using System.Windows.Threading;
 using System.Windows.Input;
+using System.Windows.Controls.Primitives;
 
 namespace OneDrive_Cloud_Player.VLC
 {
@@ -60,6 +61,32 @@ namespace OneDrive_Cloud_Player.VLC
 
             //Start the timer
             dispatcherTimer.Start();
+
+
+            SeekBar.ApplyTemplate();
+            Thumb thumb = (SeekBar.Template.FindName("PART_Track", SeekBar) as Track).Thumb;
+            thumb.MouseEnter += new MouseEventHandler(Thumb_MouseEnter);
+        }
+
+        /// <summary>
+        /// Enables the user to click and drag everywhere on the slider track.
+        /// </summary>
+        /// Code from: https://social.msdn.microsoft.com/Forums/vstudio/en-US/5fa7cbc2-c99f-4b71-b46c-f156bdf0a75a/making-the-slider-slide-with-one-click-anywhere-on-the-slider
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Thumb_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed && e.MouseDevice.Captured == null)
+            {
+                // the left button is pressed on mouse enter
+                // but the mouse isn't captured, so the thumb
+                // must have been moved under the mouse in response
+                // to a click on the track.
+                // Generate a MouseLeftButtonDown event.
+                MouseButtonEventArgs args = new MouseButtonEventArgs(e.MouseDevice, e.Timestamp, MouseButton.Left);
+                args.RoutedEvent = MouseLeftButtonDownEvent;
+                (sender as Thumb).RaiseEvent(args);
+            }
         }
 
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
@@ -69,7 +96,6 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoPlayerViewModel.StopButton();
             this.Close();
             VideoPlayerViewModel.DisposeVLC();
         }
@@ -119,8 +145,6 @@ namespace OneDrive_Cloud_Player.VLC
                 //Hides Cursor.
                 Mouse.OverrideCursor = Cursors.None;
             }
-
-
             //Disable the timer
             dispatcherTimer.IsEnabled = false;
         }
@@ -146,16 +170,16 @@ namespace OneDrive_Cloud_Player.VLC
             RunDispatcher = true;
         }
 
-        private void Slider_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        private void Slider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
             VideoPlayerViewModel.StartSeeking();
-            Console.WriteLine("Started seekingnee");
+            Console.WriteLine("Started seekingnee DRAG started");
         }
 
-        private void Slider_PreviewMouseUp(object sender, MouseButtonEventArgs e)
+        private void Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
             VideoPlayerViewModel.StopSeeking();
-            Console.WriteLine("Stopped seekingnee");
+            Console.WriteLine("Stopped seekingnee DRAG completed");
         }
     }
 }

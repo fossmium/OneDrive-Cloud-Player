@@ -174,14 +174,6 @@ namespace OneDrive_Cloud_Player.VLC
             videoView.MediaPlayer.Volume = Volume;
         }
 
-        public static void StopButton()
-        {
-            if (videoView.MediaPlayer.IsPlaying)
-            {
-                videoView.MediaPlayer.Stop();
-            }
-        }
-
         public static void DisposeVLC()
         {
             videoView.MediaPlayer.Stop();
@@ -196,10 +188,10 @@ namespace OneDrive_Cloud_Player.VLC
         public static void StopSeeking()
         {
             var newVideoTime = TimeLineValue;
-            
+            videoView.MediaPlayer.Time = newVideoTime;
             // Set video time to seek time
             IsSeeking = false;
-            videoView.MediaPlayer.Time = newVideoTime;
+            
         }
 
 
