@@ -13,15 +13,20 @@ namespace OneDrive_Cloud_Player.VLC
     partial class VideoPlayerWindow : Window
     {
         private DispatcherTimer dispatcherTimer;
-        private MediaPlayer _mediaPlayer;
-        public LibVLC _libVLC;
+        private MediaPlayer mediaPlayer;
+        private LibVLC libVLC;
         private string VideoURL;
         private bool RunDispatcher;
         public string ButtonTitle { set; get; }
 
-        public VideoPlayerWindow(string VideoURL)
+       
+
+        public VideoPlayerWindow(string driveId, string itemId)
         {
             InitializeComponent();
+
+
+
 
             RunDispatcher = true;
 
@@ -29,9 +34,6 @@ namespace OneDrive_Cloud_Player.VLC
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(DispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
-
-            //Sets the url of the video.
-            this.VideoURL = VideoURL;
 
             var label = new Label
             {
@@ -44,18 +46,18 @@ namespace OneDrive_Cloud_Player.VLC
 
             Core.Initialize();
 
-            _libVLC = new LibVLC();
-            _mediaPlayer = new MediaPlayer(_libVLC);
+            libVLC = new LibVLC();
+            mediaPlayer = new MediaPlayer(libVLC);
 
-            //we need the VideoView to be fully loaded before setting a MediaPlayer on it.
-            //videoView.Loaded += (sender, e) => videoView.MediaPlayer = _mediaPlayer;
-
-            //Set videoview field int the static VideoPlayerViewModel class.
-
-            videoView.MediaPlayer = _mediaPlayer;
+            // set the mediaplayer in the videoView.
+            videoView.MediaPlayer = mediaPlayer;
 
             //Set the videoview in the viewmodel.
             VideoPlayerViewModel.videoView = videoView;
+
+            //Initialize variables
+            VideoPlayerViewModel.driveId = driveId;
+            VideoPlayerViewModel.itemId = itemId;
 
             AutoStartVideo();
 
@@ -91,7 +93,7 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoPlayerViewModel.PauseContinueButton(_libVLC);
+            VideoPlayerViewModel.PauseContinueButton(libVLC);
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -107,7 +109,7 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void AutoStartVideo()
         {
-            VideoPlayerViewModel.StartVideo(this._libVLC, this.VideoURL);
+            VideoPlayerViewModel.StartVideo(this.libVLC, this.VideoURL);
         }
 
         /// <summary>

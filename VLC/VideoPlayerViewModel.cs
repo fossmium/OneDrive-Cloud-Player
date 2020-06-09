@@ -76,6 +76,10 @@ namespace OneDrive_Cloud_Player.VLC
             set { isSeeking = value; }
         }
 
+        public static string itemId;
+        public static string driveId;
+
+
 
         public static void Initialize(VideoView videoView)
         {
@@ -147,6 +151,11 @@ namespace OneDrive_Cloud_Player.VLC
                     }));
                 };
             }
+        }
+
+        public static void ReloadVideo()
+        {
+            
         }
 
         private static void PrintTrackDetails()
