@@ -19,14 +19,12 @@ namespace OneDrive_Cloud_Player.VLC
         private bool RunDispatcher;
         public string ButtonTitle { set; get; }
 
-       
+        public string itemId;
+        public string driveId;
 
         public VideoPlayerWindow(string driveId, string itemId)
         {
             InitializeComponent();
-
-
-
 
             RunDispatcher = true;
 
@@ -52,18 +50,15 @@ namespace OneDrive_Cloud_Player.VLC
             // set the mediaplayer in the videoView.
             videoView.MediaPlayer = mediaPlayer;
 
-            //Set the videoview in the viewmodel.
+            //Initialize variables in the viewmodel.
             VideoPlayerViewModel.videoView = videoView;
-
-            //Initialize variables
-            VideoPlayerViewModel.driveId = driveId;
-            VideoPlayerViewModel.itemId = itemId;
+            this.driveId = driveId;
+            this.itemId = itemId;
 
             AutoStartVideo();
 
             //Start the timer
             dispatcherTimer.Start();
-
 
             SeekBar.ApplyTemplate();
             Thumb thumb = (SeekBar.Template.FindName("PART_Track", SeekBar) as Track).Thumb;
@@ -93,7 +88,7 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoPlayerViewModel.PauseContinueButton(libVLC);
+            VideoPlayerViewModel.PauseContinueButton();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
@@ -109,7 +104,7 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void AutoStartVideo()
         {
-            VideoPlayerViewModel.StartVideo(this.libVLC, this.VideoURL);
+            //VideoPlayerViewModel.StartVideo(this.libVLC, this.VideoURL);
         }
 
         /// <summary>
