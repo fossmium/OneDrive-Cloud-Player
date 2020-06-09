@@ -80,12 +80,6 @@ namespace OneDrive_Cloud_Player.VLC
         public static string driveId;
 
 
-
-        public static void Initialize(VideoView videoView)
-        {
-            VideoPlayerViewModel.videoView = videoView;
-        }
-
         public static void PauseContinueButton(LibVLC _libVLC)
         {
             Console.WriteLine("CanPause: " + videoView.MediaPlayer.CanPause);
