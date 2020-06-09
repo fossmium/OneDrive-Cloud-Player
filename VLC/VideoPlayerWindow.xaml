@@ -104,6 +104,7 @@
 
                     <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
                     <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
+                    <Button Content="ReloadVideo" x:Name="ReloadButton"  Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="ReloadVideoButton_Click" />
                     <Slider VerticalAlignment="Bottom" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" Width="100" Margin="5,0,5,0" Maximum="100"></Slider>
                     <!--<TextBox Height="25" Width="100" Margin="20,0,0,0" Text="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>-->
 

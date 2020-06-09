@@ -77,13 +77,6 @@ namespace OneDrive_Cloud_Player.VLC
         }
 
 
-
-
-        public static string GetNewVideoDownloadURL(string driveId, string itemId)
-        {
-            //return 
-        }
-
         public static void PauseContinueButton()
         {
             Console.WriteLine("CanPause: " + videoView.MediaPlayer.CanPause);
@@ -102,7 +95,7 @@ namespace OneDrive_Cloud_Player.VLC
             }
         }
 
-        public static async void StartVideo(LibVLC libVLC, string VideoURL)
+        public static async void StartVideo(LibVLC libVLC, string VideoURL, long VideoStartTime = 0)
         {
             //If video is not playing play video.
             if (!videoView.MediaPlayer.IsPlaying)
@@ -131,6 +124,8 @@ namespace OneDrive_Cloud_Player.VLC
                 //Waits for the stream to be parsed so we do not raise a nullpointer exception.
                 await videoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
 
+                //Set the video start time.
+                videoView.MediaPlayer.Time = VideoStartTime;
 
                 //@todo Hier gebleven
                 videoView.MediaPlayer.TimeChanged += (sender, args) =>

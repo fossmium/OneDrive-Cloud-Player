@@ -1,12 +1,13 @@
-﻿using System;
-using LibVLCSharp.Shared;
+﻿using LibVLCSharp.Shared;
+using Microsoft.Graph;
+using OneDrive_Cloud_Player.API;
+using System;
+using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
-using System.Windows.Threading;
-using System.Windows.Input;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Threading;
+using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
 
 namespace OneDrive_Cloud_Player.VLC
 {
@@ -15,6 +16,7 @@ namespace OneDrive_Cloud_Player.VLC
         private DispatcherTimer dispatcherTimer;
         private MediaPlayer mediaPlayer;
         private LibVLC libVLC;
+        private GraphHandler graphHandler;
         private string VideoURL;
         private bool RunDispatcher;
         public string ButtonTitle { set; get; }
@@ -33,19 +35,11 @@ namespace OneDrive_Cloud_Player.VLC
             dispatcherTimer.Tick += new EventHandler(DispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
 
-            var label = new Label
-            {
-                Content = "v0.7.2-alpha1",
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Top,
-                Foreground = new SolidColorBrush(Colors.Red)
-            };
-            VideoGrid.Children.Add(label);
-
             Core.Initialize();
 
             libVLC = new LibVLC();
             mediaPlayer = new MediaPlayer(libVLC);
+            graphHandler = new GraphHandler();
 
             // set the mediaplayer in the videoView.
             videoView.MediaPlayer = mediaPlayer;
@@ -55,7 +49,7 @@ namespace OneDrive_Cloud_Player.VLC
             this.driveId = driveId;
             this.itemId = itemId;
 
-            AutoStartVideo();
+            StartVideoAsync();
 
             //Start the timer
             dispatcherTimer.Start();
@@ -63,6 +57,16 @@ namespace OneDrive_Cloud_Player.VLC
             SeekBar.ApplyTemplate();
             Thumb thumb = (SeekBar.Template.FindName("PART_Track", SeekBar) as Track).Thumb;
             thumb.MouseEnter += new MouseEventHandler(Thumb_MouseEnter);
+        }
+
+        private async void StartVideoAsync(long VideoStartTime = 0)
+        {
+            //Gets the drive item with a graph call.
+            var driveItem = await graphHandler.GetItemInformationAsync(driveId, itemId);
+            //Retrieve the download URL from the drive item to be used for the video,
+            VideoURL = (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
+
+            VideoPlayerViewModel.StartVideo(libVLC, VideoURL, VideoStartTime);
         }
 
         /// <summary>
@@ -100,11 +104,6 @@ namespace OneDrive_Cloud_Player.VLC
         protected override void OnClosed(EventArgs e)
         {
             VideoPlayerViewModel.DisposeVLC();
-        }
-
-        private void AutoStartVideo()
-        {
-            //VideoPlayerViewModel.StartVideo(this.libVLC, this.VideoURL);
         }
 
         /// <summary>
@@ -177,6 +176,15 @@ namespace OneDrive_Cloud_Player.VLC
         {
             VideoPlayerViewModel.StopSeeking();
             Console.WriteLine("Stopped seekingnee DRAG completed");
+        }
+
+        private void ReloadVideoButton_Click(object sender, RoutedEventArgs e)
+        {
+            //Get the time of the video.
+            long videoTime = VideoPlayerViewModel.TimeLineValue;
+            videoView.MediaPlayer.Stop();
+            //Start the video again with a new start time.
+            StartVideoAsync(videoTime);
         }
     }
 }
