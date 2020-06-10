@@ -21,8 +21,8 @@ namespace OneDrive_Cloud_Player.VLC
         private bool RunDispatcher;
         public string ButtonTitle { set; get; }
 
-        public string itemId;
-        public string driveId;
+        private string itemId;
+        private string driveId;
 
         public VideoPlayerWindow(string driveId, string itemId)
         {
