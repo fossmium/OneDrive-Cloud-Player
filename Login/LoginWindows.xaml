@@ -10,9 +10,74 @@
         <local:LoginViewModel x:Key="vm"/>
     </Window.Resources>
     <Grid>
-        <Button Content="Login" Name="LoginButn" FontSize="30" Command="{Binding MyCommand, Source={StaticResource vm}}"  HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="253" Margin="0,307,0,0"/>
-        <Label Content="Please login." FontSize="30" HorizontalAlignment="Center" Margin="0,180,0,0" VerticalAlignment="Top"/>
-        <Button Content="Test Token" FontSize="30" Command="{Binding MyCommand2, Source={StaticResource vm}}" HorizontalAlignment="Center" VerticalAlignment="Top" Height="51" Width="253" Margin="0,30,0,0"/>
+        <Rectangle>
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#1E2931" Offset="0.0"/>
+                    <GradientStop Color="#384D5A" Offset="1.0"/>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
 
+        <Button
+            Content="Test Token"
+            
+            Width="253"
+            Height="51"
+            Margin="0,30,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            
+            FontSize="21"
+            FontFamily="Lato"
+            FontWeight="Normal"
+            Foreground="White"
+            
+            BorderThickness="0,0,0,2"
+            BorderBrush="#414E58"
+            
+            Command="{Binding MyCommand2, Source={StaticResource vm}}"
+            >
+            <Button.Background>
+                <SolidColorBrush Color="White" Opacity="0"/>
+            </Button.Background>
+        </Button>
+
+        <Label
+            Content="Welcome! Please log in"
+            
+            Margin="0,155,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            
+            FontSize="30"
+            Foreground="White"
+            
+            />
+
+        <Button
+            Content="Login"
+            Name="LoginButn"
+            
+            Width="252"
+            Height="51"
+            Margin="0,241,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            
+            FontSize="21"
+            FontFamily="Lato"
+            FontWeight="Normal"
+            Foreground="White"
+            
+            BorderThickness="0,0,0,2"
+            BorderBrush="#414E58"
+            
+            Command="{Binding MyCommand, Source={StaticResource vm}}"
+            >
+            <Button.Background>
+                <SolidColorBrush Color="White" Opacity="0"/>
+            </Button.Background>
+        </Button>
     </Grid>
 </Window>
