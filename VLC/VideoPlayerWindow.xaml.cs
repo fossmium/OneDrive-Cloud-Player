@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
-using Microsoft.Graph;
+using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using OneDrive_Cloud_Player.API;
 using System;
 using System.ComponentModel;
@@ -12,7 +13,7 @@ using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace OneDrive_Cloud_Player.VLC
 {
-    partial class VideoPlayerWindow : Window, INotifyPropertyChanged
+    partial class VideoPlayerWindow : MetroWindow, INotifyPropertyChanged
     {
         private int volumeValue = 20;
 
@@ -26,6 +27,19 @@ namespace OneDrive_Cloud_Player.VLC
                 OnPropertyChanged("VolumeValue");
             }
         }
+
+        private bool showLoadingCircle;
+
+        public bool ShowLoadingCircle
+        {
+            get { return showLoadingCircle; }
+            set
+            {
+                showLoadingCircle = value;
+                OnPropertyChanged("ShowLoadingCircle");
+            }
+        }
+
 
         private long timeLineValue;
 
@@ -104,6 +118,7 @@ namespace OneDrive_Cloud_Player.VLC
             SeekBar.ApplyTemplate();
             Thumb thumb = (SeekBar.Template.FindName("PART_Track", SeekBar) as Track).Thumb;
             thumb.MouseEnter += new MouseEventHandler(Thumb_MouseEnter);
+           
         }
 
         private async void StartVideoAsync(long VideoStartTime = 0)
@@ -113,7 +128,7 @@ namespace OneDrive_Cloud_Player.VLC
             //Retrieve the download URL from the drive item to be used for the video,
             VideoURL = (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
 
-            this.StartVideo(libVLC, VideoURL, VideoStartTime);
+            this.PlayVideo(libVLC, VideoURL, VideoStartTime);
 
         }
 
@@ -154,6 +169,16 @@ namespace OneDrive_Cloud_Player.VLC
             this.DisposeVLC();
         }
 
+        private void StartedProcessing()
+        {
+            ShowLoadingCircle = true;
+        }
+
+        private void EndedProcessing()
+        {
+            ShowLoadingCircle = false;
+        }
+
         /// <summary>
         /// Event for when the mouse moves. Resets the dispatcherTimer for hiding the controls.
         /// </summary>
@@ -164,7 +189,6 @@ namespace OneDrive_Cloud_Player.VLC
             //Make controls anc cursor visible again
             VideoControls.Visibility = Visibility.Visible;
             Mouse.OverrideCursor = null;
-
             //Starts dispatcher timer.
             if (RunDispatcher)
             {
@@ -184,7 +208,7 @@ namespace OneDrive_Cloud_Player.VLC
             VideoControls.Visibility = System.Windows.Visibility.Collapsed;
 
             //Only hide cursor when it is directly above the video grid.
-            if (Mouse.DirectlyOver == this.VideoGrid)
+            if (VideoGrid.IsMouseOver)
             {
                 //Hides Cursor.
                 Mouse.OverrideCursor = Cursors.None;
@@ -236,13 +260,13 @@ namespace OneDrive_Cloud_Player.VLC
         }
 
 
-
-
-        private async void StartVideo(LibVLC libVLC, string VideoURL, long VideoStartTime = 0)
+        private async void PlayVideo(LibVLC libVLC, string VideoURL, long VideoStartTime = 0)
         {
             //If video is not playing play video.
             if (!videoView.MediaPlayer.IsPlaying)
             {
+                StartedProcessing();
+
                 //Thread.Sleep(2000);
                 Console.WriteLine("HWND: " + videoView.MediaPlayer.Hwnd);
 
@@ -263,9 +287,10 @@ namespace OneDrive_Cloud_Player.VLC
                 //Plays the video from the url.
                 videoView.MediaPlayer.Play(new Media(libVLC, VideoURL, FromType.FromLocation));
 
-
                 //Waits for the stream to be parsed so we do not raise a nullpointer exception.
                 await videoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+
+                EndedProcessing();
 
                 //Set the video start time.
                 videoView.MediaPlayer.Time = VideoStartTime;
@@ -275,7 +300,6 @@ namespace OneDrive_Cloud_Player.VLC
                 {
                     App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
                     {
-                        //Console.WriteLine("Time: " + videoView.MediaPlayer.Time + "Time changed");//Console.WriteLine("Time Changed!");
                         if (!IsSeeking)
                         {
                             TimeLineValue = videoView.MediaPlayer.Time;
@@ -326,9 +350,6 @@ namespace OneDrive_Cloud_Player.VLC
             IsSeeking = false;
 
         }
-
-
-
 
         public event PropertyChangedEventHandler PropertyChanged;
 
