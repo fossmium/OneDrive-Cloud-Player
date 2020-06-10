@@ -22,7 +22,7 @@
         <wpf:VideoView x:Name="videoView" Panel.ZIndex="0" Margin="1,1,1,1">
             <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
 
-                <mah:ProgressRing IsActive="{Binding Path=ShowLoadingCircle}"></mah:ProgressRing>
+                <mah:ProgressRing IsActive="{Binding Path=ShowLoadingCircle}" Height="90" Width="90"></mah:ProgressRing>
 
 
                 <Grid x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
