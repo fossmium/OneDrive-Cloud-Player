@@ -11,14 +11,14 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         BorderThickness="1"
         ResizeMode="CanResizeWithGrip"
-        
+        Background="Black"
         Title="Video Player" Height="450" Width="800">
 
     <Window.Resources>
 
     </Window.Resources>
 
-    <Grid Background="Black">
+    <Grid>
         <wpf:VideoView x:Name="videoView" Panel.ZIndex="0" Margin="1,1,1,1">
             <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
 

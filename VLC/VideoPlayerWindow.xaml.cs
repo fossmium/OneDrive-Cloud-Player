@@ -265,7 +265,6 @@ namespace OneDrive_Cloud_Player.VLC
             StartVideoAsync(videoTime);
         }
 
-
         /// <summary>
         /// Contains the logic for playing a nework video.
         /// </summary>
