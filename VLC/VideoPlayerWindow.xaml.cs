@@ -169,11 +169,17 @@ namespace OneDrive_Cloud_Player.VLC
             this.DisposeVLC();
         }
 
+        /// <summary>
+        /// Activates the loading circle in the UI.
+        /// </summary>
         private void StartedProcessing()
         {
             ShowLoadingCircle = true;
         }
 
+        /// <summary>
+        /// Deactivates the loading circle in the UI.
+        /// </summary>
         private void EndedProcessing()
         {
             ShowLoadingCircle = false;
@@ -260,6 +266,12 @@ namespace OneDrive_Cloud_Player.VLC
         }
 
 
+        /// <summary>
+        /// Contains the logic for playing a nework video.
+        /// </summary>
+        /// <param name="libVLC"></param>
+        /// <param name="VideoURL"></param>
+        /// <param name="VideoStartTime"></param>
         private async void PlayVideo(LibVLC libVLC, string VideoURL, long VideoStartTime = 0)
         {
             //If video is not playing play video.
@@ -309,6 +321,9 @@ namespace OneDrive_Cloud_Player.VLC
             }
         }
 
+        /// <summary>
+        /// Handles the logic for playing and pausing a video and updating the button in the UI.
+        /// </summary>
         private void PauseContinueButton()
         {
             Console.WriteLine("CanPause: " + videoView.MediaPlayer.CanPause);
