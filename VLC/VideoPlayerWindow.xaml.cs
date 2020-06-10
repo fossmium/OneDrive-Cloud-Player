@@ -2,55 +2,102 @@
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
 using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
-using MediaPlayer = LibVLCSharp.Shared.MediaPlayer;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace OneDrive_Cloud_Player.VLC
 {
-    partial class VideoPlayerWindow : Window
+    partial class VideoPlayerWindow : Window, INotifyPropertyChanged
     {
-        private DispatcherTimer dispatcherTimer;
-        private MediaPlayer mediaPlayer;
-        private LibVLC libVLC;
-        private GraphHandler graphHandler;
-        private string VideoURL;
-        private bool RunDispatcher;
-        public string ButtonTitle { set; get; }
+        private int volumeValue = 20;
 
-        private string itemId;
-        private string driveId;
+        public int VolumeValue
+        {
+            get { return volumeValue; }
+            set
+            {
+                volumeValue = value;
+                SetVolume(value);
+                OnPropertyChanged("VolumeValue");
+            }
+        }
+
+        private long timeLineValue;
+
+        public long TimeLineValue
+        {
+            get { return timeLineValue; }
+            set
+            {
+                timeLineValue = value;
+                OnPropertyChanged("TimeLineValue");
+            }
+        }
+
+        private long timeLineMaxLength;
+
+        public long TimeLineMaxLength
+        {
+            get { return timeLineMaxLength; }
+            set
+            {
+                timeLineMaxLength = value;
+                OnPropertyChanged("TimeLineMaxLength");
+            }
+        }
+
+        private string pausePlayButtonTitle = "PLAY";
+
+        public string PausePlayButtonTitle
+        {
+            get { return pausePlayButtonTitle; }
+            set
+            {
+                pausePlayButtonTitle = value;
+                OnPropertyChanged("PausePlayButtonTitle");
+            }
+
+        }
+
+        private DispatcherTimer dispatcherTimer;
+        private GraphHandler graphHandler;
+        private readonly MediaPlayer mediaPlayer;
+        private readonly LibVLC libVLC;
+        private readonly string itemId;
+        private readonly string driveId;
+        private bool RunDispatcher;
+        public string ButtonTitle;
+        private string VideoURL;
+        private bool IsSeeking;
+
 
         public VideoPlayerWindow(string driveId, string itemId)
         {
             InitializeComponent();
 
-            RunDispatcher = true;
+            Core.Initialize();
 
-            //Create a timer with interval of 2 secs
+            //Initialize variables.
+            this.driveId = driveId;
+            this.itemId = itemId;
+            RunDispatcher = true;
+            libVLC = new LibVLC();
+            mediaPlayer = new MediaPlayer(libVLC);
+            graphHandler = new GraphHandler();
+            videoView.MediaPlayer = mediaPlayer; // set the mediaplayer in the videoView.
+
+            //Create a timer with interval.
             dispatcherTimer = new DispatcherTimer();
             dispatcherTimer.Tick += new EventHandler(DispatcherTimer_Tick);
             dispatcherTimer.Interval = new TimeSpan(0, 0, 2);
 
-            Core.Initialize();
-
-            libVLC = new LibVLC();
-            mediaPlayer = new MediaPlayer(libVLC);
-            graphHandler = new GraphHandler();
-
-            // set the mediaplayer in the videoView.
-            videoView.MediaPlayer = mediaPlayer;
-
-            //Initialize variables in the viewmodel.
-            VideoPlayerViewModel.videoView = videoView;
-            this.driveId = driveId;
-            this.itemId = itemId;
-
+            //Call methods that need to be run at the start.
             StartVideoAsync();
-
             //Start the timer
             dispatcherTimer.Start();
 
@@ -66,7 +113,8 @@ namespace OneDrive_Cloud_Player.VLC
             //Retrieve the download URL from the drive item to be used for the video,
             VideoURL = (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
 
-            VideoPlayerViewModel.StartVideo(libVLC, VideoURL, VideoStartTime);
+            this.StartVideo(libVLC, VideoURL, VideoStartTime);
+
         }
 
         /// <summary>
@@ -92,18 +140,18 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
         {
-            VideoPlayerViewModel.PauseContinueButton();
+            this.PauseContinueButton();
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-            VideoPlayerViewModel.DisposeVLC();
+            this.DisposeVLC();
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            VideoPlayerViewModel.DisposeVLC();
+            this.DisposeVLC();
         }
 
         /// <summary>
@@ -168,23 +216,134 @@ namespace OneDrive_Cloud_Player.VLC
 
         private void Slider_DragStarted(object sender, System.Windows.Controls.Primitives.DragStartedEventArgs e)
         {
-            VideoPlayerViewModel.StartSeeking();
+            this.StartSeeking();
             Console.WriteLine("Started seekingnee DRAG started");
         }
 
         private void Slider_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            VideoPlayerViewModel.StopSeeking();
+            this.StopSeeking();
             Console.WriteLine("Stopped seekingnee DRAG completed");
         }
 
         private void ReloadVideoButton_Click(object sender, RoutedEventArgs e)
         {
             //Get the time of the video.
-            long videoTime = VideoPlayerViewModel.TimeLineValue;
+            long videoTime = this.TimeLineValue;
             videoView.MediaPlayer.Stop();
             //Start the video again with a new start time.
             StartVideoAsync(videoTime);
+        }
+
+
+
+
+        private async void StartVideo(LibVLC libVLC, string VideoURL, long VideoStartTime = 0)
+        {
+            //If video is not playing play video.
+            if (!videoView.MediaPlayer.IsPlaying)
+            {
+                //Thread.Sleep(2000);
+                Console.WriteLine("HWND: " + videoView.MediaPlayer.Hwnd);
+
+                //Subscribe to IsPlaying event to set the TimeLineMaxLength only when the video is actually loaded.
+                videoView.MediaPlayer.Playing += (sender, args) =>
+                {
+                    App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        TimeLineMaxLength = videoView.MediaPlayer.Length;
+                        PausePlayButtonTitle = "PAUSE";
+                    }));
+                };
+
+                //Sets volume on startup.
+                videoView.MediaPlayer.Volume = VolumeValue;
+                Console.WriteLine("Seekable: " + this.videoView.MediaPlayer.IsSeekable);
+
+                //Plays the video from the url.
+                videoView.MediaPlayer.Play(new Media(libVLC, VideoURL, FromType.FromLocation));
+
+
+                //Waits for the stream to be parsed so we do not raise a nullpointer exception.
+                await videoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+
+                //Set the video start time.
+                videoView.MediaPlayer.Time = VideoStartTime;
+
+                //@todo Hier gebleven
+                videoView.MediaPlayer.TimeChanged += (sender, args) =>
+                {
+                    App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
+                    {
+                        //Console.WriteLine("Time: " + videoView.MediaPlayer.Time + "Time changed");//Console.WriteLine("Time Changed!");
+                        if (!IsSeeking)
+                        {
+                            TimeLineValue = videoView.MediaPlayer.Time;
+                        }
+                    }));
+                };
+            }
+        }
+
+        private void PauseContinueButton()
+        {
+            Console.WriteLine("CanPause: " + videoView.MediaPlayer.CanPause);
+
+            if (!videoView.MediaPlayer.IsPlaying)
+            {
+                videoView.MediaPlayer.Play();
+                PausePlayButtonTitle = "PAUSE";
+
+                videoView.MediaPlayer.Play();
+            }
+            else
+            {
+                videoView.MediaPlayer.Pause();
+                PausePlayButtonTitle = "PLAY";
+            }
+        }
+        private void SetVolume(int Volume)
+        {
+            videoView.MediaPlayer.Volume = Volume;
+        }
+
+        public void DisposeVLC()
+        {
+            videoView.MediaPlayer.Stop();
+            videoView.Dispose();
+        }
+
+        public void StartSeeking()
+        {
+            IsSeeking = true;
+        }
+
+        public void StopSeeking()
+        {
+            var newVideoTime = TimeLineValue;
+            videoView.MediaPlayer.Time = newVideoTime;
+            // Set video time to seek time
+            IsSeeking = false;
+
+        }
+
+
+
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises this object's PropertyChanged event.
+        /// </summary>
+        /// <param name="propertyName">The property that has a new value.</param>
+        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChangedEventHandler handler = this.PropertyChanged;
+            if (handler != null)
+            {
+                var e = new PropertyChangedEventArgs(propertyName);
+                handler(this, e);
+            }
         }
     }
 }

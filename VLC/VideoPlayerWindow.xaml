@@ -10,7 +10,7 @@
     Title="VideoPlayerWindow" Height="450" Width="688">
 
     <Window.Resources>
-        <local:VideoPlayerViewModel x:Key="VideoPlayerVM"/>
+        <!--<local:VideoPlayerViewModel x:Key="VideoPlayerVM"/>-->
         <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -100,12 +100,12 @@
                 
                 <DockPanel x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave" Grid.ColumnSpan="2">
                     <!--<Slider  Maximum="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" IsMoveToPointEnabled="True" VerticalAlignment="Bottom" PreviewMouseDown="Slider_PreviewMouseDown" PreviewMouseUp="Slider_PreviewMouseUp" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineValue}" Width="300" Margin="5,0,5,0"></Slider>-->
-                    <Slider x:Name="SeekBar" Maximum="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" IsMoveToPointEnabled="True" VerticalAlignment="Bottom" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineValue}" Width="300" Margin="5,0,5,0" ></Slider>
+                    <Slider x:Name="SeekBar" Maximum="{Binding Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" IsMoveToPointEnabled="True" VerticalAlignment="Bottom" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted" HorizontalAlignment="Left" Value="{Binding Path=TimeLineValue}" Width="300" Margin="5,0,5,0" ></Slider>
 
-                    <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
+                    <Button Content="{Binding Path=PausePlayButtonTitle}"  Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
                     <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
                     <Button Content="ReloadVideo" x:Name="ReloadButton"  Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="ReloadVideoButton_Click" />
-                    <Slider VerticalAlignment="Bottom" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" Width="100" Margin="5,0,5,0" Maximum="100"></Slider>
+                    <Slider VerticalAlignment="Bottom" HorizontalAlignment="Left" Value="{Binding Path=VolumeValue}" Width="100" Margin="5,0,5,0" Maximum="100"></Slider>
                     <!--<TextBox Height="25" Width="100" Margin="20,0,0,0" Text="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>-->
 
                 </DockPanel>
