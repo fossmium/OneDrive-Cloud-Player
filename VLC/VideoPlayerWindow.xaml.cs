@@ -1,6 +1,7 @@
 ﻿using LibVLCSharp.Shared;
 using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
+using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
 using System;
 using System.ComponentModel;
@@ -302,7 +303,6 @@ namespace OneDrive_Cloud_Player.VLC
                 await videoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
 
                 EndedProcessing();
-
                 //Set the video start time.
                 videoView.MediaPlayer.Time = VideoStartTime;
 
