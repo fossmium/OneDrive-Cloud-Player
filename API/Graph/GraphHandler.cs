@@ -120,7 +120,7 @@ namespace OneDrive_Cloud_Player.API
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
         /// <returns></returns>
-        public async Task<DriveItem> GetItemInformationAsync(string ItemId, string DriveId)
+        public async Task<DriveItem> GetItemInformationAsync(string DriveId, string ItemId)
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
