@@ -10,16 +10,19 @@
     <Window.Resources>
         <local:LoginViewModel x:Key="vm"/>
     </Window.Resources>
-    <Grid>
-        <Rectangle>
-            <Rectangle.Fill>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#1E2931" Offset="0.0"/>
-                    <GradientStop Color="#384D5A" Offset="1.0"/>
-                </LinearGradientBrush>
-            </Rectangle.Fill>
-        </Rectangle>
+    
+    <!--Applies the gradient background-->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#1E2931" Offset="0.0"/>
+            <GradientStop Color="#384D5A" Offset="1.0"/>
+        </LinearGradientBrush>
+    </Window.Background>
 
+    <!--GRID LOGIN WINDOW-->
+    <Grid>
+
+        <!--TEST TOKEN BUTTON-->
         <Button
             Content="Test Token"
             
@@ -44,6 +47,7 @@
             </Button.Background>
         </Button>
 
+        <!--WELCOME TEKST-->
         <Label
             Content="Welcome! Please log in"
             
@@ -56,6 +60,7 @@
             
             />
 
+        <!--LOGIN BUTTON-->
         <Button
             Content="Login"
             Name="LoginButn"
