@@ -2,12 +2,13 @@
 using System.IO;
 using System.Windows;
 using System.Windows.Input;
+using MahApps.Metro.Controls;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
 
 namespace OneDrive_Cloud_Player.Login
 {
-    class LoginViewModel : Window
+    class LoginViewModel : MetroWindow
     {
         public ICommand MyCommand { get; set; }
         public ICommand MyCommand2 { get; set; }
