@@ -7,9 +7,9 @@ namespace OneDrive_Cloud_Player.Login
     /// <summary>
     /// Interaction logic for LoginWindows.xaml
     /// </summary>
-    public partial class LoginWindows : Window
+    public partial class LoginWindow : Window
     {
-        public LoginWindows()
+        public LoginWindow()
         {
             InitializeComponent();
         }
