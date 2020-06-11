@@ -1,112 +1,83 @@
-﻿<Window x:Class="OneDrive_Cloud_Player.VLC.VideoPlayerWindow"
+﻿<Controls:MetroWindow x:Class="OneDrive_Cloud_Player.VLC.VideoPlayerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
         xmlns:local="clr-namespace:OneDrive_Cloud_Player.VLC" 
         xmlns:wpf="clr-namespace:LibVLCSharp.WPF;assembly=LibVLCSharp.WPF"
         mc:Ignorable="d"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
-    Title="VideoPlayerWindow" Height="450" Width="688">
+        BorderThickness="1"
+        ResizeMode="CanResizeWithGrip"
+        Background="Black"
+        Title="Video Player" Height="450" Width="800">
 
     <Window.Resources>
-        <local:VideoPlayerViewModel x:Key="VideoPlayerVM"/>
-        <Style x:Key="SliderRepeatButton" TargetType="RepeatButton">
-            <Setter Property="SnapsToDevicePixels" Value="true" />
-            <Setter Property="OverridesDefaultStyle" Value="true" />
-            <Setter Property="IsTabStop" Value="false" />
-            <Setter Property="Focusable" Value="false" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RepeatButton">
-                        <Border  BorderThickness="1" BorderBrush="Black" Background="Black" Height="10"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
 
-        <Style x:Key="SliderRepeatButton1" TargetType="RepeatButton">
-            <Setter Property="SnapsToDevicePixels" Value="true" />
-            <Setter Property="OverridesDefaultStyle" Value="true" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="RepeatButton">
-                        <Border SnapsToDevicePixels="True" Background="Green"  BorderThickness="1" BorderBrush="YellowGreen" Height="10"/>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="SliderThumb" TargetType="Thumb">
-            <Setter Property="SnapsToDevicePixels" Value="true" />
-            <Setter Property="OverridesDefaultStyle" Value="true" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Thumb">
-                        <!--Add name to ellipse to use in  controltemplate triggers-->
-                        <Ellipse x:Name="Ellipse" Height="20" Width="20" Fill="Green"></Ellipse>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="true">
-                                <Setter TargetName="Ellipse" Property="Fill" Value="Yellow"></Setter>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <ControlTemplate x:Key="Slider"  TargetType="Slider">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Track Grid.Row="1" x:Name="PART_Track"   >
-                    <Track.DecreaseRepeatButton>
-                        <RepeatButton Style="{StaticResource SliderRepeatButton1}"  Command="Slider.DecreaseLarge" />
-                    </Track.DecreaseRepeatButton>
-                    <Track.Thumb>
-                        <Thumb Style="{StaticResource SliderThumb}"  />
-                    </Track.Thumb>
-                    <Track.IncreaseRepeatButton>
-                        <RepeatButton Style="{StaticResource SliderRepeatButton}" Command="Slider.IncreaseLarge" />
-                    </Track.IncreaseRepeatButton>
-                </Track>
-            </Grid>
-        </ControlTemplate>
-
-        <Style x:Key="Horizontal_Slider" TargetType="Slider">
-            <Setter Property="Focusable" Value="False"/>
-            <Setter Property="SnapsToDevicePixels" Value="true" />
-            <Setter Property="OverridesDefaultStyle" Value="true" />
-            <Style.Triggers>
-                <Trigger Property="Orientation" Value="Horizontal">
-                    <Setter Property="MinHeight" Value="21" />
-                    <Setter Property="MinWidth" Value="104" />
-                    <Setter Property="Template" Value="{StaticResource Slider}" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
 
     <Grid>
-        <wpf:VideoView x:Name="videoView" Panel.ZIndex="0">
+        <wpf:VideoView x:Name="videoView" Panel.ZIndex="0" Margin="1,1,1,1">
             <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="177*"/>
-                    <ColumnDefinition Width="511*"/>
-                </Grid.ColumnDefinitions>
-                <DockPanel x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave" Grid.ColumnSpan="2">
-                    <Slider Maximum="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineMaxLength}" Style="{StaticResource Horizontal_Slider}" IsMoveToPointEnabled="True" VerticalAlignment="Bottom" PreviewMouseDown="Slider_PreviewMouseDown" PreviewMouseUp="Slider_PreviewMouseUp" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=TimeLineValue}" Width="300" Margin="5,0,5,0"></Slider>
 
-                    <Button Content="{Binding Source={StaticResource VideoPlayerVM}, Path=PausePlayButtonTitle}" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="PauseContinueButton_Click" />
-                    <Button Content="STOP" Height="25" Width="50" VerticalAlignment="Bottom" HorizontalAlignment="Left" Click="StopButton_Click" />
-                    <Slider VerticalAlignment="Bottom" HorizontalAlignment="Left" Value="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" Width="100" Margin="5,0,5,0" Maximum="100"></Slider>
-                    <TextBox Height="25" Width="100" Margin="20,0,0,0" Text="{Binding Source={StaticResource VideoPlayerVM}, Path=VolumeValue}" VerticalAlignment="Bottom" HorizontalAlignment="Left"></TextBox>
+                <mah:ProgressRing IsActive="{Binding Path=ShowLoadingCircle}" Height="90" Width="90"></mah:ProgressRing>
 
-                </DockPanel>
+
+                <Grid x:Name="VideoControls" MaxHeight="100" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!--Left bottom controls-->
+                        <Grid Grid.Column="0" Margin="0,0,30,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!--Play/Pause Button-->
+                            <Button Grid.Column="0" Content="{Binding Path=PausePlayButtonTitle}" Style="{StaticResource MahApps.Styles.Button.Flat}" Click="PauseContinueButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,2,0"/>
+                            <!--Stop Button-->
+                            <Button Grid.Column="1" Content="STOP" Click="StopButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                            <!--Reload Button-->
+                            <Button Grid.Column="2" Content="Reload" x:Name="ReloadButton" Click="ReloadVideoButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" />
+                        </Grid>
+
+                        <!--Middle bottom controls-->
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100*" />
+                            </Grid.ColumnDefinitions>
+                            <!--SeekBar-->
+                            <Slider Grid.Column="0" x:Name="SeekBar" Maximum="{Binding Path=TimeLineMaxLength}" Style="{StaticResource MahApps.Styles.Slider.Flat}" IsMoveToPointEnabled="True" VerticalAlignment="Center" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"  Value="{Binding Path=TimeLineValue}" HorizontalAlignment="Stretch" Height="Auto"></Slider>
+                        </Grid>
+
+                        <!--Right bottom controls-->
+                        <Grid Grid.Column="2" Margin="30,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100*" />
+                            </Grid.ColumnDefinitions>
+
+                            <!--Volume Slider-->
+                            <Slider Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}"  Width="100" Maximum="100" RenderTransformOrigin="0.5,0.5" Margin="0,-27,0,46">
+                                <Slider.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform/>
+                                        <RotateTransform Angle="-90"/>
+                                        <TranslateTransform/>
+                                    </TransformGroup>
+                                </Slider.RenderTransform>
+                            </Slider>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
         </wpf:VideoView>
     </Grid>
-</Window>
+</Controls:MetroWindow>
