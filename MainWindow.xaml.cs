@@ -4,6 +4,7 @@ using LibVLCSharp.Shared;
 using OneDrive_Cloud_Player.VLC;
 using MahApps.Metro.Controls;
 using System.Windows;
+using MahApps.Metro.Controls.Dialogs;
 
 namespace OneDrive_Cloud_Player
 {

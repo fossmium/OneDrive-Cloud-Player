@@ -111,7 +111,7 @@ namespace OneDrive_Cloud_Player.API
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Error while trying to sign out.");
+                    Console.WriteLine("Error while trying to sign out: " + e);
                 }
             }
         }
