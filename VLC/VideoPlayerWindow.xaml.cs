@@ -99,7 +99,6 @@ namespace OneDrive_Cloud_Player.VLC
         private readonly string itemId;
         private readonly string driveId;
         private bool RunDispatcher;
-        public string ButtonTitle;
         private string VideoURL;
         private bool IsSeeking;
 

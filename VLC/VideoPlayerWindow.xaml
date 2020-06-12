@@ -65,20 +65,12 @@
                             <Slider Grid.Column="0" x:Name="SeekBar" Maximum="{Binding Path=TimeLineMaxLength}" Style="{StaticResource MahApps.Styles.Slider.Flat}" IsMoveToPointEnabled="True" VerticalAlignment="Center" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"  Value="{Binding Path=TimeLineValue}" HorizontalAlignment="Stretch" Height="Auto"></Slider>
                         </Grid>
                         <!--Volume Slider-->
-                        <Slider VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Orientation="Vertical" Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}" Width="15" Height="90"  Maximum="100" Margin="30,0,0,0">
-                            <!--<Slider.LayoutTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="-90"/>
-                                    </TransformGroup>
-                                </Slider.LayoutTransform>-->
-                        </Slider>
+                        <Slider VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Orientation="Vertical" Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}" Width="15" Height="90"  Maximum="100" Margin="30,0,0,0"></Slider>
                         <!--Right bottom controls-->
                         <Grid Grid.Column="3" Margin="30,0,5,0" Grid.Row="3">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-
-
                             <Button x:Name="ChangeFullscreenModeButton"  Content="{Binding IsFullScreen}" Click="ChangeFullscreenModeButton_Click"></Button>
                         </Grid>
                     </Grid>
