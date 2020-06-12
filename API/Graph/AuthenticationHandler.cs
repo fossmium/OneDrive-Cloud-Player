@@ -75,7 +75,7 @@ namespace OneDrive_Cloud_Player.API
         /// </summary>
         public async void GetAccessTokenForcedInteractive()
         {
-            AuthenticationResult LocalResult = null;
+            AuthenticationResult LocalResult;
             try
             {
                 LocalResult = await InitProgram.Current
@@ -109,7 +109,7 @@ namespace OneDrive_Cloud_Player.API
                 {
                     await InitProgram.Current.PublicClientApplication.RemoveAsync(accounts.FirstOrDefault());
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     Console.WriteLine("Error while trying to sign out: " + e);
                 }
