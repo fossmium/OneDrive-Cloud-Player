@@ -11,9 +11,10 @@ using System.Windows.Input;
 
 namespace Explorer
 {
-    class ExplorerView : MetroWindow, INotifyPropertyChanged
+    class ExplorerViewModel : MetroWindow, INotifyPropertyChanged
     {
         public ICommand GetSharedDrivesCommand { get; set; }
+        public ICommand GetSharedFolderChildrenCommand { get; set; }
 
         private GraphHandler graph;
 
@@ -31,23 +32,36 @@ namespace Explorer
             }
         }
 
-        private List<DriveItem> folderList;
+        private DriveItem sharedFolder;
 
-        public List<DriveItem> FolderList
+        public DriveItem SharedFolder
         {
-            get { return folderList; }
+            get { return sharedFolder; }
             set
             {
-                folderList = value;
+                sharedFolder = value;
+                NotifyPropertyChanged();
+            }
+        }
+        
+        private List<DriveItem> childrenList;
+
+        public List<DriveItem> ChildrenList
+        {
+            get { return childrenList; }
+            set
+            {
+                childrenList = value;
                 NotifyPropertyChanged();
             }
         }
 
-        public ExplorerView()
+        public ExplorerViewModel()
         {
             driveItemList = null;
             this.graph = new GraphHandler();
-            GetSharedDrivesCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
+            GetSharedDrivesCommand = new CommandHandler(GetSharedDrivesASyncCall, CanExecuteMethod);
+            GetSharedFolderChildrenCommand = new CommandHandler(GetSharedFolderChildren, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetSharedDrivesCommand.Execute(null);
         }
@@ -57,16 +71,12 @@ namespace Explorer
             return true;
         }
 
-        private async void ExecuteMethod(object obj)
-        {
-            await GetSharedDrivesASyncCall();
-        }
 
         /// <summary>
         /// Creates a list of the users shared folders
         /// </summary>
         /// <returns></returns>
-        public async Task GetSharedDrivesASyncCall()
+        public async void GetSharedDrivesASyncCall(object obj)
         {
             IDriveSharedWithMeCollectionPage driveItemsTemp = await graph.GetSharedItemsAsync();
             List<DriveItem> driveItemList = new List<DriveItem>();
@@ -80,9 +90,21 @@ namespace Explorer
             DriveItemList = driveItemList;
         }
 
-        public async Task GetFolderItems()
+        /// <summary>
+        /// Creates a list of the names from the selected list
+        /// </summary>
+        /// <param name="obj"></param>
+        public async void GetSharedFolderChildren(object obj)
         {
-            
+            string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
+            string SharedItemId = sharedFolder.RemoteItem.Id;
+            List<DriveItem> childrenTempList = new List<DriveItem>();
+            IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
+            foreach (DriveItem item in Children)
+            {
+                childrenTempList.Add(item);
+            }
+            ChildrenList = childrenTempList;
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")

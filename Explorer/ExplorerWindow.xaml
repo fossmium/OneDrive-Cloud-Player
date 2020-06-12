@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Explorer"
-        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
-        Title="One Drive Cloud Player" MinHeight="500" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" MinWidth="800" Height="Auto" Width="Auto">
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+                      Title="One Drive Cloud Player" MinHeight="500" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" MinWidth="800" Height="Auto" Width="Auto">
     <Window.DataContext>
-        <local:ExplorerView/>
+        <local:ExplorerViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.Background>
@@ -30,15 +30,29 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Grid.Column="0"/>
             <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Grid.Column="2"/>
-            <ListBox ItemsSource="{Binding DriveItemList}" SelectedItem="{Binding RemoteItem.Name}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1">
+            <ListBox ItemsSource="{Binding DriveItemList}" SelectedItem="{Binding SharedFolder}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction  Command="{Binding DataContext.GetSharedFolderChildrenCommand , RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding Path=SelectedItem,ElementName=lstCategory}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <TextBlock Text="{Binding RemoteItem.Name}"/>
+                            <TextBlock Background="Transparent" Text="{Binding RemoteItem.Name}"/>
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </Grid>
+        <ListBox ItemsSource="{Binding ChildrenList}" Background="Transparent" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="2">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                        <TextBlock Background="Transparent" Text="{Binding Name}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </Controls:MetroWindow>
