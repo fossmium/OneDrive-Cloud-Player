@@ -1,4 +1,6 @@
-﻿using Microsoft.Graph;
+﻿using MahApps.Metro.Controls;
+using Microsoft.Graph;
+using OneDrive_Cloud_Player;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Explorer;
 using System;
@@ -8,16 +10,17 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Explorer
 {
-    class ExplorerView : INotifyPropertyChanged
+    class ExplorerView : MetroWindow, INotifyPropertyChanged
     {
 
-        public ICommand TestCallCommand { get; set; }
+        public ICommand GetSharedDrivesCommand { get; set; }
 
         private GraphHandler graph;
 
@@ -35,13 +38,13 @@ namespace Explorer
             }
         }
 
-
         public ExplorerView()
         {
             driveItemList = null;
-
             this.graph = new GraphHandler();
-            TestCallCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
+            GetSharedDrivesCommand = new CommandHandler(ExecuteMethod, CanExecuteMethod);
+            // OnLoad runs the login and gets the shared drives
+            GetSharedDrivesCommand.Execute(null);
         }
 
         private bool CanExecuteMethod(object arg)
@@ -51,11 +54,12 @@ namespace Explorer
 
         private async void ExecuteMethod(object obj)
         {
-            await TestCallAsync();
+            await GetSharedDrivesASyncCall();
         }
 
-        public async Task TestCallAsync()
+        public async Task GetSharedDrivesASyncCall()
         {
+            
             DriveItemList = await graph.GetSharedItemsAsync();
         }
 
