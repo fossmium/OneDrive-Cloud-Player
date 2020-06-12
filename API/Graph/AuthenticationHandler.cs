@@ -109,7 +109,7 @@ namespace OneDrive_Cloud_Player.API
                 {
                     await InitProgram.Current.PublicClientApplication.RemoveAsync(accounts.FirstOrDefault());
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     Console.WriteLine("Error while trying to sign out: " + e);
                 }
