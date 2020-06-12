@@ -1,39 +1,44 @@
 ﻿using MahApps.Metro.Controls;
 using Microsoft.Graph;
-using OneDrive_Cloud_Player;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Explorer;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Explorer
 {
     class ExplorerView : MetroWindow, INotifyPropertyChanged
     {
-
         public ICommand GetSharedDrivesCommand { get; set; }
 
         private GraphHandler graph;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        private IDriveSharedWithMeCollectionPage driveItemList;
+        private List<DriveItem> driveItemList;
 
-        public IDriveSharedWithMeCollectionPage DriveItemList
+        public List<DriveItem> DriveItemList
         {
             get { return driveItemList; }
             set
             {
                 driveItemList = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private List<DriveItem> folderList;
+
+        public List<DriveItem> FolderList
+        {
+            get { return folderList; }
+            set
+            {
+                folderList = value;
                 NotifyPropertyChanged();
             }
         }
@@ -57,10 +62,27 @@ namespace Explorer
             await GetSharedDrivesASyncCall();
         }
 
+        /// <summary>
+        /// Creates a list of the users shared folders
+        /// </summary>
+        /// <returns></returns>
         public async Task GetSharedDrivesASyncCall()
         {
+            IDriveSharedWithMeCollectionPage driveItemsTemp = await graph.GetSharedItemsAsync();
+            List<DriveItem> driveItemList = new List<DriveItem>();
+            foreach (DriveItem item in driveItemsTemp)
+            {
+                if (item.Folder != null)
+                {
+                    driveItemList.Add(item);
+                }
+            }
+            DriveItemList = driveItemList;
+        }
+
+        public async Task GetFolderItems()
+        {
             
-            DriveItemList = await graph.GetSharedItemsAsync();
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")

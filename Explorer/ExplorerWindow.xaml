@@ -1,11 +1,8 @@
 ﻿<Controls:MetroWindow x:Class="Explorer.ExplorerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Explorer"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
-        mc:Ignorable="d"
         Title="One Drive Cloud Player" MinHeight="500" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" MinWidth="800" Height="Auto" Width="Auto">
     <Window.DataContext>
         <local:ExplorerView/>
@@ -33,7 +30,7 @@
             </Grid.ColumnDefinitions>
             <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Grid.Column="0"/>
             <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Grid.Column="2"/>
-            <ListBox ItemsSource="{Binding DriveItemList}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1">
+            <ListBox ItemsSource="{Binding DriveItemList}" SelectedItem="{Binding RemoteItem.Name}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
