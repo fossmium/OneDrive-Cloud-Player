@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Application = System.Windows.Application;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace OneDrive_Cloud_Player.VLC
@@ -79,8 +80,20 @@ namespace OneDrive_Cloud_Player.VLC
 
         }
 
-        private readonly DispatcherTimer dispatcherTimer;
-        private readonly GraphHandler graphHandler;
+        private bool isFullScreen = false;
+
+        public bool IsFullScreen
+        {
+            get { return isFullScreen; }
+            set { 
+                isFullScreen = value;
+                OnPropertyChanged("isFullScreen");
+            }
+        }
+
+
+        private DispatcherTimer dispatcherTimer;
+        private GraphHandler graphHandler;
         private readonly MediaPlayer mediaPlayer;
         private readonly LibVLC libVLC;
         private readonly string itemId;
@@ -119,7 +132,7 @@ namespace OneDrive_Cloud_Player.VLC
             SeekBar.ApplyTemplate();
             Thumb thumb = (SeekBar.Template.FindName("PART_Track", SeekBar) as Track).Thumb;
             thumb.MouseEnter += new MouseEventHandler(Thumb_MouseEnter);
-           
+
         }
 
         private async void StartVideoAsync(long VideoStartTime = 0)
@@ -232,9 +245,6 @@ namespace OneDrive_Cloud_Player.VLC
             Console.WriteLine("Enter");
             RunDispatcher = false;
             StopDispatcher();
-
-            //WindowStyle = WindowStyle.None;
-            //WindowState = WindowState.Maximized;
         }
 
         private void VideoControls_MouseLeave(object sender, MouseEventArgs e)
@@ -376,6 +386,30 @@ namespace OneDrive_Cloud_Player.VLC
             {
                 var e = new PropertyChangedEventArgs(propertyName);
                 handler(this, e);
+            }
+        }
+
+        private void ChangeFullscreenModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!isFullScreen)
+            {
+                UseNoneWindowStyle = true;
+                IgnoreTaskbarOnMaximize = true;
+                WindowState = WindowState.Maximized;
+                isFullScreen = true;
+                
+
+                Console.WriteLine("Miximized mode");
+            }
+            else
+            {
+              
+                WindowState = WindowState.Normal;
+                UseNoneWindowStyle = false;
+                ShowTitleBar = true;
+                IgnoreTaskbarOnMaximize = false;
+                isFullScreen = false;
+                Console.WriteLine("Normale mode");
             }
         }
     }
