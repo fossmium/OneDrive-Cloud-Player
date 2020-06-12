@@ -79,8 +79,8 @@ namespace OneDrive_Cloud_Player.VLC
 
         }
 
-        private DispatcherTimer dispatcherTimer;
-        private GraphHandler graphHandler;
+        private readonly DispatcherTimer dispatcherTimer;
+        private readonly GraphHandler graphHandler;
         private readonly MediaPlayer mediaPlayer;
         private readonly LibVLC libVLC;
         private readonly string itemId;
@@ -128,9 +128,7 @@ namespace OneDrive_Cloud_Player.VLC
             var driveItem = await graphHandler.GetItemInformationAsync(driveId, itemId);
             //Retrieve the download URL from the drive item to be used for the video,
             VideoURL = (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
-
-            this.PlayVideo(libVLC, VideoURL, VideoStartTime);
-
+            this.PlayVideo(VideoURL, VideoStartTime);
         }
 
         /// <summary>
@@ -272,7 +270,7 @@ namespace OneDrive_Cloud_Player.VLC
         /// <param name="libVLC"></param>
         /// <param name="VideoURL"></param>
         /// <param name="VideoStartTime"></param>
-        private async void PlayVideo(LibVLC libVLC, string VideoURL, long VideoStartTime = 0)
+        private async void PlayVideo(string VideoURL, long VideoStartTime = 0)
         {
             //If video is not playing play video.
             if (!videoView.MediaPlayer.IsPlaying)
