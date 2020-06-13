@@ -20,6 +20,8 @@ namespace Explorer
 
         public event PropertyChangedEventHandler PropertyChanged;
 
+
+        // The list of the different drives
         private List<DriveItem> driveItemList;
 
         public List<DriveItem> DriveItemList
@@ -32,6 +34,20 @@ namespace Explorer
             }
         }
 
+        // The list of children that is given back when you click on a parent
+        private List<DriveItem> childrenList;
+
+        public List<DriveItem> ChildrenList
+        {
+            get { return childrenList; }
+            set
+            {
+                childrenList = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // The folder that gets selected when you click on a onedrive
         private DriveItem sharedFolder;
 
         public DriveItem SharedFolder
@@ -44,17 +60,33 @@ namespace Explorer
             }
         }
         
-        private List<DriveItem> childrenList;
+        // The folder that gets selected when you click on a onedrive
+        private DriveItem folderChild;
 
-        public List<DriveItem> ChildrenList
+        public DriveItem FolderChild
         {
-            get { return childrenList; }
+            get { return folderChild; }
             set
             {
-                childrenList = value;
+                folderChild = value;
                 NotifyPropertyChanged();
             }
         }
+
+        private bool isSharedSelected;
+
+        public bool IsSharedSelected
+        {
+            get { return isSharedSelected; }
+            set 
+            { 
+                isSharedSelected = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
+
 
         public ExplorerViewModel()
         {
@@ -88,6 +120,7 @@ namespace Explorer
                 }
             }
             DriveItemList = driveItemList;
+            Console.WriteLine("drive get complete");
         }
 
         /// <summary>
@@ -96,15 +129,32 @@ namespace Explorer
         /// <param name="obj"></param>
         public async void GetSharedFolderChildren(object obj)
         {
-            string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
-            string SharedItemId = sharedFolder.RemoteItem.Id;
+            Console.WriteLine("get start");
             List<DriveItem> childrenTempList = new List<DriveItem>();
-            IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
-            foreach (DriveItem item in Children)
+            if (folderChild == null)
             {
-                childrenTempList.Add(item);
+                string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
+                string SharedItemId = sharedFolder.RemoteItem.Id;
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
+                foreach (DriveItem item in Children)
+                {
+                    childrenTempList.Add(item);
+                }
+                Console.WriteLine("if end");
+            }
+            else
+            {
+                string SelectedFolderId = folderChild.ParentReference.DriveId;
+                string SharedFolderId = folderChild.Id;
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedFolderId, SelectedFolderId);
+                foreach (DriveItem item in Children)
+                {
+                    childrenTempList.Add(item);
+                }
+                Console.WriteLine("else end");
             }
             ChildrenList = childrenTempList;
+            Console.WriteLine("Folder Get Complete");
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
