@@ -31,22 +31,19 @@
             <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Grid.Column="0"/>
             <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Grid.Column="2"/>
             <ListBox x:Name="ListBox1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding DriveItemList}" SelectedItem="{Binding SharedFolder}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1">
-                <!--<i:Interaction.Triggers>
+                <i:Interaction.Triggers>
                     <i:EventTrigger SourceName="ListBox1" EventName="SelectionChanged">
-                        <i:InvokeCommandAction  Command="{Binding DataContext.GetSharedFolderChildrenCommand , RelativeSource={RelativeSource AncestorType=ListBox}}" CommandParameter="{Binding Path=SelectedItem,ElementName=lstCategory}"/>
+                        <i:InvokeCommandAction Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
                     </i:EventTrigger>
-                    <i:EventTrigger EventName="Unselected">
-                        
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>-->
+                </i:Interaction.Triggers>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <StackPanel Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <StackPanel.InputBindings>
-                                <MouseBinding MouseAction="LeftClick"
+                        <StackPanel x:Name="DrivesStackPanel" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                            <!--<StackPanel.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"
                                  />
-                            </StackPanel.InputBindings>
+                            </StackPanel.InputBindings>-->
                             <TextBlock x:Name="TextBlock1" Background="Transparent" Text="{Binding RemoteItem.Name}">
                             </TextBlock>
                         </StackPanel>
@@ -55,11 +52,16 @@
             </ListBox>
         </Grid>
         <ListBox x:Name="ListBox2" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding ChildrenList}" SelectedItem="{Binding FolderChild}" Background="Transparent" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1">
+            <!--<i:Interaction.Triggers>
+                <i:EventTrigger SourceName="ListBox2" EventName="SelectionChanged">
+                    <i:InvokeCommandAction Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>-->
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel x:Name="StackPanelFolders" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
                         <StackPanel.InputBindings>
-                            <MouseBinding MouseAction="LeftClick"
+                            <MouseBinding MouseAction="LeftDoubleClick"
                                   Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"
                                  />
                         </StackPanel.InputBindings>

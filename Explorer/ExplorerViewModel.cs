@@ -73,21 +73,6 @@ namespace Explorer
             }
         }
 
-        private bool isSharedSelected;
-
-        public bool IsSharedSelected
-        {
-            get { return isSharedSelected; }
-            set 
-            { 
-                isSharedSelected = value;
-                NotifyPropertyChanged();
-            }
-        }
-
-
-
-
         public ExplorerViewModel()
         {
             driveItemList = null;
@@ -129,20 +114,8 @@ namespace Explorer
         /// <param name="obj"></param>
         public async void GetSharedFolderChildren(object obj)
         {
-            Console.WriteLine("get start");
             List<DriveItem> childrenTempList = new List<DriveItem>();
-            if (folderChild == null)
-            {
-                string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
-                string SharedItemId = sharedFolder.RemoteItem.Id;
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
-                foreach (DriveItem item in Children)
-                {
-                    childrenTempList.Add(item);
-                }
-                Console.WriteLine("if end");
-            }
-            else
+            if (folderChild != null)
             {
                 string SelectedFolderId = folderChild.ParentReference.DriveId;
                 string SharedFolderId = folderChild.Id;
@@ -151,10 +124,18 @@ namespace Explorer
                 {
                     childrenTempList.Add(item);
                 }
-                Console.WriteLine("else end");
+            }
+            else
+            {
+                string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
+                string SharedItemId = sharedFolder.RemoteItem.Id;
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
+                foreach (DriveItem item in Children)
+                {
+                    childrenTempList.Add(item);
+                }
             }
             ChildrenList = childrenTempList;
-            Console.WriteLine("Folder Get Complete");
         }
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
