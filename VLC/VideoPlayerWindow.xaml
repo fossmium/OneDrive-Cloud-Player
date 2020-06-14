@@ -20,13 +20,14 @@
 
     <Grid>
         
-        <wpf:VideoView x:Name="videoView" Panel.ZIndex="0" Margin="1,1,1,1">
+        <wpf:VideoView x:Name="videoView" Panel.ZIndex="-1" Margin="1,1,1,1" Visibility="Visible">
 
             <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
+           
                 <mah:ProgressRing IsActive="{Binding Path=ShowLoadingCircle}" Height="90" Width="90"></mah:ProgressRing>
 
                 <Border BorderBrush="Red" BorderThickness="1">
-                    
+
                     <Grid x:Name="VideoControls" MaxHeight="200" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
                         <Border BorderBrush="Red" BorderThickness="1">
                             <Grid x:Name="LowerHeightControls">
@@ -67,7 +68,7 @@
                                             <ColumnDefinition Width="100*" />
 
                                         </Grid.ColumnDefinitions>
-                                        
+
                                         <!--SeekBar-->
                                         <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding Path=TimeLineMaxLength}" Style="{StaticResource MahApps.Styles.Slider.Flat}" IsMoveToPointEnabled="True" VerticalAlignment="Center" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"  Value="{Binding Path=TimeLineValue}" HorizontalAlignment="Stretch" Height="Auto"></Slider>
                                     </Grid>
@@ -75,7 +76,7 @@
 
                                 <!--Volume Slider-->
                                 <Border BorderBrush="Red" BorderThickness="1" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2">
-                                    <Slider Visibility="Collapsed"  VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Orientation="Vertical" Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}" Width="15" Height="90"  Maximum="100" Margin="30,0,0,0"></Slider>
+                                    <Slider Visibility="Visible"  VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Orientation="Vertical" Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}" Width="15" Height="90"  Maximum="100" Margin="30,0,0,0"></Slider>
                                 </Border>
 
                                 <!--Right bottom controls-->
@@ -92,6 +93,8 @@
                     </Grid>
                 </Border>
             </Grid>
+            
         </wpf:VideoView>
+
     </Grid>
 </Controls:MetroWindow>
