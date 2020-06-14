@@ -1,7 +1,5 @@
 ﻿using LibVLCSharp.Shared;
 using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
-using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
 using System;
 using System.ComponentModel;
@@ -10,7 +8,6 @@ using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
-using Application = System.Windows.Application;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace OneDrive_Cloud_Player.VLC
@@ -99,7 +96,6 @@ namespace OneDrive_Cloud_Player.VLC
         private readonly string itemId;
         private readonly string driveId;
         private bool RunDispatcher;
-        public string ButtonTitle;
         private string VideoURL;
         private bool IsSeeking;
 

@@ -74,19 +74,12 @@ namespace OneDrive_Cloud_Player.API
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
         /// <returns></returns>
-        public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItemAsync(string ItemId, string DriveId = null)
+        public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItemAsync(string DriveId, string ItemId)
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
-            //Return the children of the item on the given drive. When no DriveId is given it uses the personal drive to search for the item.
-            if (DriveId == null)
-            {
-                return await GraphClient.Me.Drive.Items[ItemId].Children.Request().GetAsync();
-            }
-            else
-            {
-                return await GraphClient.Me.Drives[DriveId].Items[ItemId].Children.Request().GetAsync();
-            }
+            //Return the children of the item on the given drive.
+            return await GraphClient.Me.Drives[DriveId].Items[ItemId].Children.Request().GetAsync();
         }
 
         /// <summary>
@@ -123,7 +116,7 @@ namespace OneDrive_Cloud_Player.API
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
-           //Return information about an item that resides in the given drive id.
+            //Return information about an item that resides in the given drive id.
             return await GraphClient.Me.Drives[DriveId].Items[ItemId].Request().GetAsync();
         }
     }

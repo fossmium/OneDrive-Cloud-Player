@@ -19,70 +19,78 @@
     </Window.Resources>
 
     <Grid>
+        
         <wpf:VideoView x:Name="videoView" Panel.ZIndex="0" Margin="1,1,1,1">
-            <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
 
+            <Grid x:Name="VideoGrid" MouseMove="VideoControls_MouseMove" Background="#01FFFFFF">
                 <mah:ProgressRing IsActive="{Binding Path=ShowLoadingCircle}" Height="90" Width="90"></mah:ProgressRing>
 
+                <Border BorderBrush="Red" BorderThickness="1">
+                    
+                    <Grid x:Name="VideoControls" MaxHeight="200" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
+                        <Border BorderBrush="Red" BorderThickness="1">
+                            <Grid x:Name="LowerHeightControls">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
 
-                <Grid x:Name="VideoControls" MaxHeight="200" Background="#01FFFFFF" VerticalAlignment="Bottom"  MouseEnter="VideoControls_MouseEnter" MouseLeave="VideoControls_MouseLeave">
-                    <Grid x:Name="LowerHeightControls">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                        </Grid.RowDefinitions>
+                                <!--Left bottom controls-->
+                                <Border BorderBrush="Red" BorderThickness="1" Grid.Column="0" Grid.Row="3">
+                                    <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,30,0" >
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <!--Play/Pause Button-->
+                                        <Button Grid.Column="0" Content="{Binding Path=PausePlayButtonTitle}" Style="{StaticResource MahApps.Styles.Button.Flat}" Click="PauseContinueButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,2,0"/>
+                                        <!--Stop Button-->
+                                        <Button Grid.Column="1" Content="STOP" Click="StopButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,2,0"/>
+                                        <!--Reload Button-->
+                                        <Button Grid.Column="2" Content="Reload" x:Name="ReloadButton" Click="ReloadVideoButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" />
+                                    </Grid>
+                                </Border>
 
-                        <!--Left bottom controls-->
-                        <Grid Grid.Column="0" Margin="0,0,30,0" Grid.Row="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                
-                            </Grid.ColumnDefinitions>
-                            <!--Play/Pause Button-->
-                            <Button Grid.Column="0" Content="{Binding Path=PausePlayButtonTitle}" Style="{StaticResource MahApps.Styles.Button.Flat}" Click="PauseContinueButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,2,0"/>
-                            <!--Stop Button-->
-                            <Button Grid.Column="1" Content="STOP" Click="StopButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,2,0"/>
-                            <!--Reload Button-->
-                            <Button Grid.Column="2" Content="Reload" x:Name="ReloadButton" Click="ReloadVideoButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" />
-                        </Grid>
+                                <!--Middle bottom controls-->
+                                <Border BorderBrush="Red" BorderThickness="1" Grid.Row="3" Grid.Column="1">
+                                    <Grid Grid.Column="1" Grid.Row="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100*" />
 
-                        <!--Middle bottom controls-->
-                        <Grid Grid.Column="1" Grid.Row="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100*" />
-                            </Grid.ColumnDefinitions>
-                            <!--SeekBar-->
-                            <Slider Grid.Column="0" x:Name="SeekBar" Maximum="{Binding Path=TimeLineMaxLength}" Style="{StaticResource MahApps.Styles.Slider.Flat}" IsMoveToPointEnabled="True" VerticalAlignment="Center" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"  Value="{Binding Path=TimeLineValue}" HorizontalAlignment="Stretch" Height="Auto"></Slider>
-                        </Grid>
-                        <!--Volume Slider-->
-                        <Slider VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Orientation="Vertical" Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}" Width="15" Height="90"  Maximum="100" Margin="30,0,0,0">
-                            <!--<Slider.LayoutTransform>
-                                    <TransformGroup>
-                                        <RotateTransform Angle="-90"/>
-                                    </TransformGroup>
-                                </Slider.LayoutTransform>-->
-                        </Slider>
-                        <!--Right bottom controls-->
-                        <Grid Grid.Column="3" Margin="30,0,5,0" Grid.Row="3">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <!--SeekBar-->
+                                        <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding Path=TimeLineMaxLength}" Style="{StaticResource MahApps.Styles.Slider.Flat}" IsMoveToPointEnabled="True" VerticalAlignment="Center" Thumb.DragStarted="Slider_DragStarted" Thumb.DragCompleted="Slider_DragCompleted"  Value="{Binding Path=TimeLineValue}" HorizontalAlignment="Stretch" Height="Auto"></Slider>
+                                    </Grid>
+                                </Border>
 
+                                <!--Volume Slider-->
+                                <Border BorderBrush="Red" BorderThickness="1" Grid.Row="1" Grid.RowSpan="3" Grid.Column="2">
+                                    <Slider Visibility="Collapsed"  VerticalAlignment="Bottom" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3" Orientation="Vertical" Value="{Binding Path=VolumeValue}" Style="{StaticResource MahApps.Styles.Slider.Flat}" Width="15" Height="90"  Maximum="100" Margin="30,0,0,0"></Slider>
+                                </Border>
 
-                            <Button x:Name="ChangeFullscreenModeButton"  Content="{Binding IsFullScreen}" Click="ChangeFullscreenModeButton_Click"></Button>
-                        </Grid>
+                                <!--Right bottom controls-->
+                                <Border BorderBrush="Red" BorderThickness="1" Grid.Row="3" Grid.Column="3">
+                                    <Grid Grid.Column="3" Margin="30,0,5,0" Grid.Row="3">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <Button x:Name="ChangeFullscreenModeButton"  Content="{Binding IsFullScreen}" Click="ChangeFullscreenModeButton_Click"></Button>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
                     </Grid>
-                </Grid>
+                </Border>
             </Grid>
         </wpf:VideoView>
     </Grid>
