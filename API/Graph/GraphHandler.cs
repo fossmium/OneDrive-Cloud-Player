@@ -83,10 +83,22 @@ namespace OneDrive_Cloud_Player.API
         }
 
         /// <summary>
-        /// Get the items that are shared with the user.
+        /// Gets the root item inside the user drive.
         /// </summary>
         /// <returns></returns>
-        public async Task<IDriveSharedWithMeCollectionPage> GetSharedItemsAsync()
+        public async Task<DriveItem> GetUserRootDrive()
+        {
+            //Create a new GraphServiceClient.
+            await CreateGraphClientAsync();
+
+            return await GraphClient.Me.Drive.Root.Request().GetAsync();
+        }
+
+        /// <summary>
+        /// Get the drives that are shared with the user.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IDriveSharedWithMeCollectionPage> GetSharedDrivesAsync()
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();

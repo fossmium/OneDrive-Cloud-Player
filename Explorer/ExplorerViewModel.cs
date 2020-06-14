@@ -1,21 +1,28 @@
 ﻿using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Explorer;
+using OneDrive_Cloud_Player.VLC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Explorer
 {
-    class ExplorerViewModel : MetroWindow, INotifyPropertyChanged
+    class ExplorerViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
     {
-        public ICommand GetSharedDrivesCommand { get; set; }
+        public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
-        public ICommand GetSharedFolderChildrenTestCommand { get; set; }
+        public ICommand GetChildrenFomItemCommand { get; set; }
+        public ICommand GetChildrenFomDriveCommand { get; set; }
 
         private GraphHandler graph;
 
@@ -23,82 +30,70 @@ namespace Explorer
 
 
         // The list of the different drives
-        private List<DriveItem> driveItemList;
+        private List<DriveItem> driveList;
 
-        public List<DriveItem> DriveItemList
+        public List<DriveItem> DriveList
         {
-            get { return driveItemList; }
+            get { return driveList; }
             set
             {
-                driveItemList = value;
+                driveList = value;
                 NotifyPropertyChanged();
             }
         }
 
         // The list of children that is given back when you click on a parent
-        private List<DriveItem> childrenList;
+        private List<DriveItem> explorerItemsList;
 
-        public List<DriveItem> ChildrenList
+        public List<DriveItem> ExplorerItemsList
         {
-            get { return childrenList; }
+            get { return explorerItemsList; }
             set
             {
-                childrenList = value;
+                explorerItemsList = value;
                 NotifyPropertyChanged();
             }
         }
 
         // The folder that gets selected when you click on a onedrive
-        private DriveItem sharedFolder;
+        private DriveItem selectedDriveFolder;
 
-        public DriveItem SharedFolder
+        public DriveItem SelectedDriveFolder
         {
-            get { return sharedFolder; }
+            get { return selectedDriveFolder; }
             set
             {
-                sharedFolder = value;
+                selectedDriveFolder = value;
                 NotifyPropertyChanged();
             }
         }
 
         // The folder that gets selected when you click on a onedrive
-        private DriveItem folderChild;
+        private DriveItem selectedExplorerItem;
 
-        public DriveItem FolderChild
+        public DriveItem SelectedExplorerItem
         {
-            get { return folderChild; }
+            get { return selectedExplorerItem; }
             set
             {
-                folderChild = value;
-               
-
-                //if (folderChild == null)
-                //{
-                //    return;
-                //}
-
-                //if (value != null)
-                //{
-                //    PreviousSelectedCategory = value;
-                //}
-
-                //folderChild = value;
-                //GetSharedFolderChildren(folderChild);
+                selectedExplorerItem = value;
                 NotifyPropertyChanged();
             }
         }
+
+        private string SelectedDriveId { get; set; }
 
         public DriveItem PreviousSelectedCategory { get; private set; }
 
         public ExplorerViewModel()
         {
-            driveItemList = null;
+            driveList = null;
             this.graph = new GraphHandler();
-            GetSharedDrivesCommand = new CommandHandler(GetSharedDrivesASyncCall, CanExecuteMethod);
-            GetSharedFolderChildrenCommand = new CommandHandler(GetSharedFolderChildren, CanExecuteMethod);
-            GetSharedFolderChildrenTestCommand = new CommandHandler(GetSharedFolderChildrenTest, CanExecuteMethod);
+            GetDrivesCommand = new CommandHandler(GetDrives, CanExecuteMethod);
+            GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
+            GetChildrenFomDriveCommand = new CommandHandler(GetChildrenFomDrive, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
-            GetSharedDrivesCommand.Execute(null);
+            GetDrivesCommand.Execute(null);
         }
 
         private bool CanExecuteMethod(object arg)
@@ -106,92 +101,181 @@ namespace Explorer
             return true;
         }
 
-
+        //TODO: Implement that the personal drive is also added the the drivelist in the UI.
         /// <summary>
-        /// Creates a list of the users shared folders
+        /// Creates a list of the drives that are shared with the user.
         /// </summary>
         /// <returns></returns>
-        public async void GetSharedDrivesASyncCall(object obj)
+        public async void GetDrives(object obj)
         {
-            IDriveSharedWithMeCollectionPage driveItemsTemp = await graph.GetSharedItemsAsync();
-            List<DriveItem> driveItemList = new List<DriveItem>();
-            foreach (DriveItem item in driveItemsTemp)
+            //Creates local list to store the user drive and shared drives of the user.
+            List<DriveItem> localDriveList = new List<DriveItem>();
+
+            DriveItem personalDrive = await graph.GetUserRootDrive();
+
+            localDriveList.Add(personalDrive);
+
+            //Retrieves and stores the drives that are shared with the user.
+            IDriveSharedWithMeCollectionPage sharedDrivesCollection = await graph.GetSharedDrivesAsync();
+
+
+            //Adds only drives to the driveList when they are a folder. To filter out the shared files.
+            foreach (DriveItem drive in sharedDrivesCollection)
             {
-                if (item.Folder != null)
+                if (drive.Folder != null)
                 {
-                    driveItemList.Add(item);
+                    localDriveList.Add(drive);
                 }
             }
-            DriveItemList = driveItemList;
-            Console.WriteLine("drive get complete");
+
+            //Sets the DriveItemList property so it updates the UI.
+            DriveList = localDriveList;
+
+            Console.WriteLine(" + Loaded Drives.");
         }
+
+
 
         /// <summary>
-        /// Creates a list of the names from the selected list
+        /// Retrieves the children that are inside the drive and fills the the Childrenlist property with those items.
         /// </summary>
         /// <param name="obj"></param>
-        public async void GetSharedFolderChildrenTest(object obj)
+        public async void GetChildrenFomDrive(object obj)
         {
-            List<DriveItem> childrenTempList = new List<DriveItem>();
-            if (folderChild != null)
-            {
-                string SelectedFolderId = folderChild.ParentReference.DriveId;
-                string SharedFolderId = folderChild.Id;
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedFolderId, SelectedFolderId);
-                foreach (DriveItem item in Children)
-                {
-                    childrenTempList.Add(item);
-                }
-                Console.WriteLine("folder loaded");
-                ChildrenList = childrenTempList;
-            }
-            Console.WriteLine("uPDATED folderchild");
-        }
+            //Prevents exception when user clicks an empty space in the ListBox.
+            if (SelectedDriveFolder is null) { return; };
 
-            /// <summary>
-            /// Creates a list of the names from the selected list
-            /// </summary>
-            /// <param name="obj"></param>
-            public async void GetSharedFolderChildren(object obj)
-        {
-            List<DriveItem> childrenTempList = new List<DriveItem>();
-            if (folderChild != null)
+            //Initializing.
+            string sharedItemId;
+
+            //Checks if the selected drive is a shared drive or a user drive.
+            if (selectedDriveFolder.RemoteItem != null)
             {
-                string SelectedFolderId = folderChild.ParentReference.DriveId;
-                string SharedFolderId = folderChild.Id;
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedFolderId, SelectedFolderId);
-                foreach (DriveItem item in Children)
-                {
-                    childrenTempList.Add(item);
-                }
-                Console.WriteLine("folder loaded");
+                //Sets the SelectedDriveId field with the driveid of the selected drive.
+                SelectedDriveId = selectedDriveFolder.RemoteItem.ParentReference.DriveId;
+
+                //Sets the item id of the selectedItem variable.
+                sharedItemId = selectedDriveFolder.RemoteItem.Id;
             }
             else
             {
-                try
-                {
-                    string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
-                    string SharedItemId = sharedFolder.RemoteItem.Id;
-                    IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
-                    foreach (DriveItem item in Children)
-                    {
-                        childrenTempList.Add(item);
-                    }
-                    Console.WriteLine("empty loaded.");
-                }
-                catch (Exception)
-                {
+                //Sets the SelectedDriveId field with the driveid of the selected drive.
+                SelectedDriveId = selectedDriveFolder.ParentReference.DriveId;
 
-
-                }
-
+                //Sets the sharedItemId with the id of the selected folder.
+                sharedItemId = selectedDriveFolder.Id;
             }
-            ChildrenList = childrenTempList;
+
+            IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, sharedItemId);
+
+            List<DriveItem> localItemList = new List<DriveItem>();
+
+            foreach (DriveItem item in driveItemsCollection)
+            {
+                localItemList.Add(item);
+            }
+            Console.WriteLine(" + Loaded children from selected Drive.");
+
+            //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
+            ExplorerItemsList = localItemList;
         }
+
+        /// <summary>
+        /// Retrieves the children that are inside an item and fills the the Childrenlist property with those items.
+        /// </summary>
+        /// <param name="obj"></param>
+        public async void GetChildrenFomItem(object obj)
+        {
+            //Prevents exception when user clicks an empty space in the ListBox.
+            if (SelectedExplorerItem is null) { return; };
+
+            List<DriveItem> localDriveItemList = new List<DriveItem>();
+
+            //Checks if the SelectedExplorerItem is an folder.
+            if (SelectedExplorerItem.Folder != null)
+            {
+                string ItemId = SelectedExplorerItem.Id;
+                IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
+
+                //Adds every item inside the folder to the localDriveItemList. The item needs to be of type video, audio or folder.
+                foreach (DriveItem item in driveItemsCollection)
+                {
+                    if (item.Folder != null)
+                    {
+                        localDriveItemList.Add(item);
+                    }
+                    else if (item.File.MimeType.Contains("video") || item.File.MimeType.Contains("audio"))
+                    {
+                        localDriveItemList.Add(item);
+                    }
+                   
+                }
+                Console.WriteLine(" + Loaded folder.");
+
+                //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
+                ExplorerItemsList = localDriveItemList;
+            }
+            else
+            {
+                if (SelectedExplorerItem.File != null)
+                {
+                    OpenItemWithVideoPlayer(SelectedExplorerItem);
+                }
+            }
+            Console.WriteLine(" + Loaded children from folder item.");
+        }
+
+        /// <summary>
+        /// Opens the selected item with the videoplayer.
+        /// </summary>
+        private void OpenItemWithVideoPlayer(DriveItem SelectedExplorerItem)
+        {
+            VideoPlayerWindow videoWindow = new VideoPlayerWindow(SelectedDriveId, SelectedExplorerItem.Id);
+            videoWindow.Show();
+        }
+
+        /// <summary>
+        /// Test code. Do not remove without asking @Tim Gels first.
+        /// </summary>
+        /// This method is created so i could test how to detect and change the personal user drive on runtime.
+        /// <param name="value"></param>
+        /// <param name="targetType"></param>
+        /// <param name="parameter"></param>
+        /// <param name="culture"></param>
+        /// <returns></returns>
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Console.WriteLine("Converted called!");
+            //if (value != null)
+            //{
+            //    return null;
+            //}
+            Console.WriteLine(value);
+            //var color = value.ToString();
+
+
+            if (value is null)
+            {
+                return new SolidColorBrush(Colors.Green);
+            }
+            else
+            {
+                return new SolidColorBrush(Colors.Transparent);
+            }
+            return SystemColors.ControlColor;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return null;
+        }
+
 
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+
     }
 }

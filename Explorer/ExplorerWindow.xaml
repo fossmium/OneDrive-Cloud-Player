@@ -1,75 +1,126 @@
-﻿<Controls:MetroWindow x:Class="Explorer.ExplorerWindow"
+﻿<Controls:MetroWindow 
+        x:Class="Explorer.ExplorerWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Explorer"
-        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls" xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-                      Title="One Drive Cloud Player" Height="400" Width="500">
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        Title="One Drive Cloud Player" Height="700" Width="1000"
+        >
+
+
     <Window.DataContext>
         <local:ExplorerViewModel/>
     </Window.DataContext>
+
+    <!--Sets the background-->
+    <Controls:MetroWindow.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="#1E2931" Offset="0.0" />
+            <GradientStop Color="#384D5A" Offset="1.0" />
+        </LinearGradientBrush>
+    </Controls:MetroWindow.Background>
     <Grid>
-        <Grid.Background>
-            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                <GradientStop Color="#1E2931" Offset="0.0" />
-                <GradientStop Color="#384D5A" Offset="1.0" />
-            </LinearGradientBrush>
-        </Grid.Background>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="4*"/>
-        </Grid.ColumnDefinitions>
-        <Grid Grid.Column="0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*"/>
-                <RowDefinition Height="5*"/>
-            </Grid.RowDefinitions>
+        <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="5*"/>
+                <ColumnDefinition Width="200" MinWidth="100"/>
+                <ColumnDefinition Width="100*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="Back" Content="&lt;" Background="Transparent" BorderThickness="0.5" Grid.Column="0"/>
-            <Button x:Name="Next" Content="&gt;" Background="Transparent" BorderThickness="0.5" Grid.Column="2"/>
-            <ListBox x:Name="ListBox1" IsSynchronizedWithCurrentItem="True" ItemsSource="{Binding DriveItemList}" SelectedItem="{Binding SharedFolder}" Background="Transparent" Grid.ColumnSpan="3" Grid.RowSpan="1" Grid.Row="1" >
-                <i:Interaction.Triggers>
-                    <i:EventTrigger SourceName="ListBox1" EventName="MouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel x:Name="DrivesStackPanel" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                            <!--<StackPanel.InputBindings>
-                                <MouseBinding MouseAction="LeftDoubleClick"
-                                  Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"
-                                 />
-                            </StackPanel.InputBindings>-->
-                            <TextBlock x:Name="TextBlock1" Background="Transparent" Text="{Binding RemoteItem.Name}">
-                            </TextBlock>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="110"/>
+                    <RowDefinition Height="32"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" Background="Red">
+                    <TextBlock Text="User Picture and name. (dropdown when clicked on the picture to show a button to open the settings window)" TextWrapping="Wrap"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1" Background="Yellow">
+                    <TextBlock Text="Search bar"/>
+                </StackPanel>
+
+                <ListBox x:Name="DriveListBox" ItemsSource="{Binding DriveList}" SelectedItem="{Binding SelectedDriveFolder}" Background="Transparent" Grid.Row="2" BorderThickness="0">
+                    <!--Styles the listbox containing the drives.-->
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="TextBlock.Foreground" Value="white"/>
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Margin" Value="0,0,0,0" />
+                            <Setter Property="FontSize" Value="15"/>
+                            <Setter Property="TextBlock.Foreground" Value="white"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.Resources>
+                        <local:ExplorerViewModel x:Key="converter"/>
+                    </ListBox.Resources>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding DataContext.GetChildrenFomDriveCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <!--<StackPanel >-->
+                            <StackPanel x:Name="DrivesStackPanel" Background="{Binding Path=RemoteItem, Converter={StaticResource converter}}">
+                                <Grid >
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="20"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="DriveName" Grid.Column="0" HorizontalAlignment="Left" Background="Transparent" Text="{Binding Name}"/>
+                                    <TextBlock x:Name="DriveChildCount" Grid.Column="2" HorizontalAlignment="Right" Background="Transparent" TextAlignment="Right" Text="{Binding Folder.ChildCount}"/>
+                                </Grid>
+
+                            </StackPanel>
+                            <!--</StackPanel>-->
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="50"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30" />
+                    <RowDefinition Height="85*" />
+                </Grid.RowDefinitions>
+                <Rectangle Grid.Row="0" Fill="Gray"/>
+                <StackPanel Grid.Row="0" Background="Gray">
+                    <TextBlock Text="Idk what needs to go here."/>
+                </StackPanel>
+                <Rectangle Grid.Row="1" Fill="Purple"/>
+                <StackPanel Grid.Row="1" Background="Purple">
+                    <TextBlock Text="The titles of the rows for example. 'Name', 'Contents' and 'Size'"/>
+                </StackPanel>
+                <Rectangle Grid.Row="2" Fill="Orange"/>
+                <StackPanel Grid.Row="2" Background="Orange">
+                    <TextBlock Text="The position where the element goes that brings the user back to the parent folder."/>
+                </StackPanel>
+                <ListBox x:Name="ExplorerListBox" ItemsSource="{Binding ExplorerItemsList}" SelectedItem="{Binding SelectedExplorerItem}" Background="Transparent" Grid.Row="3" HorizontalAlignment="Stretch">
+                    <ListBox.Resources>
+                        <!--Make the listbox items transparent.-->
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Background" Value="Transparent" />
+                            <Setter Property="Margin" Value="0" />
+                            <Setter Property="TextBlock.Foreground" Value="white"/>
+                        </Style>
+                    </ListBox.Resources>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel x:Name="FolderStackPanel" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                <StackPanel.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
+                                </StackPanel.InputBindings>
+                                <TextBlock x:Name="ExplorerItem" Background="Transparent" Text="{Binding Name}">
+                                </TextBlock>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
         </Grid>
-        <ListBox x:Name="ListBox2" ItemsSource="{Binding ChildrenList}" SelectedItem="{Binding FolderChild}" Background="Transparent" Grid.ColumnSpan="1" Grid.RowSpan="1" Grid.Column="1">
-            <i:Interaction.Triggers>
-                <i:EventTrigger SourceName="ListBox2" EventName="MouseLeftButtonUp">
-                    <i:InvokeCommandAction Command="{Binding DataContext.GetSharedFolderChildrenTestCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
-                </i:EventTrigger>
-            </i:Interaction.Triggers>
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel x:Name="StackPanelFolders" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                        <!--<StackPanel.InputBindings>
-                            <MouseBinding MouseAction="LeftClick"
-                                  Command="{Binding DataContext.GetSharedFolderChildrenCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"
-                                 />
-                        </StackPanel.InputBindings>-->
-                        <TextBlock x:Name="TextBlock2" Background="Transparent" Text="{Binding Name}">
-                        </TextBlock>
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
     </Grid>
 </Controls:MetroWindow>
+    

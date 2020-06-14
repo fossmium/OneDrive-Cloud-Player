@@ -76,7 +76,7 @@ namespace OneDrive_Cloud_Player.Login
                 Console.WriteLine("Drive Owner Name: " + YourDriveInformation.Owner.User.DisplayName);
 
 
-                IDriveSharedWithMeCollectionPage SharedItems = await graph.GetSharedItemsAsync();
+                IDriveSharedWithMeCollectionPage SharedItems = await graph.GetSharedDrivesAsync();
                 //Get the name of the first shared folder.
                 Console.WriteLine("Shared item name: " + SharedItems[0].RemoteItem.Name);
                 //Store the drive id from the shared folder.
