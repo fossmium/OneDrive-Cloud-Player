@@ -87,7 +87,6 @@ namespace OneDrive_Cloud_Player.API
             {
                 return await GraphClient.Me.Drives[DriveId].Items[ItemId].Children.Request().GetAsync();
             }
-
         }
 
         /// <summary>

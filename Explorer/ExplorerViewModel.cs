@@ -15,6 +15,7 @@ namespace Explorer
     {
         public ICommand GetSharedDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
+        public ICommand GetSharedFolderChildrenTestCommand { get; set; }
 
         private GraphHandler graph;
 
@@ -59,7 +60,7 @@ namespace Explorer
                 NotifyPropertyChanged();
             }
         }
-        
+
         // The folder that gets selected when you click on a onedrive
         private DriveItem folderChild;
 
@@ -69,9 +70,25 @@ namespace Explorer
             set
             {
                 folderChild = value;
+               
+
+                //if (folderChild == null)
+                //{
+                //    return;
+                //}
+
+                //if (value != null)
+                //{
+                //    PreviousSelectedCategory = value;
+                //}
+
+                //folderChild = value;
+                //GetSharedFolderChildren(folderChild);
                 NotifyPropertyChanged();
             }
         }
+
+        public DriveItem PreviousSelectedCategory { get; private set; }
 
         public ExplorerViewModel()
         {
@@ -79,6 +96,7 @@ namespace Explorer
             this.graph = new GraphHandler();
             GetSharedDrivesCommand = new CommandHandler(GetSharedDrivesASyncCall, CanExecuteMethod);
             GetSharedFolderChildrenCommand = new CommandHandler(GetSharedFolderChildren, CanExecuteMethod);
+            GetSharedFolderChildrenTestCommand = new CommandHandler(GetSharedFolderChildrenTest, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetSharedDrivesCommand.Execute(null);
         }
@@ -112,7 +130,7 @@ namespace Explorer
         /// Creates a list of the names from the selected list
         /// </summary>
         /// <param name="obj"></param>
-        public async void GetSharedFolderChildren(object obj)
+        public async void GetSharedFolderChildrenTest(object obj)
         {
             List<DriveItem> childrenTempList = new List<DriveItem>();
             if (folderChild != null)
@@ -124,16 +142,49 @@ namespace Explorer
                 {
                     childrenTempList.Add(item);
                 }
+                Console.WriteLine("folder loaded");
+                ChildrenList = childrenTempList;
             }
-            else
+            Console.WriteLine("uPDATED folderchild");
+        }
+
+            /// <summary>
+            /// Creates a list of the names from the selected list
+            /// </summary>
+            /// <param name="obj"></param>
+            public async void GetSharedFolderChildren(object obj)
+        {
+            List<DriveItem> childrenTempList = new List<DriveItem>();
+            if (folderChild != null)
             {
-                string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
-                string SharedItemId = sharedFolder.RemoteItem.Id;
-                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
+                string SelectedFolderId = folderChild.ParentReference.DriveId;
+                string SharedFolderId = folderChild.Id;
+                IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedFolderId, SelectedFolderId);
                 foreach (DriveItem item in Children)
                 {
                     childrenTempList.Add(item);
                 }
+                Console.WriteLine("folder loaded");
+            }
+            else
+            {
+                try
+                {
+                    string SelectedDriveId = sharedFolder.RemoteItem.ParentReference.DriveId;
+                    string SharedItemId = sharedFolder.RemoteItem.Id;
+                    IDriveItemChildrenCollectionPage Children = await graph.GetChildrenOfItemAsync(SharedItemId, SelectedDriveId);
+                    foreach (DriveItem item in Children)
+                    {
+                        childrenTempList.Add(item);
+                    }
+                    Console.WriteLine("empty loaded.");
+                }
+                catch (Exception)
+                {
+
+
+                }
+
             }
             ChildrenList = childrenTempList;
         }
