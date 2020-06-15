@@ -71,7 +71,7 @@ namespace OneDrive_Cloud_Player.Login
                 //Display the full name of the OneDrive owner that called the graph api.
                 Console.WriteLine("OneDrive Owner Display Name: " + OwnerInformation.GivenName);
 
-                Drive YourDriveInformation = await graph.GetDriveInformationAsync();
+                Drive YourDriveInformation = await graph.GetDriveInformationAsync("3");
                 //Get the name of the owner of the caller his OneDrive.
                 Console.WriteLine("Drive Owner Name: " + YourDriveInformation.Owner.User.DisplayName);
 

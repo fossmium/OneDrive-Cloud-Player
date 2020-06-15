@@ -1,6 +1,8 @@
-﻿using MahApps.Metro.Controls;
+﻿using LibVLCSharp.WPF;
+using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Graph;
+using OneDrive_Cloud_Player;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Explorer;
 using OneDrive_Cloud_Player.VLC;
@@ -9,9 +11,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 
@@ -229,8 +234,7 @@ namespace Explorer
         /// </summary>
         private void OpenItemWithVideoPlayer(DriveItem SelectedExplorerItem)
         {
-            VideoPlayerWindow videoWindow = new VideoPlayerWindow(SelectedDriveId, SelectedExplorerItem.Id);
-            videoWindow.Show();
+            new VideoPlayerWindow(SelectedDriveId, SelectedExplorerItem.Id);
         }
 
         /// <summary>

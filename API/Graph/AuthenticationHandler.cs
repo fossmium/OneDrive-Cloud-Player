@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace OneDrive_Cloud_Player.API
 {
@@ -22,9 +23,8 @@ namespace OneDrive_Cloud_Player.API
             AuthenticationResult LocalResult = null;
             try
             {
-                var accounts = await InitProgram.Current.PublicClientApplication.GetAccountsAsync();
-
-                LocalResult = await InitProgram.Current.PublicClientApplication.AcquireTokenSilent(InitProgram.Current.Scopes, accounts.FirstOrDefault())
+                var accounts = await App.Current.PublicClientApplication.GetAccountsAsync();
+                LocalResult = await App.Current.PublicClientApplication.AcquireTokenSilent(App.Current.Scopes, accounts.FirstOrDefault())
                        .ExecuteAsync();
 
                 if (LocalResult != null)
@@ -40,10 +40,10 @@ namespace OneDrive_Cloud_Player.API
                 try
                 {
                     Console.WriteLine(" + Cannot do silent acquire. Trying interactive instead.");
-                    LocalResult = await InitProgram.Current
+                    LocalResult = await App.Current
                     .PublicClientApplication
-                    .AcquireTokenInteractive(InitProgram.Current.Scopes)
-                    .WithCustomWebUi(new EmbeddedBrowser(InitProgram.Current.MainWindow))
+                    .AcquireTokenInteractive(App.Current.Scopes)
+                    .WithCustomWebUi(new EmbeddedBrowser(App.Current.MainWindow))
                     .ExecuteAsync();
                 }
                 catch (MsalException msalex)
@@ -78,10 +78,10 @@ namespace OneDrive_Cloud_Player.API
             AuthenticationResult LocalResult;
             try
             {
-                LocalResult = await InitProgram.Current
+                LocalResult = await App.Current
                 .PublicClientApplication
-                .AcquireTokenInteractive(InitProgram.Current.Scopes)
-                .WithCustomWebUi(new EmbeddedBrowser(InitProgram.Current.MainWindow))
+                .AcquireTokenInteractive(App.Current.Scopes)
+                .WithCustomWebUi(new EmbeddedBrowser(App.Current.MainWindow))
                 .ExecuteAsync();
                 if (LocalResult != null)
                 {
@@ -100,14 +100,15 @@ namespace OneDrive_Cloud_Player.API
         /// </summary>
         public async void SignOut()
         {
-            var accounts = await InitProgram.Current.PublicClientApplication.GetAccountsAsync();
+            var accounts = await App.Current.PublicClientApplication.GetAccountsAsync();
+            accounts = (System.Collections.Generic.IEnumerable<IAccount>)accounts.ElementAt(0);
 
             //Checks if any account is inside the token cache.
             if (accounts.Any())
             {
                 try
                 {
-                    await InitProgram.Current.PublicClientApplication.RemoveAsync(accounts.FirstOrDefault());
+                    await App.Current.PublicClientApplication.RemoveAsync(accounts.FirstOrDefault());
                 }
                 catch (Exception e)
                 {

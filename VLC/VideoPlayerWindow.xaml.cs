@@ -4,6 +4,8 @@ using OneDrive_Cloud_Player.API;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -82,7 +84,8 @@ namespace OneDrive_Cloud_Player.VLC
         public bool IsFullScreen
         {
             get { return isFullScreen; }
-            set { 
+            set
+            {
                 isFullScreen = value;
                 OnPropertyChanged("isFullScreen");
             }
@@ -122,13 +125,14 @@ namespace OneDrive_Cloud_Player.VLC
 
             //Call methods that need to be run at the start.
             StartVideoAsync();
+            //Shows video player the window.
+            Show();
             //Start the timer
             dispatcherTimer.Start();
 
             SeekBar.ApplyTemplate();
             Thumb thumb = (SeekBar.Template.FindName("PART_Track", SeekBar) as Track).Thumb;
             thumb.MouseEnter += new MouseEventHandler(Thumb_MouseEnter);
-
         }
 
         private async void StartVideoAsync(long VideoStartTime = 0)
@@ -278,6 +282,7 @@ namespace OneDrive_Cloud_Player.VLC
         /// <param name="VideoStartTime"></param>
         private async void PlayVideo(string VideoURL, long VideoStartTime = 0)
         {
+
             //If video is not playing play video.
             if (!videoView.MediaPlayer.IsPlaying)
             {
@@ -288,16 +293,17 @@ namespace OneDrive_Cloud_Player.VLC
 
                 //Subscribe to IsPlaying event to set the TimeLineMaxLength only when the video is actually loaded.
                 videoView.MediaPlayer.Playing += (sender, args) =>
-                {
-                    App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
-                    {
-                        TimeLineMaxLength = videoView.MediaPlayer.Length;
-                        PausePlayButtonTitle = "PAUSE";
-                    }));
-                };
+                         {
+                             App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
+                             {
+                                 TimeLineMaxLength = videoView.MediaPlayer.Length;
+                                 PausePlayButtonTitle = "PAUSE";
+                             }));
+                         };
 
                 //Sets volume on startup.
                 videoView.MediaPlayer.Volume = VolumeValue;
+
                 Console.WriteLine("Seekable: " + this.videoView.MediaPlayer.IsSeekable);
 
                 //Plays the video from the url.
@@ -307,20 +313,23 @@ namespace OneDrive_Cloud_Player.VLC
                 await videoView.MediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
 
                 EndedProcessing();
-                //Set the video start time.
-                videoView.MediaPlayer.Time = VideoStartTime;
 
-                //@todo Hier gebleven
-                videoView.MediaPlayer.TimeChanged += (sender, args) =>
+                this.Dispatcher.Invoke(() =>
                 {
-                    App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
+                    //Set the video start time.
+                    videoView.MediaPlayer.Time = VideoStartTime;
+
+                    videoView.MediaPlayer.TimeChanged += (sender, args) =>
                     {
-                        if (!IsSeeking)
+                        App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
                         {
-                            TimeLineValue = videoView.MediaPlayer.Time;
-                        }
-                    }));
-                };
+                            if (!IsSeeking)
+                            {
+                                TimeLineValue = videoView.MediaPlayer.Time;
+                            }
+                        }));
+                    };
+                });
             }
         }
 
@@ -393,13 +402,13 @@ namespace OneDrive_Cloud_Player.VLC
                 IgnoreTaskbarOnMaximize = true;
                 WindowState = WindowState.Maximized;
                 isFullScreen = true;
-                
+
 
                 Console.WriteLine("Miximized mode");
             }
             else
             {
-              
+
                 WindowState = WindowState.Normal;
                 UseNoneWindowStyle = false;
                 ShowTitleBar = true;
