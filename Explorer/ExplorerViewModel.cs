@@ -204,7 +204,7 @@ namespace Explorer
                     {
                         localDriveItemList.Add(item);
                     }
-                    else if (item.File.MimeType.Contains("video") || item.File.MimeType.Contains("audio"))
+                    else if (item.File != null && (item.File.MimeType.Contains("video") || item.File.MimeType.Contains("audio")))
                     {
                         localDriveItemList.Add(item);
                     }

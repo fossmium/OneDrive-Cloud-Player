@@ -57,10 +57,10 @@ namespace OneDrive_Cloud_Player.API
         }
 
         /// <summary>
-        /// Get the information of the owner of the onedrive.
+        /// Get the information of the user of the onedrive.
         /// </summary>
         /// <returns></returns>
-        public async Task<User> GetOneDriveOwnerInformationAsync()
+        public async Task<User> GetOneDriveUserInformationAsync()
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();

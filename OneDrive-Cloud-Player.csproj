@@ -7,6 +7,7 @@
     <UseWPF>true</UseWPF>
     <UserSecretsId>1327468f-ef86-48f2-9afe-4d5f09ed837d</UserSecretsId>
     <StartupObject></StartupObject>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile></DocumentationFile>

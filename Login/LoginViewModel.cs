@@ -67,7 +67,7 @@ namespace OneDrive_Cloud_Player.Login
             LockAuthCall = true;
             try
             {
-                User OwnerInformation = await graph.GetOneDriveOwnerInformationAsync();
+                User OwnerInformation = await graph.GetOneDriveUserInformationAsync();
                 //Display the full name of the OneDrive owner that called the graph api.
                 Console.WriteLine("OneDrive Owner Display Name: " + OwnerInformation.GivenName);
 
