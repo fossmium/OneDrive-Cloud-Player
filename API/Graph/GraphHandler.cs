@@ -41,19 +41,13 @@ namespace OneDrive_Cloud_Player.API
         /// </summary>
         /// <param name="DriveId"></param>
         /// <returns></returns>
-        public async Task<Drive> GetDriveInformationAsync(string DriveId = null)
+        public async Task<Drive> GetDriveInformationAsync(string DriveId)
         {
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
-            //Return the name of the drive of type string. Return caller information when DriveId is not filled in.
-            if (DriveId == null)
-            {
-                return await GraphClient.Me.Drive.Request().GetAsync();
-            }
-            else
-            {
-                return await GraphClient.Me.Drives[DriveId].Request().GetAsync();
-            }
+            //Return the name of the drive of type string.
+            return await GraphClient.Me.Drives[DriveId].Request().GetAsync();
+
         }
 
         /// <summary>
