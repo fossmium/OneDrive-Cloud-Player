@@ -208,7 +208,6 @@ namespace Explorer
                     {
                         localDriveItemList.Add(item);
                     }
-                   
                 }
                 Console.WriteLine(" + Loaded folder.");
 
