@@ -29,7 +29,7 @@ namespace OneDrive_Cloud_Player
             if (await IsLoggedIn())
             {
                 // show Explorer Window
-                StartupUri = new Uri("MainWindow/MainWindow.xaml", UriKind.Relative);
+                StartupUri = new Uri("Main/MainWindow.xaml", UriKind.Relative);
             }
         }
 
