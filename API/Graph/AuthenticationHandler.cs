@@ -73,7 +73,7 @@ namespace OneDrive_Cloud_Player.API
         /// <summary>
         /// Tries to acquire the acces token by forcing to use an interactive window.
         /// </summary>
-        public async void GetAccessTokenForcedInteractive()
+        public async Task GetAccessTokenForcedInteractive()
         {
             AuthenticationResult LocalResult;
             try

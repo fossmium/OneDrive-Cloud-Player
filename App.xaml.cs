@@ -1,5 +1,9 @@
 ﻿using active_directory_wpf_msgraph_v2;
 using Microsoft.Identity.Client;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace OneDrive_Cloud_Player
@@ -22,7 +26,17 @@ namespace OneDrive_Cloud_Player
 
         public async void Initialize_Startup(object sender, StartupEventArgs e)
         {
+            if (await IsLoggedIn())
+            {
+                // show Explorer Window
+                StartupUri = new Uri("MainWindow/MainWindow.xaml", UriKind.Relative);
+            }
+        }
 
+        public async Task<bool> IsLoggedIn()
+        {
+            IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
+            return Accounts.Count() != 0;
         }
 
         /// <summary>

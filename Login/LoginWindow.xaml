@@ -6,10 +6,10 @@
          xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
         xmlns:local="clr-namespace:OneDrive_Cloud_Player.Login"
         mc:Ignorable="d"
-        Title="LoginWindows" Height="450" Width="800">
-    <Window.Resources>
-        <local:LoginViewModel x:Key="vm"/>
-    </Window.Resources>
+        Title="LoginWindow" Height="450" Width="800">
+    <Window.DataContext>
+		<local:LoginViewModel/>
+    </Window.DataContext>
     
     <!--Applies the gradient background-->
     <Window.Background>
@@ -20,34 +20,9 @@
     </Window.Background>
 
     <!--GRID LOGIN WINDOW-->
-    <Grid>
+	<Grid>
 
-        <!--TEST TOKEN BUTTON-->
-        <Button
-            Content="Test Token"
-            
-            Width="253"
-            Height="51"
-            Margin="0,30,0,0"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            
-            FontSize="21"
-            FontFamily="Lato"
-            FontWeight="Normal"
-            Foreground="White"
-            
-            BorderThickness="0,0,0,2"
-            BorderBrush="#414E58"
-            
-            Command="{Binding MyCommand2, Source={StaticResource vm}}"
-            >
-            <Button.Background>
-                <SolidColorBrush Color="White" Opacity="0"/>
-            </Button.Background>
-        </Button>
-
-        <!--WELCOME TEKST-->
+		<!--WELCOME TEKST-->
         <Label
             Content="Welcome! Please log in"
             
@@ -79,7 +54,7 @@
             BorderThickness="0,0,0,2"
             BorderBrush="#414E58"
             
-            Command="{Binding MyCommand, Source={StaticResource vm}}"
+            Command="{Binding LoginCommand}"
             >
             <Button.Background>
                 <SolidColorBrush Color="White" Opacity="0"/>
