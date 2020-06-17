@@ -25,6 +25,8 @@ namespace OneDrive_Cloud_Player.Login
             AuthenticationHandler auth = new AuthenticationHandler();
             await auth.GetAccessTokenForcedInteractive();
 
+            //TODO: check if user has really logged in or simply closed the popup
+
             //close the login window and open the explorer window
             MainWindow MainWindow = new MainWindow();
             LoginWindow LoginWindow = (LoginWindow)App.Current.MainWindow;
