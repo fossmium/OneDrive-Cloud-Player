@@ -13,6 +13,9 @@
     <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="VLC\stop.png" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="LibVLCSharp" Version="3.4.5" />
     <PackageReference Include="LibVLCSharp.WPF" Version="3.4.5" />
     <PackageReference Include="MahApps.Metro" Version="2.0.1" />
@@ -22,6 +25,9 @@
     <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.19" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.5.1" />
     <PackageReference Include="VideoLAN.LibVLC.Windows" Version="3.0.10" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="VLC\stop.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="API\Graph\InteractiveComponents\Internal\EmbeddedWebUI.xaml.cs">
