@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace OneDrive_Cloud_Player.Explorer
+namespace OneDrive_Cloud_Player.Main
 {
     class CommandHandler : ICommand
     {

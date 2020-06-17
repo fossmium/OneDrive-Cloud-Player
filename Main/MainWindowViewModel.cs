@@ -1,28 +1,20 @@
-﻿using LibVLCSharp.WPF;
-using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
+﻿using MahApps.Metro.Controls;
 using Microsoft.Graph;
-using OneDrive_Cloud_Player;
 using OneDrive_Cloud_Player.API;
-using OneDrive_Cloud_Player.Explorer;
 using OneDrive_Cloud_Player.VLC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace Explorer
+namespace OneDrive_Cloud_Player.Main
 {
-    class ExplorerViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
+    class MainWindowViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
     {
         public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
@@ -90,7 +82,7 @@ namespace Explorer
 
         public DriveItem PreviousSelectedCategory { get; private set; }
 
-        public ExplorerViewModel()
+        public MainWindowViewModel()
         {
             driveList = null;
             this.graph = new GraphHandler();

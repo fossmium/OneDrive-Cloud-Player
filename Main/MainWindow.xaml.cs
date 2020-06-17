@@ -4,14 +4,14 @@ using Microsoft.Graph;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Explorer
+namespace OneDrive_Cloud_Player.Main
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class ExplorerWindow : MetroWindow
+    public partial class MainWindow : MetroWindow
     {
-        public ExplorerWindow()
+        public MainWindow()
         {
             InitializeComponent();
         }

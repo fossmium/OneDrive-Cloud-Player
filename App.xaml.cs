@@ -20,6 +20,11 @@ namespace OneDrive_Cloud_Player
             CreateScopedPublicClientApplicationInstance();
         }
 
+        public async void Initialize_Startup(object sender, StartupEventArgs e)
+        {
+
+        }
+
         /// <summary>
         /// Create a plublic client application instance and set it to the PublicClientApplication property.
         /// </summary>
