@@ -1,19 +1,15 @@
-﻿using System;
-using System.Windows.Input;
-using LibVLCSharp.Shared;
-using OneDrive_Cloud_Player.VLC;
+﻿using OneDrive_Cloud_Player.VLC;
 using MahApps.Metro.Controls;
 using System.Windows;
-using MahApps.Metro.Controls.Dialogs;
 
 namespace OneDrive_Cloud_Player
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for TestVLCWindow.xaml
     /// </summary>
-    public partial class MainWindow : MetroWindow
+    public partial class TestVLCWindow : MetroWindow
     {
-        public MainWindow()
+        public TestVLCWindow()
         {
             InitializeComponent();
         }
