@@ -13,6 +13,7 @@ namespace Explorer
     {
         public ExplorerWindow()
         {
+            InitializeComponent();
         }
     }
 }
