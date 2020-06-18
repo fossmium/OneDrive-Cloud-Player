@@ -1,30 +1,30 @@
 ﻿using MahApps.Metro.Controls;
-using MahApps.Metro.Controls.Dialogs;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
-using OneDrive_Cloud_Player.Explorer;
+using AuthenticationHandler = OneDrive_Cloud_Player.API.AuthenticationHandler;
 using OneDrive_Cloud_Player.VLC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using OneDrive_Cloud_Player.Login;
 
-namespace Explorer
+namespace OneDrive_Cloud_Player.Main
 {
-    class ExplorerViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
+    class MainWindowViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
     {
         public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
         public ICommand GetChildrenFomItemCommand { get; set; }
         public ICommand GetChildrenFomDriveCommand { get; set; }
+        public ICommand LogoutCommand { get; set; }
 
-        private GraphHandler graph;
+        private readonly GraphHandler graph;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -85,13 +85,14 @@ namespace Explorer
 
         public DriveItem PreviousSelectedCategory { get; private set; }
 
-        public ExplorerViewModel()
+        public MainWindowViewModel()
         {
             driveList = null;
             this.graph = new GraphHandler();
             GetDrivesCommand = new CommandHandler(GetDrives, CanExecuteMethod);
             GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
             GetChildrenFomDriveCommand = new CommandHandler(GetChildrenFomDrive, CanExecuteMethod);
+            LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetDrivesCommand.Execute(null);
         }
@@ -99,6 +100,14 @@ namespace Explorer
         private bool CanExecuteMethod(object arg)
         {
             return true;
+        }
+
+        private async void Logout(object obj)
+        {
+            AuthenticationHandler auth = new API.AuthenticationHandler();
+            await auth.SignOut();
+
+            App.Current.SwitchWindows(new LoginWindow());
         }
 
         //TODO: Implement that the personal drive is also added the the drivelist in the UI.
@@ -229,8 +238,7 @@ namespace Explorer
         /// </summary>
         private void OpenItemWithVideoPlayer(DriveItem SelectedExplorerItem)
         {
-            VideoPlayerWindow videoWindow = new VideoPlayerWindow(SelectedDriveId, SelectedExplorerItem.Id);
-            videoWindow.Show();
+            new VideoPlayerWindow(SelectedDriveId, SelectedExplorerItem.Id);
         }
 
         /// <summary>
@@ -261,7 +269,6 @@ namespace Explorer
             {
                 return new SolidColorBrush(Colors.Transparent);
             }
-            return SystemColors.ControlColor;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

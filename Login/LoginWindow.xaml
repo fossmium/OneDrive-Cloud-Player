@@ -6,10 +6,10 @@
          xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"  
         xmlns:local="clr-namespace:OneDrive_Cloud_Player.Login"
         mc:Ignorable="d"
-        Title="LoginWindows" Height="450" Width="800">
-    <Window.Resources>
-        <local:LoginViewModel x:Key="vm"/>
-    </Window.Resources>
+        Title="LoginWindow" Height="450" Width="800">
+    <Window.DataContext>
+		<local:LoginViewModel/>
+    </Window.DataContext>
     
     <!--Applies the gradient background-->
     <Window.Background>

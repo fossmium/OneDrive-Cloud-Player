@@ -1,8 +1,8 @@
 ﻿<Controls:MetroWindow 
-        x:Class="Explorer.ExplorerWindow"
+        x:Class="OneDrive_Cloud_Player.Main.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:local="clr-namespace:Explorer"
+        xmlns:local="clr-namespace:OneDrive_Cloud_Player.Main"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
         Title="One Drive Cloud Player" Height="700" Width="1000"
@@ -10,7 +10,7 @@
 
 
     <Window.DataContext>
-        <local:ExplorerViewModel/>
+        <local:MainWindowViewModel/>
     </Window.DataContext>
 
     <!--Sets the background-->
@@ -52,7 +52,7 @@
                         </Style>
                     </ListBox.ItemContainerStyle>
                     <ListBox.Resources>
-                        <local:ExplorerViewModel x:Key="converter"/>
+                        <local:MainWindowViewModel x:Key="converter"/>
                     </ListBox.Resources>
                     <i:Interaction.Triggers>
                         <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
@@ -78,6 +78,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <Button Command="{Binding LogoutCommand}" Grid.Row="2" Height="40" VerticalAlignment="Bottom" Content="Logout"></Button>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>

@@ -1,4 +1,9 @@
-﻿
+﻿using active_directory_wpf_msgraph_v2;
+using Microsoft.Identity.Client;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace OneDrive_Cloud_Player
@@ -8,5 +13,76 @@ namespace OneDrive_Cloud_Player
     /// </summary>
     public partial class App : Application
     {
+        //Other classes can now call this class with the use of 'App.Current'. 
+        public static new App Current => (App)Application.Current;
+
+        public IPublicClientApplication PublicClientApplication { get; private set; }
+        public string[] Scopes { get; private set; }
+        //public string CurrentUserId { get; private set; }
+
+        public App()
+        {
+            CreateScopedPublicClientApplicationInstance();
+            //Initialize();
+        }
+
+        public async void Initialize_Startup(object sender, StartupEventArgs e)
+        {
+            if (await IsLoggedIn())
+            {
+                // show Explorer Window
+                StartupUri = new Uri("Main/MainWindow.xaml", UriKind.Relative);
+            }
+        }
+
+        /// <summary>
+        /// This method initializes the cache with the current userid/cache and needs to be called upon every login.
+        /// </summary>
+        //public async void Initialize()
+        //{
+        //GraphHandler Graph = new GraphHandler();
+        //CurrentUserId = (await Graph.GetOneDriveUserInformationAsync()).Id;
+        //IEnumerable<IAccount> jijwatmaat = await PublicClientApplication.GetAccountsAsync();
+        //string pcauid = jijwatmaat.FirstOrDefault<IAccount>().HomeAccountId.ObjectId.ToString();
+        //Console.WriteLine(CurrentUserId);
+        //Console.WriteLine(pcauid);
+        //CacheHandler.Initialize(CurrentUserId);
+        // }
+
+        public async Task<bool> IsLoggedIn()
+        {
+            IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
+            return Accounts.Count() != 0;
+        }
+
+        public void SwitchWindows(Window NewWindow)
+        {
+            Window CurrentWindow = MainWindow;
+            MainWindow = NewWindow;
+            CurrentWindow.Close();
+            NewWindow.Show();
+        }
+
+        /// <summary>
+        /// Create a plublic client application instance and set it to the PublicClientApplication property.
+        /// </summary>
+        private void CreateScopedPublicClientApplicationInstance()
+        {
+            PublicClientApplication = PublicClientApplicationBuilder.Create("cfc49d19-b88e-4986-8862-8b5de253d0fd")
+                .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+                .Build();
+
+            //Caches the login and keeps the user logged in after an application restart.
+            TokenCacheHelper.EnableSerialization(PublicClientApplication.UserTokenCache);
+
+            Scopes = new[]
+                {
+                    "offline_access",
+                    "openid",
+                    "profile",
+                    "user.read",
+                    "Files.Read.All"
+                };
+        }
     }
 }
