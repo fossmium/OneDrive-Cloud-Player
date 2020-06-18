@@ -68,15 +68,16 @@ namespace OneDrive_Cloud_Player.VLC
             }
         }
 
-        private string pausePlayButtonTitle = "PLAY";
+        private string pausePlayButtonImageSource = "/Assets/Icons/play_arrow.png";
 
-        public string PausePlayButtonTitle
+        public string PausePlayButtonImageSource
         {
-            get { return pausePlayButtonTitle; }
+            get { return pausePlayButtonImageSource; }
             set
             {
-                pausePlayButtonTitle = value;
-                OnPropertyChanged("PausePlayButtonTitle");
+                pausePlayButtonImageSource = value;
+                Console.WriteLine("Image source " + PausePlayButtonImageSource);
+                OnPropertyChanged("PausePlayButtonImageSource");
             }
 
         }
@@ -299,7 +300,8 @@ namespace OneDrive_Cloud_Player.VLC
                              App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
                              {
                                  TimeLineMaxLength = videoView.MediaPlayer.Length;
-                                 PausePlayButtonTitle = "PAUSE";
+                                 
+                                 PausePlayButtonImageSource = "/Assets/Icons/pause.png";
                              }));
                          };
 
@@ -345,14 +347,14 @@ namespace OneDrive_Cloud_Player.VLC
             if (!videoView.MediaPlayer.IsPlaying)
             {
                 videoView.MediaPlayer.Play();
-                PausePlayButtonTitle = "PAUSE";
+                PausePlayButtonImageSource = "/Assets/Icons/pause.png";
 
                 videoView.MediaPlayer.Play();
             }
             else
             {
                 videoView.MediaPlayer.Pause();
-                PausePlayButtonTitle = "PLAY";
+                PausePlayButtonImageSource = "/Assets/Icons/play_arrow.png";
             }
         }
         private void SetVolume(int Volume)

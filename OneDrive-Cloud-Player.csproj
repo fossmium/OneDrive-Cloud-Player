@@ -17,7 +17,10 @@
     <None Remove="Assets\Fonts\Lato-Light.ttf" />
     <None Remove="Assets\Fonts\Lato-LightItalic.ttf" />
     <None Remove="Assets\Fonts\Lato-Regular.ttf" />
-    <None Remove="VLC\stop.png" />
+    <None Remove="Assets\Icons\add_to_queue.png" />
+    <None Remove="Assets\Icons\pause.png" />
+    <None Remove="Assets\Icons\play_arrow.png" />
+    <None Remove="Assets\Icons\stop.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibVLCSharp" Version="3.4.5" />
@@ -43,7 +46,10 @@
     <Resource Include="Assets\Fonts\Lato-Regular.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="VLC\stop.png" />
+    <Resource Include="Assets\Icons\add_to_queue.png" />
+    <Resource Include="Assets\Icons\pause.png" />
+    <Resource Include="Assets\Icons\play_arrow.png" />
+    <Resource Include="Assets\Icons\stop.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="API\Graph\InteractiveComponents\Internal\EmbeddedWebUI.xaml.cs">
