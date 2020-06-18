@@ -50,7 +50,7 @@
             FontWeight="Regular"
             Foreground="White"
             
-            Command="{Binding MyCommand, Source={StaticResource vm}}">
+            Command="{Binding LoginCommand}">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
                     <Setter Property="Background" Value="Transparent"/>
