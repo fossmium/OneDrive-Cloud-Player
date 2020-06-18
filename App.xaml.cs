@@ -1,5 +1,6 @@
 ﻿using active_directory_wpf_msgraph_v2;
 using Microsoft.Identity.Client;
+using OneDrive_Cloud_Player.Caching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,43 +19,55 @@ namespace OneDrive_Cloud_Player
 
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
-        //public string CurrentUserId { get; private set; }
+        public CacheHandler CacheHandler { get; private set; }
 
         public App()
         {
             CreateScopedPublicClientApplicationInstance();
-            //Initialize();
+            CacheHandler = new CacheHandler();
         }
 
+        /// <summary>
+        /// Check whether or not the user credentials are cached
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         public async void Initialize_Startup(object sender, StartupEventArgs e)
         {
             if (await IsLoggedIn())
             {
+                await App.Current.CacheHandler.Initialize(false);
                 // show Explorer Window
                 StartupUri = new Uri("Main/MainWindow.xaml", UriKind.Relative);
             }
         }
 
         /// <summary>
-        /// This method initializes the cache with the current userid/cache and needs to be called upon every login.
+        /// Save the graph cache on exit
         /// </summary>
-        //public async void Initialize()
-        //{
-        //GraphHandler Graph = new GraphHandler();
-        //CurrentUserId = (await Graph.GetOneDriveUserInformationAsync()).Id;
-        //IEnumerable<IAccount> jijwatmaat = await PublicClientApplication.GetAccountsAsync();
-        //string pcauid = jijwatmaat.FirstOrDefault<IAccount>().HomeAccountId.ObjectId.ToString();
-        //Console.WriteLine(CurrentUserId);
-        //Console.WriteLine(pcauid);
-        //CacheHandler.Initialize(CurrentUserId);
-        // }
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff"));
+            App.Current.CacheHandler.WriteGraphCache();
+            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff"));
+        }
 
+        /// <summary>
+        /// Check whether or not the user credentials are cached via MSAL
+        /// </summary>
+        /// <returns></returns>
         public async Task<bool> IsLoggedIn()
         {
             IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
             return Accounts.Count() != 0;
         }
 
+        /// <summary>
+        /// Set the MainWindow to the NewWindow and close the previous MainWindow
+        /// </summary>
+        /// <param name="NewWindow"></param>
         public void SwitchWindows(Window NewWindow)
         {
             Window CurrentWindow = MainWindow;

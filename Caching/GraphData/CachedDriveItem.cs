@@ -3,9 +3,9 @@
 namespace OneDrive_Cloud_Player.Caching.GraphData
 {
 	/// <summary>
-	/// This class represents a cached drive item. This can either be a folder or an item.
+	/// This class represents a cached drive item. This can either be a folder or a file.
 	/// </summary>
-	class CachedDriveItem
+	public class CachedDriveItem
 	{
 		/// <summary>
 		/// This id is used to uniquely identidy an item.
@@ -16,8 +16,8 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		/// <summary>
 		/// This id will reference the id of another item in case this item has a parent. If this item does not have a parent, this id will be null.
 		/// </summary>
-		[JsonProperty("parentId")]
-		public string ParentId { get; private set; }
+		[JsonProperty("parentItemId")]
+		public string ParentItemId { get; private set; }
 
 		/// <summary>
 		/// This boolean indicates whether or not this item is a folder.
@@ -30,5 +30,23 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		/// </summary>
 		[JsonProperty("name")]
 		public string Name { get; private set; }
+
+		/// <summary>
+		/// Size of the file or folder in Bytes
+		/// </summary>
+		[JsonProperty("size")]
+		public int Size { get; private set; }
+
+		/// <summary>
+		/// In case this is a folder, this represents the amount of children this folder has
+		/// </summary>
+		[JsonProperty("childCount")]
+		public int ChildCount { get; private set; }
+
+		/// <summary>
+		/// In case this is a file, this represents the mime type
+		/// </summary>
+		[JsonProperty("mimeType")]
+		public string MimeType { get; private set; }
 	}
 }

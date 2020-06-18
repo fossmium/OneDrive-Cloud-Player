@@ -1,8 +1,8 @@
-﻿using System.Windows.Input;
-using MahApps.Metro.Controls;
+﻿using MahApps.Metro.Controls;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Main;
+using System.Windows.Input;
 
 namespace OneDrive_Cloud_Player.Login
 {
@@ -45,6 +45,9 @@ namespace OneDrive_Cloud_Player.Login
                 IsLoginButtonEnabled = true;
                 return;
             }
+            // check whether or not the cache was already initialized
+            bool HasAlreadyLoggedIn = App.Current.CacheHandler.Cache.Count != 0;
+            await App.Current.CacheHandler.Initialize(HasAlreadyLoggedIn);
             // Close this window and switch to the MainWindow.
             App.Current.SwitchWindows(new MainWindow());
         }

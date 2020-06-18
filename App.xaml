@@ -4,6 +4,7 @@
              xmlns:local="clr-namespace:OneDrive_Cloud_Player.VLC"
 			 StartupUri="Login/LoginWindow.xaml"
 			 Startup="Initialize_Startup"
+			 Exit="Application_Exit"
              ShutdownMode="OnMainWindowClose">
 
     <Application.Resources>

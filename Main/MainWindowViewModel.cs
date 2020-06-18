@@ -1,18 +1,17 @@
 ﻿using MahApps.Metro.Controls;
 using Microsoft.Graph;
-using OneDrive_Cloud_Player.API;
 using AuthenticationHandler = OneDrive_Cloud_Player.API.AuthenticationHandler;
+using OneDrive_Cloud_Player.API;
+using OneDrive_Cloud_Player.Login;
 using OneDrive_Cloud_Player.VLC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
-using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
-using OneDrive_Cloud_Player.Login;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -102,11 +101,15 @@ namespace OneDrive_Cloud_Player.Main
             return true;
         }
 
+        /// <summary>
+        /// Sign the user out and clear the cache before switching to the login window
+        /// </summary>
+        /// <param name="obj"></param>
         private async void Logout(object obj)
         {
             AuthenticationHandler auth = new API.AuthenticationHandler();
             await auth.SignOut();
-
+            App.Current.CacheHandler.ResetCache();
             App.Current.SwitchWindows(new LoginWindow());
         }
 
