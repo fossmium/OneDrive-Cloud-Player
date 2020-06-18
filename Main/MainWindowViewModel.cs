@@ -20,6 +20,7 @@ namespace OneDrive_Cloud_Player.Main
         public ICommand GetSharedFolderChildrenCommand { get; set; }
         public ICommand GetChildrenFomItemCommand { get; set; }
         public ICommand GetChildrenFomDriveCommand { get; set; }
+        public ICommand LogoutCommand { get; set; }
 
         private GraphHandler graph;
 
@@ -89,6 +90,7 @@ namespace OneDrive_Cloud_Player.Main
             GetDrivesCommand = new CommandHandler(GetDrives, CanExecuteMethod);
             GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
             GetChildrenFomDriveCommand = new CommandHandler(GetChildrenFomDrive, CanExecuteMethod);
+            LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetDrivesCommand.Execute(null);
         }
@@ -96,6 +98,11 @@ namespace OneDrive_Cloud_Player.Main
         private bool CanExecuteMethod(object arg)
         {
             return true;
+        }
+
+        private void Logout(object obj)
+        {
+            Console.WriteLine("Logging out.");
         }
 
         //TODO: Implement that the personal drive is also added the the drivelist in the UI.

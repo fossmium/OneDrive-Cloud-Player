@@ -78,6 +78,7 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+                <Button Command="{Binding LogoutCommand}" Grid.Row="2" Height="40" VerticalAlignment="Bottom" Content="Logout"></Button>
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
