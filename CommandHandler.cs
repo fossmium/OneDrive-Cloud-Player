@@ -4,22 +4,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
-namespace OneDrive_Cloud_Player.Login
+namespace OneDrive_Cloud_Player.Main
 {
     class CommandHandler : ICommand
     {
-        readonly Action<object> executeMethod;
-        readonly Func<object, bool> canExecuteMethod;
+        Action<object> executeMethod;
+        Func<object, bool> canExecute;
 
         public CommandHandler(Action<object> executeMethod, Func<object, bool> canExecuteMethod)
         {
             this.executeMethod = executeMethod;
-            this.canExecuteMethod = canExecuteMethod;
+            this.canExecute = canExecuteMethod;
         }
 
         public bool CanExecute(object parameter)
         {
-            return true;
+            return canExecute(parameter);
         }
 
         public void Execute(object parameter)

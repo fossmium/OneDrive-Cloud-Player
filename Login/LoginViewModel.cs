@@ -22,12 +22,15 @@ namespace OneDrive_Cloud_Player.Login
 
         private async void ExecuteLogin(object parameter)
         {
+            //make button unusable
+
             // log the user in
             AuthenticationHandler auth = new AuthenticationHandler();
             AuthenticationResult LocalResult = await auth.GetAccessTokenForcedInteractive();
             // check whether or not the user closed the popup dialog window.
             if (LocalResult == null)
             {
+                // make button usable again
                 return;
             }
             App.Current.SwitchWindows(new MainWindow());
