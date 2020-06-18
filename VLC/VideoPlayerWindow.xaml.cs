@@ -92,8 +92,8 @@ namespace OneDrive_Cloud_Player.VLC
         }
 
 
-        private DispatcherTimer dispatcherTimer;
-        private GraphHandler graphHandler;
+        private readonly DispatcherTimer dispatcherTimer;
+        private readonly GraphHandler graphHandler;
         private readonly MediaPlayer mediaPlayer;
         private readonly LibVLC libVLC;
         private readonly string itemId;
