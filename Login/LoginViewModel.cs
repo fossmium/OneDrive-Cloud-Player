@@ -8,33 +8,45 @@ namespace OneDrive_Cloud_Player.Login
 {
     class LoginViewModel : MetroWindow
     {
+        private bool IsLoginButtonEnabled = true;
+
         public ICommand LoginCommand { get; set; }
 
         public LoginViewModel()
         {
-            LoginCommand = new CommandHandler(ExecuteLogin, CanExecute);
+            LoginCommand = new CommandHandler(ExecuteLogin, CanExecuteLoginButton);
         }
 
-        private bool CanExecute(object parameter)
+        /// <summary>
+        /// Determines whether or not the login button is enabled.
+        /// </summary>
+        /// <param name="parameter"></param>
+        /// <returns></returns>
+        private bool CanExecuteLoginButton(object parameter)
         {
-            return true;
+            return IsLoginButtonEnabled;
         }
 
+        /// <summary>
+        /// Starts the login process for the user.
+        /// </summary>
+        /// <param name="parameter"></param>
         private async void ExecuteLogin(object parameter)
         {
-            //make button unusable
-
+            // Disable the Login button.
+            IsLoginButtonEnabled = false;
             // log the user in
             AuthenticationHandler auth = new AuthenticationHandler();
             AuthenticationResult LocalResult = await auth.GetAccessTokenForcedInteractive();
-            // check whether or not the user closed the popup dialog window.
+            // Check whether or not the user closed the popup dialog window.
             if (LocalResult == null)
             {
-                // make button usable again
+                // Enable the Login button.
+                IsLoginButtonEnabled = true;
                 return;
             }
+            // Close this window and switch to the MainWindow.
             App.Current.SwitchWindows(new MainWindow());
         }
     }
-
 }
