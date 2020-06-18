@@ -3,10 +3,12 @@ using MahApps.Metro.Controls;
 using OneDrive_Cloud_Player.API;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
@@ -292,6 +294,7 @@ namespace OneDrive_Cloud_Player.VLC
                     App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
                     {
                         TimeLineMaxLength = videoView.MediaPlayer.Length;
+                        //PlayButton.Source = new BitmapImage(new Uri("Resources/video.png")); @ BRUH need some halp wid dis
                         PausePlayButtonTitle = "PAUSE";
                     }));
                 };

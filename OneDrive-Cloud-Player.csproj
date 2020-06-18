@@ -17,6 +17,7 @@
     <None Remove="Assets\Fonts\Lato-Light.ttf" />
     <None Remove="Assets\Fonts\Lato-LightItalic.ttf" />
     <None Remove="Assets\Fonts\Lato-Regular.ttf" />
+    <None Remove="VLC\stop.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibVLCSharp" Version="3.4.5" />
@@ -42,6 +43,7 @@
     <Resource Include="Assets\Fonts\Lato-Regular.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="VLC\stop.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="API\Graph\InteractiveComponents\Internal\EmbeddedWebUI.xaml.cs">

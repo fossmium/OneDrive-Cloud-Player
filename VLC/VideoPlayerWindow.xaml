@@ -55,8 +55,10 @@
                                         <!--Play/Pause Button-->
                                         <Button Grid.Column="0" Content="{Binding Path=PausePlayButtonTitle}" Style="{StaticResource MahApps.Styles.Button.Flat}" Click="PauseContinueButton_Click" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="1,0,2,0"/>
                                         <!--Stop Button-->
-                                        <Button Grid.Column="1" Content="STOP" Click="StopButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,2,0"/>
-                                        <!--Reload Button-->
+                                        <Button Grid.Column="1" Click="StopButton_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="2,0,2,0" Width="50" Height="50">
+                                            <Image Source="Resources/stop.png"></Image>
+                                        </Button>
+                                    <!--Reload Button-->
                                         <Button Grid.Column="2" Content="Reload" x:Name="ReloadButton" Click="ReloadVideoButton_Click" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="2,0,0,0" />
                                     </Grid>
                                 </Border>
