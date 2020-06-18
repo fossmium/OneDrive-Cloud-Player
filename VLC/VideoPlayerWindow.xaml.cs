@@ -126,7 +126,7 @@ namespace OneDrive_Cloud_Player.VLC
             //Call methods that need to be run at the start.
             StartVideoAsync();
             //Shows video player the window.
-            Show();
+            ShowDialog();
             //Start the timer
             dispatcherTimer.Start();
 
