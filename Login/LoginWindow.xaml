@@ -21,43 +21,17 @@
 
     <!--GRID LOGIN WINDOW-->
     <Grid>
-
-        <!--TEST TOKEN BUTTON-->
-        <Button
-            Content="Test Token"
-            
-            Width="253"
-            Height="51"
-            Margin="0,30,0,0"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Top"
-            
-            FontSize="21"
-            FontFamily="Lato"
-            FontWeight="Normal"
-            Foreground="White"
-            
-            BorderThickness="0,0,0,2"
-            BorderBrush="#414E58"
-            
-            Command="{Binding MyCommand2, Source={StaticResource vm}}"
-            >
-            <Button.Background>
-                <SolidColorBrush Color="White" Opacity="0"/>
-            </Button.Background>
-        </Button>
-
         <!--WELCOME TEKST-->
         <Label
             Content="Welcome! Please log in"
             
-            Margin="0,155,0,0"
+            Margin="0,125,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             
+            FontFamily="{StaticResource Lato}"
             FontSize="30"
             Foreground="White"
-            
             />
 
         <!--LOGIN BUTTON-->
@@ -67,23 +41,35 @@
             
             Width="252"
             Height="51"
-            Margin="0,241,0,0"
+            Margin="0,211,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            
+
             FontSize="21"
-            FontFamily="Lato"
-            FontWeight="Normal"
+            FontFamily="{StaticResource Lato}"
+            FontWeight="Regular"
             Foreground="White"
             
-            BorderThickness="0,0,0,2"
-            BorderBrush="#414E58"
-            
-            Command="{Binding MyCommand, Source={StaticResource vm}}"
-            >
-            <Button.Background>
-                <SolidColorBrush Color="White" Opacity="0"/>
-            </Button.Background>
+            Command="{Binding MyCommand, Source={StaticResource vm}}">
+            <Button.Style>
+                <Style TargetType="{x:Type Button}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="#414E58" BorderThickness="0,0,0,2">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#414E58"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
         </Button>
     </Grid>
 </Controls:MetroWindow>

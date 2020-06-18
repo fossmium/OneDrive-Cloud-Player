@@ -14,6 +14,8 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.FlatSlider.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.FlatButton.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <FontFamily x:Key="Lato">pack://application:,,,/Assets/Fonts/#Lato</FontFamily>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
