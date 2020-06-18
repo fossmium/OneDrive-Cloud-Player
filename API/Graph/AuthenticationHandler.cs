@@ -5,7 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
+using System.Collections.Generic;
 
 namespace OneDrive_Cloud_Player.API
 {
@@ -72,10 +72,11 @@ namespace OneDrive_Cloud_Player.API
 
         /// <summary>
         /// Tries to acquire the acces token by forcing to use an interactive window.
+        /// Returns null when user closes popup dialog window.
         /// </summary>
-        public async Task GetAccessTokenForcedInteractive()
+        public async Task<AuthenticationResult> GetAccessTokenForcedInteractive()
         {
-            AuthenticationResult LocalResult;
+            AuthenticationResult LocalResult = null;
             try
             {
                 LocalResult = await App.Current
@@ -93,15 +94,17 @@ namespace OneDrive_Cloud_Player.API
                 Console.WriteLine($"Error Acquiring Token:{System.Environment.NewLine}{msalex}");
                 Debug.WriteLine("\nLocalResult is NULL.\n");
             }
+            // finally, return the AuthenticationResult so any callers can check for null
+            return LocalResult;
         }
 
         /// <summary>
         /// Signs out a user. It removes the account from the token cache.
         /// </summary>
-        public async void SignOut()
+        public async Task SignOut()
         {
-            var accounts = await App.Current.PublicClientApplication.GetAccountsAsync();
-            accounts = (System.Collections.Generic.IEnumerable<IAccount>)accounts.ElementAt(0);
+            IEnumerable<IAccount> accounts = await App.Current.PublicClientApplication.GetAccountsAsync();
+            //accounts = (System.Collections.Generic.IEnumerable<IAccount>)accounts.ElementAt(0);
 
             //Checks if any account is inside the token cache.
             if (accounts.Any())

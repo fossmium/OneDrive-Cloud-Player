@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using MahApps.Metro.Controls;
+using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Main;
 
@@ -23,16 +24,13 @@ namespace OneDrive_Cloud_Player.Login
         {
             // log the user in
             AuthenticationHandler auth = new AuthenticationHandler();
-            await auth.GetAccessTokenForcedInteractive();
-
-            //TODO: check if user has really logged in or simply closed the popup
-
-            //close the login window and open the explorer window
-            MainWindow MainWindow = new MainWindow();
-            LoginWindow LoginWindow = (LoginWindow)App.Current.MainWindow;
-            App.Current.MainWindow = MainWindow;
-            MainWindow.Show();
-            LoginWindow.Close();
+            AuthenticationResult LocalResult = await auth.GetAccessTokenForcedInteractive();
+            // check whether or not the user closed the popup dialog window.
+            if (LocalResult == null)
+            {
+                return;
+            }
+            App.Current.SwitchWindows(new MainWindow());
         }
     }
 

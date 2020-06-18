@@ -1,6 +1,7 @@
 ﻿using MahApps.Metro.Controls;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.API;
+using AuthenticationHandler = OneDrive_Cloud_Player.API.AuthenticationHandler;
 using OneDrive_Cloud_Player.VLC;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using OneDrive_Cloud_Player.Login;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -100,9 +102,12 @@ namespace OneDrive_Cloud_Player.Main
             return true;
         }
 
-        private void Logout(object obj)
+        private async void Logout(object obj)
         {
-            Console.WriteLine("Logging out.");
+            AuthenticationHandler auth = new API.AuthenticationHandler();
+            await auth.SignOut();
+
+            App.Current.SwitchWindows(new LoginWindow());
         }
 
         //TODO: Implement that the personal drive is also added the the drivelist in the UI.

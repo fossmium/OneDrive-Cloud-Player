@@ -18,10 +18,12 @@ namespace OneDrive_Cloud_Player
 
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
+        //public string CurrentUserId { get; private set; }
 
         public App()
         {
             CreateScopedPublicClientApplicationInstance();
+            //Initialize();
         }
 
         public async void Initialize_Startup(object sender, StartupEventArgs e)
@@ -33,10 +35,32 @@ namespace OneDrive_Cloud_Player
             }
         }
 
+        /// <summary>
+        /// This method initializes the cache with the current userid/cache and needs to be called upon every login.
+        /// </summary>
+        //public async void Initialize()
+        //{
+        //GraphHandler Graph = new GraphHandler();
+        //CurrentUserId = (await Graph.GetOneDriveUserInformationAsync()).Id;
+        //IEnumerable<IAccount> jijwatmaat = await PublicClientApplication.GetAccountsAsync();
+        //string pcauid = jijwatmaat.FirstOrDefault<IAccount>().HomeAccountId.ObjectId.ToString();
+        //Console.WriteLine(CurrentUserId);
+        //Console.WriteLine(pcauid);
+        //CacheHandler.Initialize(CurrentUserId);
+        // }
+
         public async Task<bool> IsLoggedIn()
         {
             IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
             return Accounts.Count() != 0;
+        }
+
+        public void SwitchWindows(Window NewWindow)
+        {
+            Window CurrentWindow = App.Current.MainWindow;
+            App.Current.MainWindow = NewWindow;
+            CurrentWindow.Close();
+            NewWindow.Show();
         }
 
         /// <summary>
