@@ -57,8 +57,8 @@ namespace OneDrive_Cloud_Player
 
         public void SwitchWindows(Window NewWindow)
         {
-            Window CurrentWindow = App.Current.MainWindow;
-            App.Current.MainWindow = NewWindow;
+            Window CurrentWindow = MainWindow;
+            MainWindow = NewWindow;
             CurrentWindow.Close();
             NewWindow.Show();
         }
