@@ -29,7 +29,7 @@ namespace OneDrive_Cloud_Player.API.Authentication.InteractiveComponents
             int windowHeight = DefaultWindowHeight,
             WindowStartupLocation windowStartupLocation = WindowStartupLocation.CenterOwner)
         {
-            Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+            Dispatcher.FromThread(Thread.CurrentThread);
             _owner = owner ?? throw new ArgumentNullException(nameof(owner));
             _title = title;
             _windowWidth = windowWidth;

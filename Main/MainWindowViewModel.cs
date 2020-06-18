@@ -24,7 +24,7 @@ namespace OneDrive_Cloud_Player.Main
         public ICommand GetChildrenFomDriveCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
 
-        private GraphHandler graph;
+        private readonly GraphHandler graph;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -269,7 +269,6 @@ namespace OneDrive_Cloud_Player.Main
             {
                 return new SolidColorBrush(Colors.Transparent);
             }
-            return SystemColors.ControlColor;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
