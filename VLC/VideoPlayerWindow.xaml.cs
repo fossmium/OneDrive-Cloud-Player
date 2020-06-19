@@ -18,7 +18,7 @@ namespace OneDrive_Cloud_Player.VLC
 {
     partial class VideoPlayerWindow : MetroWindow, INotifyPropertyChanged
     {
-        private int volumeValue = 20;
+        private int volumeValue = 50;
 
         public int VolumeValue
         {
