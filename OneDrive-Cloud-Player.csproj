@@ -23,6 +23,7 @@
     <None Remove="Assets\Icons\play_arrow.png" />
     <None Remove="Assets\Icons\Reload.png" />
     <None Remove="Assets\Icons\stop.png" />
+    <None Remove="Assets\Icons\volume-up.png" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibVLCSharp" Version="3.4.5" />
@@ -54,6 +55,7 @@
     <Resource Include="Assets\Icons\play_arrow.png" />
     <Resource Include="Assets\Icons\Reload.png" />
     <Resource Include="Assets\Icons\stop.png" />
+    <Resource Include="Assets\Icons\volume-up.png" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="API\Graph\InteractiveComponents\Internal\EmbeddedWebUI.xaml.cs">
