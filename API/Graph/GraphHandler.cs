@@ -63,7 +63,7 @@ namespace OneDrive_Cloud_Player.API
         }
 
         /// <summary>
-        /// Get the children that are inside a drive item.
+        /// Get the children that are inside a drive item. Rreturns null upon Graph ServiceException
         /// </summary>
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
@@ -73,7 +73,15 @@ namespace OneDrive_Cloud_Player.API
             //Create a new GraphServiceClient.
             await CreateGraphClientAsync();
             //Return the children of the item on the given drive.
-            return await GraphClient.Me.Drives[DriveId].Items[ItemId].Children.Request().GetAsync();
+            try
+            {
+                return await GraphClient.Me.Drives[DriveId].Items[ItemId].Children.Request().GetAsync();
+            }
+            catch (ServiceException)
+            {
+                return null;
+            }
+            
         }
 
         /// <summary>

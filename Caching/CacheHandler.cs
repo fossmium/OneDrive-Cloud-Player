@@ -1,4 +1,5 @@
-﻿using Microsoft.Identity.Client;
+﻿using Microsoft.Graph;
+using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Caching.GraphData;
@@ -12,7 +13,7 @@ namespace OneDrive_Cloud_Player.Caching
 {
 	public class CacheHandler
 	{
-		GraphHandler Graph = new GraphHandler();
+		GraphHandler graph { get; set; }
 
 		public string CurrentUserId { get; private set; }
 
@@ -23,6 +24,7 @@ namespace OneDrive_Cloud_Player.Caching
 		public CacheHandler()
 		{
 			Cache = new List<OneDriveCache>();
+			graph = new GraphHandler();
 		}
 
 		/// <summary>
@@ -109,28 +111,6 @@ namespace OneDrive_Cloud_Player.Caching
 			CurrentUserId = null;
 		}
 
-		//public static async Task<Drive> GetCachedDriveInformationAsync(string DriveId)
-		//{
-		//	bool Found = false;
-		//	foreach (CachedDrive DriveCollection in CurrentUserCache.Drives)
-		//	{
-		//		if (DriveCollection.DriveId.Equals(DriveId))
-		//		{
-		//			Found = true;
-		//			// Convert the current DriveCollection to Microsoft.Graph.Drive
-		//			Drive DriveInformation = new Drive();
-		//			DriveItem i = new DriveItem();
-		//			DriveInformation.Id = DriveId;
-
-		//		}
-		//	}
-		//	if (!Found)
-		//	{
-		//		// The requested drive with DriveId was not found in the cache, we need to make a graph call
-		//		return await Graph.GetDriveInformationAsync(DriveId);
-		//	}
-		//}
-
 		/// <summary>
 		/// Deserialize a JSON string loaded from disk to set the cache.
 		/// Can be null in case the cache does not exist on disk.
@@ -153,8 +133,81 @@ namespace OneDrive_Cloud_Player.Caching
 			new Thread(() =>
 			{
 				string JsonToWrite = JsonConvert.SerializeObject(Cache, Formatting.Indented);
-				IO.JsonHandler.WriteJson(JsonToWrite, "graphcache1.json");
+				IO.JsonHandler.WriteJson(JsonToWrite, "graphcache.json");
 			}).Start();	
+		}
+
+		/// <summary>
+		/// First check if there is cache. If so, load that. If not, request data from Graph.
+		/// In any case, the cache is freshly updated on a new thread after the data has been fetched,
+		/// so the next time it won't have to call Graph. For Drives, this won't have a big impact,
+		/// but DriveItem loading might benefit significantly from caching.
+		/// </summary>
+		/// <returns></returns>
+		public async Task<List<CachedDrive>> GetDrives()
+		{
+			List<CachedDrive> drives = null;
+			if (CurrentUserCache.Drives.Count != 0)
+			{
+				drives = CurrentUserCache.Drives;
+			}
+			else
+			{
+				drives = await GetDrivesFromGraph();
+			}
+			new Thread(async () =>
+			{
+				await UpdateDriveCache();
+			});
+			return drives;
+		}
+
+		public async Task<List<CachedDrive>> GetDrivesFromGraph()
+		{
+			// Compile a list of drives, straight from Graph
+			List<DriveItem> localDriveList = new List<DriveItem>();
+			localDriveList.Add(await graph.GetUserRootDrive());
+
+			IDriveSharedWithMeCollectionPage sharedDrivesCollection = await graph.GetSharedDrivesAsync();
+			foreach (DriveItem drive in sharedDrivesCollection)
+			{
+				if (drive.Folder != null)
+				{
+					localDriveList.Add(drive);
+				}
+			}
+
+			// Convert the Graph format
+			string CurrentUserName = (await graph.GetOneDriveUserInformationAsync()).DisplayName;
+			List<CachedDrive> newlyCachedDrives = new List<CachedDrive>();
+			foreach (DriveItem graphDrive in localDriveList)
+			{
+				CachedDrive driveToAdd = new CachedDrive();
+				driveToAdd.DriveName = graphDrive.Name;
+				driveToAdd.Id = graphDrive.Id;
+				driveToAdd.ChildrenCount = graphDrive.Folder.ChildCount;
+				// Check if the current graphDrive in the localDriveList is the personal graphDrive
+				if (graphDrive.RemoteItem == null)
+				{
+					// this is the personal drive
+					driveToAdd.DriveId = graphDrive.ParentReference.DriveId;
+					driveToAdd.IsSharedFolder = false;
+					driveToAdd.OwnerName = CurrentUserName;
+				}
+				else
+				{
+					driveToAdd.DriveId = graphDrive.RemoteItem.ParentReference.DriveId;
+					driveToAdd.IsSharedFolder = true;
+					driveToAdd.OwnerName = graphDrive.RemoteItem.Shared.SharedBy.User.DisplayName;
+				}
+				newlyCachedDrives.Add(driveToAdd);
+			}
+			return newlyCachedDrives;
+		}
+
+		public async Task UpdateDriveCache()
+		{
+			CurrentUserCache.Drives = await GetDrivesFromGraph();
 		}
 	}
 }

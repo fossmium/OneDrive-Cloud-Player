@@ -5,7 +5,7 @@
         xmlns:local="clr-namespace:OneDrive_Cloud_Player.Main"
         xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        Title="One Drive Cloud Player" Height="700" Width="1000"
+        Title="OneDrive Cloud Player" Height="700" Width="1000"
         >
 
 
@@ -30,8 +30,9 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="110"/>
                     <RowDefinition Height="32"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+					<RowDefinition Height="100"/>
+				</Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0" Background="Red">
                     <TextBlock Text="User Picture and name. (dropdown when clicked on the picture to show a button to open the settings window)" TextWrapping="Wrap"/>
@@ -69,8 +70,8 @@
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="20"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="DriveName" Grid.Column="0" HorizontalAlignment="Left" Background="Transparent" Text="{Binding Name}"/>
-                                    <TextBlock x:Name="DriveChildCount" Grid.Column="2" HorizontalAlignment="Right" Background="Transparent" TextAlignment="Right" Text="{Binding Folder.ChildCount}"/>
+									<TextBlock x:Name="DriveName" Grid.Column="0" HorizontalAlignment="Left" Background="Transparent" Text="{Binding DriveName}"/>
+									<TextBlock x:Name="DriveChildCount" Grid.Column="2" HorizontalAlignment="Right" Background="Transparent" TextAlignment="Right" Text="{Binding ChildrenCount}"/>
                                 </Grid>
 
                             </StackPanel>
@@ -78,8 +79,16 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
-                <Button Command="{Binding LogoutCommand}" Grid.Row="2" Height="40" VerticalAlignment="Bottom" Content="Logout"></Button>
-            </Grid>
+
+				<Grid Grid.Row="3">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Button Command="{Binding ReloadCommand}" Grid.Row="0" Height="40" VerticalAlignment="Bottom" Content="Reload" Visibility="{Binding VisibilityReloadButton}"></Button>
+					<Button Command="{Binding LogoutCommand}" Grid.Row="1" Height="40" VerticalAlignment="Bottom" Content="Logout"></Button>
+				</Grid>
+			</Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="50"/>

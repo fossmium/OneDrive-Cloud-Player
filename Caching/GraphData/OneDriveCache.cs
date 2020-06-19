@@ -18,13 +18,13 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		/// This is the unique id used to identify an account
 		/// </summary>
 		[JsonProperty("userId")]
-		public string UserId { get; private set; }
+		public string UserId { get; set; }
 
 		/// <summary>
 		/// This represents a collection of all the drives (owned or shared) of the currently signed in user.
 		/// </summary>
 		[JsonProperty("drives")]
-		public List<CachedDrive> Drives { get; private set; }
+		public List<CachedDrive> Drives { get; set; }
 
 	}
 }

@@ -17,36 +17,36 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		/// This id will reference the id of another item in case this item has a parent. If this item does not have a parent, this id will be null.
 		/// </summary>
 		[JsonProperty("parentItemId")]
-		public string ParentItemId { get; private set; }
+		public string ParentItemId { get; set; }
 
 		/// <summary>
 		/// This boolean indicates whether or not this item is a folder.
 		/// </summary>
 		[JsonProperty("isFolder")]
-		public bool IsFolder { get; private set; }
+		public bool IsFolder { get; set; }
 
 		/// <summary>
 		/// This is the name of the item. In case of a folder, it will be the folder name. In case of a file, it will be the file name.
 		/// </summary>
 		[JsonProperty("name")]
-		public string Name { get; private set; }
+		public string Name { get; set; }
 
 		/// <summary>
 		/// Size of the file or folder in Bytes
 		/// </summary>
 		[JsonProperty("size")]
-		public int Size { get; private set; }
+		public long? Size { get; set; }
 
 		/// <summary>
 		/// In case this is a folder, this represents the amount of children this folder has
 		/// </summary>
 		[JsonProperty("childCount")]
-		public int ChildCount { get; private set; }
+		public int ChildCount { get; set; }
 
 		/// <summary>
 		/// In case this is a file, this represents the mime type
 		/// </summary>
 		[JsonProperty("mimeType")]
-		public string MimeType { get; private set; }
+		public string MimeType { get; set; }
 	}
 }

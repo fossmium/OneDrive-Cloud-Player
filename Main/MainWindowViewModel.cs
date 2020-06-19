@@ -2,6 +2,7 @@
 using Microsoft.Graph;
 using AuthenticationHandler = OneDrive_Cloud_Player.API.AuthenticationHandler;
 using OneDrive_Cloud_Player.API;
+using OneDrive_Cloud_Player.Caching.GraphData;
 using OneDrive_Cloud_Player.Login;
 using OneDrive_Cloud_Player.VLC;
 using System;
@@ -9,9 +10,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Threading;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -21,6 +24,7 @@ namespace OneDrive_Cloud_Player.Main
         public ICommand GetSharedFolderChildrenCommand { get; set; }
         public ICommand GetChildrenFomItemCommand { get; set; }
         public ICommand GetChildrenFomDriveCommand { get; set; }
+        public ICommand ReloadCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
 
         private readonly GraphHandler graph;
@@ -29,9 +33,9 @@ namespace OneDrive_Cloud_Player.Main
 
 
         // The list of the different drives
-        private List<DriveItem> driveList;
+        private List<CachedDrive> driveList;
 
-        public List<DriveItem> DriveList
+        public List<CachedDrive> DriveList
         {
             get { return driveList; }
             set
@@ -55,9 +59,9 @@ namespace OneDrive_Cloud_Player.Main
         }
 
         // The folder that gets selected when you click on a onedrive
-        private DriveItem selectedDriveFolder;
+        private CachedDrive selectedDriveFolder;
 
-        public DriveItem SelectedDriveFolder
+        public CachedDrive SelectedDriveFolder
         {
             get { return selectedDriveFolder; }
             set
@@ -79,6 +83,16 @@ namespace OneDrive_Cloud_Player.Main
                 NotifyPropertyChanged();
             }
         }
+		
+        private static string visibilityReloadButton = "Visible";
+
+        public static string VisibilityReloadButton {
+            get { return visibilityReloadButton; }
+            set {
+                visibilityReloadButton = value;
+                NotifyStaticPropertyChanged("VisibilityReloadButton");
+            }
+        }
 
         private string SelectedDriveId { get; set; }
 
@@ -95,6 +109,26 @@ namespace OneDrive_Cloud_Player.Main
             // OnLoad runs the login and gets the shared drives
             GetDrivesCommand.Execute(null);
         }
+		
+		/// <param name="obj"></param>
+		private async void ReloadCache(object obj)
+		{
+			new Thread(async () =>
+		    {
+			    await App.Current.CacheHandler.UpdateDriveCache();
+			    DriveList = App.Current.CacheHandler.CurrentUserCache.Drives;
+			    List<CachedDrive> localList = new List<CachedDrive>();
+			    localList.Add(new CachedDrive() { DriveName = "teriing"});
+			    DriveList = localList;
+			    Dispatcher.Invoke(() =>
+			    {
+					foreach (CachedDrive drive in DriveList)
+					{
+						Console.WriteLine(drive.DriveName);
+					}
+				});
+			}).Start();
+		}
 
         private bool CanExecuteMethod(object arg)
         {
@@ -113,7 +147,6 @@ namespace OneDrive_Cloud_Player.Main
             App.Current.SwitchWindows(new LoginWindow());
         }
 
-        //TODO: Implement that the personal drive is also added the the drivelist in the UI.
         /// <summary>
         /// Creates a list of the drives that are shared with the user.
         /// </summary>
@@ -121,26 +154,28 @@ namespace OneDrive_Cloud_Player.Main
         public async void GetDrives(object obj)
         {
             //Creates local list to store the user drive and shared drives of the user.
-            List<DriveItem> localDriveList = new List<DriveItem>();
+            List<CachedDrive> localDriveList = new List<CachedDrive>();
+            //List<DriveItem> localDriveList = new List<DriveItem>();
 
-            DriveItem personalDrive = await graph.GetUserRootDrive();
+			//DriveItem personalDrive = await graph.GetUserRootDrive();
 
-            localDriveList.Add(personalDrive);
+            //localDriveList.Add(personalDrive);
 
             //Retrieves and stores the drives that are shared with the user.
-            IDriveSharedWithMeCollectionPage sharedDrivesCollection = await graph.GetSharedDrivesAsync();
+            //IDriveSharedWithMeCollectionPage sharedDrivesCollection = await graph.GetSharedDrivesAsync();
 
 
-            //Adds only drives to the driveList when they are a folder. To filter out the shared files.
-            foreach (DriveItem drive in sharedDrivesCollection)
-            {
-                if (drive.Folder != null)
-                {
-                    localDriveList.Add(drive);
-                }
-            }
+			//Adds only drives to the driveList when they are a folder. To filter out the shared files.
+			//foreach (DriveItem drive in sharedDrivesCollection)
+			//{
+			//	if (drive.Folder != null)
+			//	{
+			//		localDriveList.Add(drive);
+			//	}
+			//}
+			localDriveList = await App.Current.CacheHandler.GetDrives();
 
-            //Sets the DriveItemList property so it updates the UI.
+			//Sets the DriveItemList property so it updates the UI.
             DriveList = localDriveList;
 
             Console.WriteLine(" + Loaded Drives.");
@@ -160,25 +195,20 @@ namespace OneDrive_Cloud_Player.Main
             //Initializing.
             string sharedItemId;
 
-            //Checks if the selected drive is a shared drive or a user drive.
-            if (selectedDriveFolder.RemoteItem != null)
-            {
-                //Sets the SelectedDriveId field with the driveid of the selected drive.
-                SelectedDriveId = selectedDriveFolder.RemoteItem.ParentReference.DriveId;
+            //Sets the SelectedDriveId field with the driveid of the selected drive.
+            SelectedDriveId = SelectedDriveFolder.DriveId;
 
-                //Sets the item id of the selectedItem variable.
-                sharedItemId = selectedDriveFolder.RemoteItem.Id;
-            }
-            else
-            {
-                //Sets the SelectedDriveId field with the driveid of the selected drive.
-                SelectedDriveId = selectedDriveFolder.ParentReference.DriveId;
-
-                //Sets the sharedItemId with the id of the selected folder.
-                sharedItemId = selectedDriveFolder.Id;
-            }
+            //Sets the item id of the selectedItem variable.
+            sharedItemId = SelectedDriveFolder.Id;
 
             IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, sharedItemId);
+
+			if (driveItemsCollection == null)
+            {
+                // Show dialog and return
+                MessageBox.Show("An error has occured while entering this shared folder. Please try again later.");
+                return;
+            }
 
             List<DriveItem> localItemList = new List<DriveItem>();
 
@@ -285,6 +315,12 @@ namespace OneDrive_Cloud_Player.Main
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+		public static event PropertyChangedEventHandler StaticPropertyChanged;
+
+		private static void NotifyStaticPropertyChanged([CallerMemberName] string name = null)
+		{
+			StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(name));
+		}
 
     }
 }
