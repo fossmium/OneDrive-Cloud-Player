@@ -169,13 +169,14 @@ namespace OneDrive_Cloud_Player.Caching
 			try
 			{
 				CachedDrive DriveToSearch = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId));
-				IEnumerable<CachedDriveItem> ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ItemId.Equals(ItemId));
+				// Get all items with a ParentItemId equal to the 2nd argument ItemId, so the direct children of a drive
+				IEnumerable<CachedDriveItem> ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ParentItemId.Equals(ItemId));
 				if (!ChildrenFromDrive.Any())
 				{
 					// Found no children from the specified drive in cache, so we need to fetch the latest from Graph
 					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
-					//DriveToSearch.ItemList = itemsToReturn;
-					
+					// Since there are no items with a ParentItemId set to the drive, there cannot be any other items, since they would be eventually be children of items which are children of the drive
+					DriveToSearch.ItemList = itemsToReturn;
 				}
 				else
 				{
@@ -193,6 +194,21 @@ namespace OneDrive_Cloud_Player.Caching
 		}
 
 		// TODO er kan niets inzitten
+		
+		//public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
+		//{
+		//	List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+		//	// Check if newly fecthed items exist in the cache. If not, add them. If yes, overwrite them with new data
+
+		//	//DriveToSearch.ItemList.ForEach((currentItem) =>
+		//	//{
+
+		//	////		if (itemToReturn.ParentItemId.Equals(currentItem.ParentItemId))
+		//	////		{
+		//	////			currentItem = itemToReturn;
+		//	////		}
+		//	//});
+		//}
 
 		public async Task<List<CachedDriveItem>> GetCachedDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
 		{
