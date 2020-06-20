@@ -132,6 +132,7 @@ namespace OneDrive_Cloud_Player.Caching
 		{
 			new Thread(() =>
 			{
+				//TODO: Dont forget to set indenting to none on release.
 				string JsonToWrite = JsonConvert.SerializeObject(Cache, Formatting.Indented);
 				IO.JsonHandler.WriteJson(JsonToWrite, "graphcache.json");
 			}).Start();	
@@ -154,91 +155,14 @@ namespace OneDrive_Cloud_Player.Caching
 			else
 			{
 				drives = await GetDrivesFromGraph();
+				CurrentUserCache.Drives = drives;
 			}
 			new Thread(async () =>
 			{
 				await UpdateDriveCache();
-			});
+			}).Start();
 			return drives;
 		}
-
-		public async Task<List<CachedDriveItem>> GetCachedChildrenFromDrive(string SelectedDriveId, string ItemId)
-		{
-			List<CachedDriveItem> itemsToReturn = null;
-			// Search for CachedDriveItems in the CachedDrive with the specified DriveId and ItemId
-			try
-			{
-				CachedDrive DriveToSearch = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId));
-				// Get all items with a ParentItemId equal to the 2nd argument ItemId, so the direct children of a drive
-				IEnumerable<CachedDriveItem> ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ParentItemId.Equals(ItemId));
-				if (!ChildrenFromDrive.Any())
-				{
-					// Found no children from the specified drive in cache, so we need to fetch the latest from Graph
-					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
-					// Since there are no items with a ParentItemId set to the drive, there cannot be any other items, since they would be eventually be children of items which are children of the drive
-					DriveToSearch.ItemList = itemsToReturn;
-				}
-				else
-				{
-					itemsToReturn = ChildrenFromDrive.ToList();
-				}
-				// We need to update the cache here on another thread without potentially destroying other saved items,
-				// so we can't just overwrite the ItemList
-				return itemsToReturn;
-			}
-			catch (InvalidOperationException)
-			{
-				// If there is no Drive witht the specified driveId, an InvalidOperationException will be thrown.
-				// This means the user clicked on a drive in cache (but this cache was updated at startup)
-				return null;
-			}
-
-		}
-
-		public async Task<List<CachedDriveItem>> GetCachedDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
-		{
-			List<DriveItem> itemsFromDrive = (await Graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId)).ToList();
-			// Convert Graph DriveItems to CachedDriveItems
-			List<CachedDriveItem> itemsToReturn = new List<CachedDriveItem>();
-			itemsFromDrive.ForEach((graphDriveItem) =>
-			{
-				CachedDriveItem itemToAdd = new CachedDriveItem();
-				itemToAdd.ItemId = graphDriveItem.Id;
-				itemToAdd.ParentItemId = ItemId;
-				itemToAdd.IsFolder = graphDriveItem.Folder != null;
-				itemToAdd.Name = graphDriveItem.Name;
-				itemToAdd.Size = graphDriveItem.Size ?? 0;
-				if (graphDriveItem.Folder is null)
-				{
-					itemToAdd.ChildCount = null;
-				}
-				else
-				{
-					itemToAdd.ChildCount = graphDriveItem.Folder.ChildCount;
-				}
-				if (graphDriveItem.File != null)
-				{
-					itemToAdd.MimeType = graphDriveItem.File.MimeType;
-				}
-				itemsToReturn.Add(itemToAdd);
-			});
-			return itemsToReturn;
-		}
-
-		//public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
-		//{
-		//	List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
-		//	// Check if newly fecthed items exist in the cache. If not, add them. If yes, overwrite them with new data
-
-		//	//DriveToSearch.ItemList.ForEach((currentItem) =>
-		//	//{
-
-		//	////		if (itemToReturn.ParentItemId.Equals(currentItem.ParentItemId))
-		//	////		{
-		//	////			currentItem = itemToReturn;
-		//	////		}
-		//	//});
-		//}
 
 		public async Task<List<CachedDrive>> GetDrivesFromGraph()
 		{
@@ -287,5 +211,98 @@ namespace OneDrive_Cloud_Player.Caching
 		{
 			CurrentUserCache.Drives = await GetDrivesFromGraph();
 		}
+
+		public async Task<List<CachedDriveItem>> GetCachedChildrenFromDrive(string SelectedDriveId, string ItemId)
+		{
+			List<CachedDriveItem> itemsToReturn = null;
+			// Search for CachedDriveItems in the CachedDrive with the specified DriveId and ItemId
+			try
+			{
+				CachedDrive DriveToSearch = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId) && drive.Id.Equals(ItemId));
+				// Get all items with a ParentItemId equal to the 2nd argument ItemId, so the direct children of a drive
+				IEnumerable<CachedDriveItem> ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ParentItemId.Equals(ItemId));
+				if (!ChildrenFromDrive.Any())
+				{
+					// Found no children from the specified drive in cache, so we need to fetch the latest from Graph
+					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+					// Since there are no items with a ParentItemId set to the drive, there cannot be any other items, since they would be eventually be children of items which are children of the drive
+					DriveToSearch.ItemList = itemsToReturn;
+				}
+				else
+				{
+					itemsToReturn = ChildrenFromDrive.ToList();
+				}
+				// We need to update the cache here on another thread without potentially destroying other saved items,
+				// so we can't just overwrite the ItemList
+				new Thread(async () =>
+				{
+					await UpdateDriveChildrenCache(SelectedDriveId, ItemId);
+				}).Start();
+				return itemsToReturn;
+			}
+			catch (InvalidOperationException)
+			{
+				// If there is no Drive witht the specified driveId, an InvalidOperationException will be thrown.
+				// This means the user clicked on a drive in cache (but this cache was updated at startup)
+				return null;
+			}
+		}
+
+		public async Task<List<CachedDriveItem>> GetCachedDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
+		{
+			List<DriveItem> localItemsFromGraph = (await Graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId)).ToList();
+			// Convert Graph DriveItems to CachedDriveItems
+			List<CachedDriveItem> itemsToReturn = new List<CachedDriveItem>();
+			localItemsFromGraph.ForEach((graphDriveItem) =>
+			{
+				CachedDriveItem itemToAdd = new CachedDriveItem();
+				itemToAdd.ItemId = graphDriveItem.Id;
+				itemToAdd.ParentItemId = ItemId;
+				itemToAdd.IsFolder = graphDriveItem.Folder != null;
+				itemToAdd.Name = graphDriveItem.Name;
+				itemToAdd.Size = graphDriveItem.Size ?? 0;
+				if (graphDriveItem.Folder is null)
+				{
+					itemToAdd.ChildCount = null;
+				}
+				else
+				{
+					itemToAdd.ChildCount = graphDriveItem.Folder.ChildCount;
+				}
+				if (graphDriveItem.File != null)
+				{
+					itemToAdd.MimeType = graphDriveItem.File.MimeType;
+				}
+				itemsToReturn.Add(itemToAdd);
+			});
+			return itemsToReturn;
+		}
+
+        public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
+        {
+            List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+			List<CachedDriveItem> CurrentlyCachedDriveItems = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId) && drive.Id.Equals(ItemId)).ItemList;
+
+			// Remove all cached items with the same ItemId
+			// Now add all newly fetched items
+			List<CachedDriveItem> itemsToRemove = new List<CachedDriveItem>();
+
+			CurrentlyCachedDriveItems.ForEach((currentItem) =>
+			{
+				if (currentItem.ParentItemId.Equals(ItemId))
+				{
+					itemsToRemove.Add(currentItem);
+				}
+			});
+
+			// remove all the items here
+			itemsToRemove.ForEach((currentItem) =>
+			{
+				CurrentlyCachedDriveItems.Remove(currentItem);
+			});
+
+			CurrentlyCachedDriveItems.AddRange(newlyFecthedDrives);
+		}
+		
 	}
 }

@@ -16,6 +16,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
 using System.Linq;
+using System.Diagnostics;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -110,9 +111,10 @@ namespace OneDrive_Cloud_Player.Main
 
         public DriveItem PreviousSelectedCategory { get; private set; }
 
+
         public MainWindowViewModel()
         {
-            driveList = null;
+            DriveList = null;
             this.graph = new GraphHandler();
             GetDrivesCommand = new CommandHandler(GetDrives, CanExecuteMethod);
             //GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
@@ -120,7 +122,6 @@ namespace OneDrive_Cloud_Player.Main
             ReloadCommand = new CommandHandler(ReloadCache, CanExecuteMethod);
             LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
-            GetDrivesCommand.Execute(null);
             GetUserInformation();
         }
 
@@ -134,9 +135,9 @@ namespace OneDrive_Cloud_Player.Main
 		{
             Console.WriteLine("Reload Cache called");
             VisibilityReloadButton = "Collapsed";
-			new Thread(async () =>
-		    {
-			    await App.Current.CacheHandler.UpdateDriveCache();
+            new Thread(async () =>
+            {
+                await App.Current.CacheHandler.UpdateDriveCache();
                 DriveList = App.Current.CacheHandler.CurrentUserCache.Drives;
                 VisibilityReloadButton = "Visible";
             }).Start();
@@ -165,6 +166,11 @@ namespace OneDrive_Cloud_Player.Main
         /// <returns></returns>
         public async void GetDrives(object obj)
         {
+            StackTrace stackTrace = new StackTrace();
+            // Get calling method name
+            Console.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
+            var yeet = stackTrace.GetFrame(1).GetMethod();
+            Console.WriteLine(new StackFrame(1).GetMethod().Name);
             //Creates local list to store the user drive and shared drives of the user.
             List<CachedDrive> localDriveList = await App.Current.CacheHandler.GetDrives();
             //List<DriveItem> localDriveList = new List<DriveItem>();
@@ -186,10 +192,8 @@ namespace OneDrive_Cloud_Player.Main
             //	}
             //}
 
-			//Sets the DriveItemList property so it updates the UI.
+            //Sets the DriveItemList property so it updates the UI.
             DriveList = localDriveList;
-
-            Console.WriteLine(" + Loaded Drives.");
         }
 
 
@@ -295,12 +299,12 @@ namespace OneDrive_Cloud_Player.Main
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Console.WriteLine("Converted called!");
+            //Console.WriteLine("Converted called!");
             //if (value != null)
             //{
             //    return null;
             //}
-            Console.WriteLine(value);
+            //Console.WriteLine(value);
             //var color = value.ToString();
 
 

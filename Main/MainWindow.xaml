@@ -12,6 +12,12 @@
     <Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
+    
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding GetDrivesCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
 
     <!--Sets the background-->
     <Controls:MetroWindow.Background>
