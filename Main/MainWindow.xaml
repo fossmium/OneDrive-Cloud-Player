@@ -63,7 +63,7 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <!--<StackPanel >-->
-                            <StackPanel x:Name="DrivesStackPanel" Background="{Binding Path=RemoteItem, Converter={StaticResource converter}}">
+                            <StackPanel x:Name="DrivesStackPanel" Background="{Binding Path=IsSharedFolder, Converter={StaticResource converter}}">
                                 <Grid >
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="150"/>
