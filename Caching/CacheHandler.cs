@@ -303,6 +303,98 @@ namespace OneDrive_Cloud_Player.Caching
 
 			CurrentlyCachedDriveItems.AddRange(newlyFecthedDrives);
 		}
-		
+
+		public async Task<List<CachedDriveItem>> GetCachedChildrenFromItem(CachedDrive SelectedDrive, string ItemId)
+		{
+			List<CachedDriveItem> CurrentlyCachedItems = SelectedDrive.ItemList;
+
+			List<CachedDriveItem> ChildrenFromItem = new List<CachedDriveItem>();
+
+			// There are children, so we need to search the ItemList for them by comparing the ParentItemId and ItemId
+			CurrentlyCachedItems.ForEach((currentItem) =>
+			{
+				if (currentItem.ParentItemId.Equals(ItemId))
+				{
+					ChildrenFromItem.Add(currentItem);
+				}
+			});
+
+			if (ChildrenFromItem.Count == 0)
+			{
+				// There were no items with the correct ParentItemId, so we need to call Graph
+				ChildrenFromItem = await GetItemChildrenFromGraph(SelectedDrive.DriveId, ItemId);
+			}
+			// Now update the cache on another thread.
+			Thread t = new Thread(async () =>
+			{
+				await UpdateItemChildrenCache(SelectedDrive.DriveId, SelectedDrive.Id, ItemId);
+			});
+			t.Name = "UpdateItemChildrenThread";
+			t.Start();
+			return ChildrenFromItem;
+		}
+
+		public async Task<List<CachedDriveItem>> GetItemChildrenFromGraph(string DriveId, string ItemId)
+		{
+			List<DriveItem> ItemsFromGraph = (await Graph.GetChildrenOfItemAsync(DriveId, ItemId)).ToList();
+
+			List<CachedDriveItem> ChildrenFromItem = new List<CachedDriveItem>();
+
+			ItemsFromGraph.ForEach((graphItem) =>
+			{
+				CachedDriveItem itemToAdd = new CachedDriveItem();
+				itemToAdd.ItemId = graphItem.Id;
+				itemToAdd.ParentItemId = graphItem.ParentReference.Id;
+				itemToAdd.IsFolder = graphItem.Folder != null;
+				itemToAdd.Name = graphItem.Name;
+				itemToAdd.Size = graphItem.Size ?? 0;
+				if (itemToAdd.IsFolder)
+				{
+					itemToAdd.ChildCount = graphItem.Folder.ChildCount;
+				}
+				else
+				{
+					if (graphItem.File != null)
+					{
+						itemToAdd.MimeType = graphItem.File.MimeType;
+					}
+				}
+				ChildrenFromItem.Add(itemToAdd);
+			});
+
+			return ChildrenFromItem;
+		}
+
+		public async Task UpdateItemChildrenCache(string DriveId, string DriveItemId, string ItemId)
+		{
+			List<CachedDriveItem> ItemsFromGraph = await GetItemChildrenFromGraph(DriveId, ItemId);
+
+			List<CachedDriveItem> ItemsInCache = CurrentUserCache.Drives.First((currentItem) => currentItem.DriveId.Equals(DriveId) && currentItem.Id.Equals(DriveItemId)).ItemList;
+
+			// Create a list of all items in cache to remove, so we can simply append the items from Graph
+			List<CachedDriveItem> ItemsToRemove = new List<CachedDriveItem>();
+
+			if (ItemsToRemove is null)
+			{
+				return;
+			}
+
+			// Match the ParentItemIds of items in cache to the ItemId of the item of which we want to get children
+			ItemsInCache.ForEach((currentItem) =>
+			{
+				if (currentItem.ParentItemId.Equals(ItemId))
+				{
+					ItemsToRemove.Add(currentItem);
+				}
+			});
+
+			ItemsToRemove.ForEach((itemToRemove) =>
+			{
+				ItemsInCache.Remove(itemToRemove);
+			});
+
+			ItemsInCache.AddRange(ItemsFromGraph);
+		}
+
 	}
 }

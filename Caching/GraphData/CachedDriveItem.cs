@@ -35,7 +35,7 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		/// Size of the file or folder in Bytes
 		/// </summary>
 		[JsonProperty("size")]
-		public long Size { get; set; }
+		public long? Size { get; set; }
 
 		/// <summary>
 		/// In case this is a folder, this represents the amount of children this folder has
