@@ -111,15 +111,12 @@ namespace OneDrive_Cloud_Player.Main
         }
 		
 		/// <param name="obj"></param>
-		private async void ReloadCache(object obj)
+		private void ReloadCache(object obj)
 		{
 			new Thread(async () =>
 		    {
 			    await App.Current.CacheHandler.UpdateDriveCache();
 			    DriveList = App.Current.CacheHandler.CurrentUserCache.Drives;
-			    List<CachedDrive> localList = new List<CachedDrive>();
-			    localList.Add(new CachedDrive() { DriveName = "teriing"});
-			    DriveList = localList;
 			    Dispatcher.Invoke(() =>
 			    {
 					foreach (CachedDrive drive in DriveList)
