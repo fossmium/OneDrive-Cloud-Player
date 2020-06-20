@@ -35,13 +35,13 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		/// Size of the file or folder in Bytes
 		/// </summary>
 		[JsonProperty("size")]
-		public long? Size { get; set; }
+		public long Size { get; set; }
 
 		/// <summary>
 		/// In case this is a folder, this represents the amount of children this folder has
 		/// </summary>
 		[JsonProperty("childCount")]
-		public int ChildCount { get; set; }
+		public int? ChildCount { get; set; }
 
 		/// <summary>
 		/// In case this is a file, this represents the mime type

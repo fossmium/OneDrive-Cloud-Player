@@ -13,7 +13,7 @@ namespace OneDrive_Cloud_Player.Caching
 {
 	public class CacheHandler
 	{
-		GraphHandler graph { get; set; }
+		GraphHandler Graph { get; set; }
 
 		public string CurrentUserId { get; private set; }
 
@@ -24,7 +24,7 @@ namespace OneDrive_Cloud_Player.Caching
 		public CacheHandler()
 		{
 			Cache = new List<OneDriveCache>();
-			graph = new GraphHandler();
+			Graph = new GraphHandler();
 		}
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace OneDrive_Cloud_Player.Caching
 					}
 				}
 			}
-			if (CurrentUserCache == null)
+			if (CurrentUserCache is null)
 			{
 				// the current user has not been found in the cache, so now we need to create a user cache
 				CreateEmptyUserCache(CurrentUserId);
@@ -162,13 +162,75 @@ namespace OneDrive_Cloud_Player.Caching
 			return drives;
 		}
 
+		public async Task<List<CachedDriveItem>> GetCachedChildrenFromDrive(string SelectedDriveId, string ItemId)
+		{
+			List<CachedDriveItem> itemsToReturn = null;
+			// Search for CachedDriveItems in the CachedDrive with the specified DriveId and ItemId
+			try
+			{
+				CachedDrive DriveToSearch = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId));
+				IEnumerable<CachedDriveItem> ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ItemId.Equals(ItemId));
+				if (!ChildrenFromDrive.Any())
+				{
+					// Found no children from the specified drive in cache, so we need to fetch the latest from Graph
+					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+					//DriveToSearch.ItemList = itemsToReturn;
+					
+				}
+				else
+				{
+					itemsToReturn = ChildrenFromDrive.ToList();
+				}
+				return itemsToReturn;
+			}
+			catch (InvalidOperationException)
+			{
+				// If there is no Drive witht the specified driveId, an InvalidOperationException will be thrown.
+				// This means the user clicked on a drive in cache (but this cache was updated at startup)
+				return null;
+			}
+
+		}
+
+		// TODO er kan niets inzitten
+
+		public async Task<List<CachedDriveItem>> GetCachedDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
+		{
+			List<DriveItem> itemsFromDrive = (await Graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId)).ToList();
+			// Convert Graph DriveItems to CachedDriveItems
+			List<CachedDriveItem> itemsToReturn = new List<CachedDriveItem>();
+			itemsFromDrive.ForEach((graphDriveItem) =>
+			{
+				CachedDriveItem itemToAdd = new CachedDriveItem();
+				itemToAdd.ItemId = graphDriveItem.Id;
+				itemToAdd.ParentItemId = ItemId;
+				itemToAdd.IsFolder = graphDriveItem.Folder != null;
+				itemToAdd.Name = graphDriveItem.Name;
+				itemToAdd.Size = graphDriveItem.Size ?? 0;
+				if (graphDriveItem.Folder is null)
+				{
+					itemToAdd.ChildCount = null;
+				}
+				else
+				{
+					itemToAdd.ChildCount = graphDriveItem.Folder.ChildCount;
+				}
+				if (graphDriveItem.File != null)
+				{
+					itemToAdd.MimeType = graphDriveItem.File.MimeType;
+				}
+				itemsToReturn.Add(itemToAdd);
+			});
+			return itemsToReturn;
+		}
+
 		public async Task<List<CachedDrive>> GetDrivesFromGraph()
 		{
 			// Compile a list of drives, straight from Graph
 			List<DriveItem> localDriveList = new List<DriveItem>();
-			localDriveList.Add(await graph.GetUserRootDrive());
+			localDriveList.Add(await Graph.GetUserRootDrive());
 
-			IDriveSharedWithMeCollectionPage sharedDrivesCollection = await graph.GetSharedDrivesAsync();
+			IDriveSharedWithMeCollectionPage sharedDrivesCollection = await Graph.GetSharedDrivesAsync();
 			foreach (DriveItem drive in sharedDrivesCollection)
 			{
 				if (drive.Folder != null)
@@ -178,7 +240,7 @@ namespace OneDrive_Cloud_Player.Caching
 			}
 
 			// Convert the Graph format
-			string CurrentUserName = (await graph.GetOneDriveUserInformationAsync()).DisplayName;
+			string CurrentUsername = (await Graph.GetOneDriveUserInformationAsync()).DisplayName;
 			List<CachedDrive> newlyCachedDrives = new List<CachedDrive>();
 			foreach (DriveItem graphDrive in localDriveList)
 			{
@@ -187,12 +249,12 @@ namespace OneDrive_Cloud_Player.Caching
 				driveToAdd.Id = graphDrive.Id;
 				driveToAdd.ChildrenCount = graphDrive.Folder.ChildCount;
 				// Check if the current graphDrive in the localDriveList is the personal graphDrive
-				if (graphDrive.RemoteItem == null)
+				if (graphDrive.RemoteItem is null)
 				{
 					// this is the personal drive
 					driveToAdd.DriveId = graphDrive.ParentReference.DriveId;
 					driveToAdd.IsSharedFolder = false;
-					driveToAdd.OwnerName = CurrentUserName;
+					driveToAdd.OwnerName = CurrentUsername;
 				}
 				else
 				{

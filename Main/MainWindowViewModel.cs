@@ -15,6 +15,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
+using System.Linq;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -46,9 +47,9 @@ namespace OneDrive_Cloud_Player.Main
         }
 
         // The list of children that is given back when you click on a parent
-        private List<DriveItem> explorerItemsList;
+        private List<CachedDriveItem> explorerItemsList;
 
-        public List<DriveItem> ExplorerItemsList
+        public List<CachedDriveItem> ExplorerItemsList
         {
             get { return explorerItemsList; }
             set
@@ -94,6 +95,17 @@ namespace OneDrive_Cloud_Player.Main
             }
         }
 
+        private string currentUsername;
+
+        public string CurrentUsername {
+            get { return currentUsername; }
+            set {
+                currentUsername = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+
         private string SelectedDriveId { get; set; }
 
         public DriveItem PreviousSelectedCategory { get; private set; }
@@ -103,12 +115,18 @@ namespace OneDrive_Cloud_Player.Main
             driveList = null;
             this.graph = new GraphHandler();
             GetDrivesCommand = new CommandHandler(GetDrives, CanExecuteMethod);
-            GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
+            //GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
             GetChildrenFomDriveCommand = new CommandHandler(GetChildrenFomDrive, CanExecuteMethod);
             ReloadCommand = new CommandHandler(ReloadCache, CanExecuteMethod);
             LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetDrivesCommand.Execute(null);
+            GetUserInformation();
+        }
+
+        public async void GetUserInformation()
+        {
+            CurrentUsername = (await graph.GetOneDriveUserInformationAsync()).DisplayName;
         }
 		
 		/// <param name="obj"></param>
@@ -191,70 +209,72 @@ namespace OneDrive_Cloud_Player.Main
             //Sets the item id of the selectedItem variable.
             string itemId = SelectedDriveFolder.Id;
 
-            IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, itemId);
+            //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, itemId);
+            List<CachedDriveItem> driveItems = await App.Current.CacheHandler.GetCachedChildrenFromDrive(SelectedDriveId, itemId);
 
-			if (driveItemsCollection is null)
+			if (driveItems is null)
             {
                 // Show dialog and return
                 MessageBox.Show("An error has occured while entering this shared folder. Please try again later.");
                 return;
             }
 
-            List<DriveItem> localItemList = new List<DriveItem>();
+            //List<DriveItem> localItemList = new List<DriveItem>();
 
-            foreach (DriveItem item in driveItemsCollection)
-            {
-                localItemList.Add(item);
-            }
+            //foreach (DriveItem item in driveItemsCollection)
+            //{
+            //    localItemList.Add(item);
+            //}
             Console.WriteLine(" + Loaded children from selected Drive.");
 
             //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
-            ExplorerItemsList = localItemList;
+            //ExplorerItemsList = localItemList;
+            ExplorerItemsList = driveItems;
         }
 
         /// <summary>
         /// Retrieves the children that are inside an item and fills the the Childrenlist property with those items.
         /// </summary>
         /// <param name="obj"></param>
-        public async void GetChildrenFomItem(object obj)
-        {
-            //Prevents exception when user clicks an empty space in the ListBox.
-            if (SelectedExplorerItem is null) { return; };
+        //public async void GetChildrenFomItem(object obj)
+        //{
+        //    //Prevents exception when user clicks an empty space in the ListBox.
+        //    if (SelectedExplorerItem is null) { return; };
 
-            List<DriveItem> localDriveItemList = new List<DriveItem>();
+        //    List<DriveItem> localDriveItemList = new List<DriveItem>();
 
-            //Checks if the SelectedExplorerItem is an folder.
-            if (SelectedExplorerItem.Folder != null)
-            {
-                string ItemId = SelectedExplorerItem.Id;
-                IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
+        //    //Checks if the SelectedExplorerItem is an folder.
+        //    if (SelectedExplorerItem.Folder != null)
+        //    {
+        //        string ItemId = SelectedExplorerItem.Id;
+        //        IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
 
-                //Adds every item inside the folder to the localDriveItemList. The item needs to be of type video, audio or folder.
-                foreach (DriveItem item in driveItemsCollection)
-                {
-                    if (item.Folder != null)
-                    {
-                        localDriveItemList.Add(item);
-                    }
-                    else if (item.File != null && (item.File.MimeType.Contains("video") || item.File.MimeType.Contains("audio")))
-                    {
-                        localDriveItemList.Add(item);
-                    }
-                }
-                Console.WriteLine(" + Loaded folder.");
+        //        //Adds every item inside the folder to the localDriveItemList. The item needs to be of type video, audio or folder.
+        //        foreach (DriveItem item in driveItemsCollection)
+        //        {
+        //            if (item.Folder != null)
+        //            {
+        //                localDriveItemList.Add(item);
+        //            }
+        //            else if (item.File != null && (item.File.MimeType.Contains("video") || item.File.MimeType.Contains("audio")))
+        //            {
+        //                localDriveItemList.Add(item);
+        //            }
+        //        }
+        //        Console.WriteLine(" + Loaded folder.");
 
-                //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
-                ExplorerItemsList = localDriveItemList;
-            }
-            else
-            {
-                if (SelectedExplorerItem.File != null)
-                {
-                    OpenItemWithVideoPlayer(SelectedExplorerItem);
-                }
-            }
-            Console.WriteLine(" + Loaded children from folder item.");
-        }
+        //        //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
+        //        ExplorerItemsList = localDriveItemList;
+        //    }
+        //    else
+        //    {
+        //        if (SelectedExplorerItem.File != null)
+        //        {
+        //            OpenItemWithVideoPlayer(SelectedExplorerItem);
+        //        }
+        //    }
+        //    Console.WriteLine(" + Loaded children from folder item.");
+        //}
 
         /// <summary>
         /// Opens the selected item with the videoplayer.
