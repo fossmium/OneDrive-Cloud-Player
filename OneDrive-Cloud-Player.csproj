@@ -18,11 +18,15 @@
     <None Remove="Assets\Fonts\Lato-LightItalic.ttf" />
     <None Remove="Assets\Fonts\Lato-Regular.ttf" />
     <None Remove="Assets\Icons\add_to_queue.png" />
+    <None Remove="Assets\Icons\folder.png" />
     <None Remove="Assets\Icons\Fullscreen.png" />
+    <None Remove="Assets\Icons\logout.png" />
     <None Remove="Assets\Icons\pause.png" />
     <None Remove="Assets\Icons\play_arrow.png" />
     <None Remove="Assets\Icons\Reload.png" />
+    <None Remove="Assets\Icons\settings.png" />
     <None Remove="Assets\Icons\stop.png" />
+    <None Remove="Assets\Icons\up-left.png" />
     <None Remove="Assets\Icons\volume-up.png" />
   </ItemGroup>
   <ItemGroup>
@@ -50,11 +54,15 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Icons\add_to_queue.png" />
+    <Resource Include="Assets\Icons\folder.png" />
     <Resource Include="Assets\Icons\Fullscreen.png" />
+    <Resource Include="Assets\Icons\logout.png" />
     <Resource Include="Assets\Icons\pause.png" />
     <Resource Include="Assets\Icons\play_arrow.png" />
     <Resource Include="Assets\Icons\Reload.png" />
+    <Resource Include="Assets\Icons\settings.png" />
     <Resource Include="Assets\Icons\stop.png" />
+    <Resource Include="Assets\Icons\up-left.png" />
     <Resource Include="Assets\Icons\volume-up.png" />
   </ItemGroup>
   <ItemGroup>
