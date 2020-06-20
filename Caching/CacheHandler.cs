@@ -182,6 +182,8 @@ namespace OneDrive_Cloud_Player.Caching
 				{
 					itemsToReturn = ChildrenFromDrive.ToList();
 				}
+				// We need to update the cache here on another thread without potentially destroying other saved items,
+				// so we can't just overwrite the ItemList
 				return itemsToReturn;
 			}
 			catch (InvalidOperationException)
@@ -192,23 +194,6 @@ namespace OneDrive_Cloud_Player.Caching
 			}
 
 		}
-
-		// TODO er kan niets inzitten
-		
-		//public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
-		//{
-		//	List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
-		//	// Check if newly fecthed items exist in the cache. If not, add them. If yes, overwrite them with new data
-
-		//	//DriveToSearch.ItemList.ForEach((currentItem) =>
-		//	//{
-
-		//	////		if (itemToReturn.ParentItemId.Equals(currentItem.ParentItemId))
-		//	////		{
-		//	////			currentItem = itemToReturn;
-		//	////		}
-		//	//});
-		//}
 
 		public async Task<List<CachedDriveItem>> GetCachedDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
 		{
@@ -239,6 +224,21 @@ namespace OneDrive_Cloud_Player.Caching
 			});
 			return itemsToReturn;
 		}
+
+		//public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
+		//{
+		//	List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+		//	// Check if newly fecthed items exist in the cache. If not, add them. If yes, overwrite them with new data
+
+		//	//DriveToSearch.ItemList.ForEach((currentItem) =>
+		//	//{
+
+		//	////		if (itemToReturn.ParentItemId.Equals(currentItem.ParentItemId))
+		//	////		{
+		//	////			currentItem = itemToReturn;
+		//	////		}
+		//	//});
+		//}
 
 		public async Task<List<CachedDrive>> GetDrivesFromGraph()
 		{
