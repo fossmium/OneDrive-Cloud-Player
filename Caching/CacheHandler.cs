@@ -534,8 +534,21 @@ namespace OneDrive_Cloud_Player.Caching
 
 		public CachedDriveItem GetParentItemByParentItemId(CachedDrive SelectedDriveFolder, string ParentId)
 		{
-			CachedDriveItem Parent = SelectedDriveFolder.ItemList.First((currentItem) => currentItem.ItemId.Equals(ParentId));
-			return Parent;
+			lock (CacheLock)
+			{
+				try
+				{
+					// Get the current drive from the cache
+					CachedDrive CurrentDrive = CurrentUserCache.Drives.First((currentDrive) => currentDrive.DriveId.Equals(SelectedDriveFolder.DriveId) && currentDrive.Id.Equals(SelectedDriveFolder.Id));
+					CachedDriveItem Parent = CurrentDrive.ItemList.First((currentItem) => currentItem.ItemId.Equals(ParentId));
+					return Parent;
+				}
+				catch (InvalidOperationException)
+				{
+					// This should not happen.
+					return null;
+				}
+			}
 		}
 
 	}
