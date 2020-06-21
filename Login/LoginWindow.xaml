@@ -25,9 +25,9 @@
         <Label
             Content="Welcome! Please log in"
             
-            Margin="0,125,0,0"
+            Margin="0,-100,0,0"
             HorizontalAlignment="Center"
-            VerticalAlignment="Top"
+            VerticalAlignment="Center"
             
             FontFamily="{StaticResource Lato}"
             FontSize="30"
@@ -41,9 +41,9 @@
             
             Width="252"
             Height="51"
-            Margin="0,211,0,0"
+            Margin="0,100,0,0"
             HorizontalAlignment="Center"
-            VerticalAlignment="Top"
+            VerticalAlignment="Center"
 
             FontSize="21"
             FontFamily="{StaticResource Lato}"

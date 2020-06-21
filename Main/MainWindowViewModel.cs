@@ -16,7 +16,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Threading;
 using System.Linq;
-using System.Diagnostics;
+using OneDrive_Cloud_Player.Login;
+using System.Threading.Tasks;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -29,6 +30,7 @@ namespace OneDrive_Cloud_Player.Main
         public ICommand ReloadCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
         public ICommand ToParentFolderCommand { get; set; }
+        public ICommand GetProfileInfoCommand { get; set; }
 
         private readonly GraphHandler graph;
 
@@ -110,6 +112,18 @@ namespace OneDrive_Cloud_Player.Main
                 NotifyPropertyChanged();
             }
         }
+        // The users profile picture
+        private System.IO.Stream profileImage;
+
+        public System.IO.Stream ProfileImage
+        {
+            get { return profileImage; }
+            set
+            {
+                profileImage = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         private string SelectedDriveId { get; set; }
 
@@ -135,13 +149,16 @@ namespace OneDrive_Cloud_Player.Main
             ReloadCommand = new CommandHandler(ReloadCache, CanExecuteMethod);
             LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
             ToParentFolderCommand = new CommandHandler(ToParentFolder, CanExecuteMethod);
+            GetProfileInfoCommand = new CommandHandler(GetProfileInfo, CanExecuteMethod);
+            //GetProfileInfoCommand.Execute(null);
             // OnLoad runs the login and gets the shared drives
             GetUserInformation();
         }
 
         public async void GetUserInformation()
         {
-            CurrentUsername = (await graph.GetOneDriveUserInformationAsync()).DisplayName;
+            CurrentUsername = "Hi, " (await graph.GetOneDriveUserInformationAsync()).GivenName;
+            ProfileImage = await graph.GetOneDriveOwnerPhotoAsync();
         }
 
         /// <param name="obj"></param>

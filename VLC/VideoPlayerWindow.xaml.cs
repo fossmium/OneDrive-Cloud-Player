@@ -68,6 +68,18 @@ namespace OneDrive_Cloud_Player.VLC
             }
         }
 
+        private string volumeImageSource = "/Assets/Icons/volume-up.png";
+
+        public string VolumeImageSource
+        {
+            get { return volumeImageSource; }
+            set
+            {
+                volumeImageSource = value;
+                OnPropertyChanged("VolumeImageSource");
+            }
+        }
+
         private string pausePlayButtonImageSource = "/Assets/Icons/play_arrow.png";
 
         public string PausePlayButtonImageSource
@@ -101,10 +113,11 @@ namespace OneDrive_Cloud_Player.VLC
         private readonly LibVLC libVLC;
         private readonly string itemId;
         private readonly string driveId;
+        private int LastVolume;
         private bool RunDispatcher;
         private string VideoURL;
         private bool IsSeeking;
-
+        private bool Muted = false;
 
         public VideoPlayerWindow(string driveId, string itemId)
         {
@@ -166,6 +179,11 @@ namespace OneDrive_Cloud_Player.VLC
                 args.RoutedEvent = MouseLeftButtonDownEvent;
                 (sender as Thumb).RaiseEvent(args);
             }
+        }
+
+        private void MuteVolume_Click(object sender, RoutedEventArgs e)
+        {
+            this.MuteVolume();
         }
 
         private void PauseContinueButton_Click(object sender, RoutedEventArgs e)
@@ -300,7 +318,7 @@ namespace OneDrive_Cloud_Player.VLC
                              App.Current.Dispatcher.BeginInvoke(new MethodInvoker(() =>
                              {
                                  TimeLineMaxLength = videoView.MediaPlayer.Length;
-                                 
+
                                  PausePlayButtonImageSource = "/Assets/Icons/pause.png";
                              }));
                          };
@@ -357,10 +375,53 @@ namespace OneDrive_Cloud_Player.VLC
                 PausePlayButtonImageSource = "/Assets/Icons/play_arrow.png";
             }
         }
+        
+        /// <summary>
+        /// Mutes the video and changes the volume to 0 and adds a mute image and is able to unmute and go back to the old value.
+        /// </summary>
+        private void MuteVolume()
+        {
+            if (!Muted)
+            {
+                LastVolume = VolumeValue;
+                VolumeValue = 0;
+                VolumeImageSource = "/Assets/Icons/volume-off.png";
+                Muted = true;
+            }
+            else
+            {
+                VolumeValue = LastVolume;
+                Muted = false;
+            }
+        }
+
+        /// <summary>
+        /// Sets the volume AND Changes the volume image depending on the current volume range.
+        /// </summary>
+        /// <param name="Volume"></param>
         private void SetVolume(int Volume)
         {
             videoView.MediaPlayer.Volume = Volume;
+
+            if (Volume == 0)
+            {
+                VolumeImageSource = "/Assets/Icons/volume-mute.png";
+            }
+            else if (Volume >= 1 && Volume <= 49)
+            {
+                VolumeImageSource = "/Assets/Icons/volume-down.png";
+            }
+            else if (Volume >= 50 && Volume <= 100)
+            {
+                VolumeImageSource = "/Assets/Icons/volume-up.png";
+            }
+            else
+            {
+                Console.WriteLine("Something went wrong");
+            }
         }
+
+
 
         public void DisposeVLC()
         {
