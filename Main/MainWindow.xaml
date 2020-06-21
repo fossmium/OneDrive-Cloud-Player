@@ -13,113 +13,549 @@
         <local:MainWindowViewModel/>
     </Window.DataContext>
 
-    <!--Sets the background-->
-    <Controls:MetroWindow.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#1E2931" Offset="0.0" />
-            <GradientStop Color="#384D5A" Offset="1.0" />
+    <!--Applies the gradient background-->
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#1E2931" Offset="0.0"/>
+            <GradientStop Color="#384D5A" Offset="1.0"/>
         </LinearGradientBrush>
-    </Controls:MetroWindow.Background>
+    </Window.Background>
+
+    <!--GRID EXPLORER WINDOW-->
     <Grid>
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" MinWidth="100"/>
-                <ColumnDefinition Width="100*"/>
-            </Grid.ColumnDefinitions>
-            <Grid Grid.Column="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="110"/>
-                    <RowDefinition Height="32"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Row="0" Background="Red">
-                    <TextBlock Text="User Picture and name. (dropdown when clicked on the picture to show a button to open the settings window)" TextWrapping="Wrap"/>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Background="Yellow">
-                    <TextBlock Text="Search bar"/>
-                </StackPanel>
+        <Grid Grid.Column="0" Background="#1E2931">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
 
-                <ListBox x:Name="DriveListBox" ItemsSource="{Binding DriveList}" SelectedItem="{Binding SelectedDriveFolder}" Background="Transparent" Grid.Row="2" BorderThickness="0">
-                    <!--Styles the listbox containing the drives.-->
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="TextBlock.Foreground" Value="white"/>
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Margin" Value="0,0,0,0" />
-                            <Setter Property="FontSize" Value="15"/>
-                            <Setter Property="TextBlock.Foreground" Value="white"/>
+            <!--USER-->
+            <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 29.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!--Profile pictures should be here-->
+                <Image Grid.Column="0" Source="{Binding ProfileImage}" Width="80" Height="80" Margin="0, 0, 20, 0"/>
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding ProfileName}"
+                    VerticalAlignment="Center"
+                                
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                                
+                    Opacity="0.5"/>
+            </Grid>
+
+            <!-- LOGOUT / SETTINGS BUTTONS -->
+            <Grid Grid.Row="1" Margin="0, 0, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                    
+                    Command="{Binding SettingsCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="#1C262E"/>
+                            <Setter Property="BorderBrush" Value="Red"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
                         </Style>
-                    </ListBox.ItemContainerStyle>
-                    <ListBox.Resources>
-                        <local:MainWindowViewModel x:Key="converter"/>
-                    </ListBox.Resources>
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
-                            <i:InvokeCommandAction Command="{Binding DataContext.GetChildrenFomDriveCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <!--<StackPanel >-->
-                            <StackPanel x:Name="DrivesStackPanel" Background="{Binding Path=RemoteItem, Converter={StaticResource converter}}">
-                                <Grid >
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="/Assets/Icons/settings.png" Width="20" HorizontalAlignment="Left"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="Settings"
+
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
+
+                <Button
+                    Grid.Column="1"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                
+                    BorderBrush="#FFFFFF"
+                    BorderThickness="2"
+                    
+                    Command="{Binding LogoutCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="#1C262E"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" HorizontalAlignment="Left"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="Logout"
+
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
+            </Grid>
+
+            <!--SEARCH INPUT-->
+            <!--<StackPanel
+                Grid.Row="1"
+                Background="Yellow">
+                <TextBlock Text="Search bar"/>
+            </StackPanel>-->
+
+            <TextBox
+                Text="Search..."
+                Grid.Row="2"
+
+                FontSize="16"
+                FontFamily="{StaticResource Lato}"
+                FontWeight="Regular"
+                Foreground="#353F46"
+                
+                Background="Transparent"
+                BorderBrush="#353F46"
+                BorderThickness="2"
+                Padding="20, 15, 15, 15"
+                Margin="0, 0, 0, 50">
+
+                <!--Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"-->
+            </TextBox>
+
+            <!-- LOGOUT / SETTINGS POPUP -->
+            <!--<Canvas HorizontalAlignment="Center">
+                <Canvas.Style>
+                    <Style TargetType="Canvas">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsMouseOver, ElementName=UserPanel}">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Canvas.Style>
+                
+                <Grid Canvas.Left="-56" Canvas.Top="90">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Button Grid.Row="0" Command="{Binding SettingsCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" Padding="10">
+                                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#414E58"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Column="0" Source="/Assets/Icons/settings.png" Width="20" HorizontalAlignment="Left"/>
+                            <TextBlock
+                                Grid.Column="1"
+                                Text="Settings"
+
+                                FontSize="16"
+                                FontFamily="{StaticResource Lato}"
+                                FontWeight="Regular"
+                                Foreground="White"/>
+                        </Grid>
+                    </Button>
+                    <Button
+                        Grid.Row="1"
+                        Command="{Binding LogoutCommand}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Background" Value="#1C262E"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" Padding="10">
+                                                <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="#414E58"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" HorizontalAlignment="Left"/>
+                            <TextBlock
+                                Grid.Column="1"
+                                Text="Logout"
+
+                                FontSize="16"
+                                FontFamily="{StaticResource Lato}"
+                                FontWeight="Regular"
+                                Foreground="White"/>
+                        </Grid>
+                    </Button>
+                </Grid>
+            </Canvas>-->
+
+            <!--CATEGORY LIST-->
+            <ListBox
+                x:Name="DriveListBox"
+                Grid.Row="3"
+                
+                Background="Transparent"
+                BorderThickness="0"
+                
+                ItemsSource="{Binding DriveList}"
+                SelectedItem="{Binding SelectedDriveFolder}">
+                <!--Styles the listbox containing the drives.-->
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontFamily" Value="{StaticResource Lato}"/>
+                        <Setter Property="FontWeight" Value="Regular"/>
+                        <Setter Property="Foreground" Value="white"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#414E58"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+                
+                <ListBox.Resources>
+                    <local:MainWindowViewModel x:Key="converter"/>
+                </ListBox.Resources>
+                
+                <i:Interaction.Triggers>
+                    <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
+                        <i:InvokeCommandAction Command="{Binding DataContext.GetChildrenFomDriveCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel x:Name="DrivesStackPanel" Background="{Binding Path=RemoteItem, Converter={StaticResource converter}}">
+                            <Grid >
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="auto"/>
+                                    <ColumnDefinition Width="*" MaxWidth="200"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Height="50" Margin="0, 0, 20, 0">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="BorderBrush" Value="Transparent"/>
+                                            <Setter Property="BorderThickness" Value="2"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="BorderBrush" Value="#1D8C72"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                </Border>
+
+                                <TextBlock x:Name="DriveName" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Background="Transparent" Text="{Binding Name}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Opacity" Value="0.25"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Opacity" Value="1"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <TextBlock x:Name="DriveChildCount" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Background="Transparent" TextAlignment="Right" Padding="0, 0, 10, 0" Text="{Binding Folder.ChildCount}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Opacity" Value="0.25"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                                                    <Setter Property="Opacity" Value="1"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="29"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Background="Transparent">
+                <TextBlock
+                    x:Name="DriveName"
+                    Text="{Binding SelectedDriveFolder.Name}"
+                    
+                    FontSize="34"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                    
+                    Padding="60, 30"/>
+            </StackPanel>
+
+            <Grid Grid.Row="1" Opacity="0.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0" Source="/Assets/Icons/folder.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Text="Name"
+                    Padding="40, 0, 0, 0"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"/>
+                <TextBlock
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    Text="Contents"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"/>
+                <TextBlock
+                    Grid.Column="3"
+                    VerticalAlignment="Center"
+                    Text="Size"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"/>
+            </Grid>
+
+            <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF" HorizontalAlignment="Stretch">
+                <Button Padding="0" Margin="0">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="/Assets/Icons/up-left.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="..."
+                
+                            Padding="40, 15, 15, 15"
+
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
+            </Border>
+
+            <ListBox Grid.Row="3" x:Name="ExplorerListBox" ItemsSource="{Binding ExplorerItemsList}" SelectedItem="{Binding SelectedExplorerItem}" Background="Transparent" HorizontalAlignment="Stretch">
+                <!--Styles the listbox containing the drives.-->
+                <ListBox.ItemContainerStyle>
+                    <Style TargetType="ListBoxItem">
+                        <Setter Property="Background" Value="Transparent"/>
+
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="FontFamily" Value="{StaticResource Lato}"/>
+                        <Setter Property="FontWeight" Value="Regular"/>
+                        <Setter Property="Foreground" Value="white"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#414E58"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ListBox.ItemContainerStyle>
+
+                <ListBox.Resources>
+                    <!--Make the listbox items transparent.-->
+                    <Style TargetType="{x:Type ListBoxItem}">
+                        <Setter Property="Background" Value="Transparent" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="TextBlock.Foreground" Value="white"/>
+                    </Style>
+                </ListBox.Resources>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+
+                        <StackPanel x:Name="FolderStackPanel" Height="51">
+                            <StackPanel.InputBindings>
+                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
+                            </StackPanel.InputBindings>
+
+                            <Border BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF">
+                                <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="150"/>
+                                        <ColumnDefinition Width="50"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="85"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock x:Name="DriveName" Grid.Column="0" HorizontalAlignment="Left" Background="Transparent" Text="{Binding Name}"/>
-                                    <TextBlock x:Name="DriveChildCount" Grid.Column="2" HorizontalAlignment="Right" Background="Transparent" TextAlignment="Right" Text="{Binding Folder.ChildCount}"/>
+                                    
+                                    <Image Grid.Column="0" Source="/Assets/Icons/folder.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                                    <TextBlock Grid.Column="1" x:Name="ExplorerItem" Text="{Binding Name}" Padding="40, 15, 15, 15"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding }" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Size}" VerticalAlignment="Center"/>
                                 </Grid>
-
-                            </StackPanel>
-                            <!--</StackPanel>-->
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-                <Button Command="{Binding LogoutCommand}" Grid.Row="2" Height="40" VerticalAlignment="Bottom" Content="Logout"></Button>
-            </Grid>
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="50"/>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30" />
-                    <RowDefinition Height="85*" />
-                </Grid.RowDefinitions>
-                <Rectangle Grid.Row="0" Fill="Gray"/>
-                <StackPanel Grid.Row="0" Background="Gray">
-                    <TextBlock Text="Idk what needs to go here."/>
-                </StackPanel>
-                <Rectangle Grid.Row="1" Fill="Purple"/>
-                <StackPanel Grid.Row="1" Background="Purple">
-                    <TextBlock Text="The titles of the rows for example. 'Name', 'Contents' and 'Size'"/>
-                </StackPanel>
-                <Rectangle Grid.Row="2" Fill="Orange"/>
-                <StackPanel Grid.Row="2" Background="Orange">
-                    <TextBlock Text="The position where the element goes that brings the user back to the parent folder."/>
-                </StackPanel>
-                <ListBox x:Name="ExplorerListBox" ItemsSource="{Binding ExplorerItemsList}" SelectedItem="{Binding SelectedExplorerItem}" Background="Transparent" Grid.Row="3" HorizontalAlignment="Stretch">
-                    <ListBox.Resources>
-                        <!--Make the listbox items transparent.-->
-                        <Style TargetType="{x:Type ListBoxItem}">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="Margin" Value="0" />
-                            <Setter Property="TextBlock.Foreground" Value="white"/>
-                        </Style>
-                    </ListBox.Resources>
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel x:Name="FolderStackPanel" Background="Transparent" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                <StackPanel.InputBindings>
-                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
-                                </StackPanel.InputBindings>
-                                <TextBlock x:Name="ExplorerItem" Background="Transparent" Text="{Binding Name}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
-            </Grid>
+                            </Border>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
     </Grid>
 </Controls:MetroWindow>
