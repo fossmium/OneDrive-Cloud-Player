@@ -245,6 +245,7 @@ namespace OneDrive_Cloud_Player.Caching
 						List<CachedDriveItem> listToRestore = drivesCombinedWithItems.GetValueOrDefault(key);
 						currentUpdatedDrive.ItemList = listToRestore;
 						//currentUpdatedDrive.ChildrenCount = listToRestore.Count;
+						// TODO: get childcount correct
 					}
 				});
 
