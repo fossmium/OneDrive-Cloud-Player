@@ -24,8 +24,8 @@
     <!--GRID EXPLORER WINDOW-->
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300" MinWidth="100"/>
-            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0" Background="#1E2931">
@@ -37,7 +37,7 @@
             </Grid.RowDefinitions>
 
             <!--USER-->
-            <Border Name="UserPanel" Grid.Row="0" Background="Transparent" Padding="0, 50">
+            <Border Name="UserPanel" Grid.Row="0" Background="Transparent" Padding="0, 60">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                     <!--Profile pictures should be here-->
                     <TextBlock
@@ -63,7 +63,7 @@
             </Border>
 
             <!-- LOGOUT / SETTINGS BUTTONS -->
-            <Grid Grid.Row="1" Margin="0, 0, 0, 20">
+            <Grid Grid.Row="1" Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50*"/>
                     <ColumnDefinition Width="50*"/>
@@ -76,9 +76,6 @@
                     FontFamily="{StaticResource Lato}"
                     FontWeight="Regular"
                     Foreground="White"
-                
-                    BorderBrush="#FFFFFF"
-                    BorderThickness="2"
                     
                     Command="{Binding SettingsCommand}">
                     <Button.Style>
@@ -184,14 +181,13 @@
                 FontSize="16"
                 FontFamily="{StaticResource Lato}"
                 FontWeight="Regular"
-                Foreground="White"
+                Foreground="#353F46"
                 
                 Background="Transparent"
-                BorderBrush="#FFFFFF"
+                BorderBrush="#353F46"
                 BorderThickness="2"
                 Padding="20, 15, 15, 15"
-                Margin="0, 0, 0, 50"
-                Opacity="0.2">
+                Margin="0, 0, 0, 50">
 
                 <!--Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"-->
             </TextBox>
@@ -400,7 +396,7 @@
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="30"/>
+                <RowDefinition Height="29"/>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
@@ -457,7 +453,7 @@
                     Foreground="White"/>
             </Grid>
 
-            <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#3A454E" HorizontalAlignment="Stretch">
+            <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#353F46" HorizontalAlignment="Stretch">
                 <Button Padding="0" Margin="0">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -540,12 +536,12 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
 
-                        <StackPanel x:Name="FolderStackPanel" Height="50">
+                        <StackPanel x:Name="FolderStackPanel" Height="51">
                             <StackPanel.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
                             </StackPanel.InputBindings>
 
-                            <Border BorderThickness="0, 0, 0, 2" BorderBrush="#3A454E">
+                            <Border BorderThickness="0, 0, 0, 2" BorderBrush="#353F46">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50"/>
