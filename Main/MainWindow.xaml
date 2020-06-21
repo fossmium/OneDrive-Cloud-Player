@@ -37,30 +37,26 @@
             </Grid.RowDefinitions>
 
             <!--USER-->
-            <Border Name="UserPanel" Grid.Row="0" Background="Transparent" Padding="0, 60">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                    <!--Profile pictures should be here-->
-                    <TextBlock
-                        Text="Photo"
-                        VerticalAlignment="Center"
-                        
-                        FontSize="16"
-                        FontFamily="{StaticResource Lato}"
-                        FontWeight="Regular"
-                        Foreground="White"/>
-                    <!--Hi, {name}-->
-                    <TextBlock
-                        Text="{Binding currentUsername}"
-                        VerticalAlignment="Center"
+            <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 29.5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!--Profile pictures should be here-->
+                <Image Grid.Column="0" Source="{Binding ProfileImage}" Width="80" Height="80" Margin="0, 0, 20, 0"/>
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding ProfileName}"
+                    VerticalAlignment="Center"
                                 
-                        FontSize="16"
-                        FontFamily="{StaticResource Lato}"
-                        FontWeight="Regular"
-                        Foreground="White"
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
                                 
-                        Opacity="0.5"/>
-                </StackPanel>
-            </Border>
+                    Opacity="0.5"/>
+            </Grid>
 
             <!-- LOGOUT / SETTINGS BUTTONS -->
             <Grid Grid.Row="1" Margin="0, 0, 0, 0">
@@ -453,7 +449,7 @@
                     Foreground="White"/>
             </Grid>
 
-            <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#353F46" HorizontalAlignment="Stretch">
+            <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF" HorizontalAlignment="Stretch">
                 <Button Padding="0" Margin="0">
                     <Button.Style>
                         <Style TargetType="{x:Type Button}">
@@ -541,7 +537,7 @@
                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
                             </StackPanel.InputBindings>
 
-                            <Border BorderThickness="0, 0, 0, 2" BorderBrush="#353F46">
+                            <Border BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="50"/>

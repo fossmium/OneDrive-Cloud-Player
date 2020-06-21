@@ -13,6 +13,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using OneDrive_Cloud_Player.Login;
+using System.Threading.Tasks;
 
 namespace OneDrive_Cloud_Player.Main
 {
@@ -22,7 +23,9 @@ namespace OneDrive_Cloud_Player.Main
         public ICommand GetSharedFolderChildrenCommand { get; set; }
         public ICommand GetChildrenFomItemCommand { get; set; }
         public ICommand GetChildrenFomDriveCommand { get; set; }
+        public ICommand ReturnToParentFolderCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
+        public ICommand GetProfileInfoCommand { get; set; }
 
         private readonly GraphHandler graph;
 
@@ -81,6 +84,50 @@ namespace OneDrive_Cloud_Player.Main
             }
         }
 
+        // The string to display as the profile name
+        private string profileName;
+
+        public string ProfileName
+        {
+            get { return profileName; }
+            set
+            {
+                profileName = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // The users profile picture
+        private System.IO.Stream profileImage;
+
+        public System.IO.Stream ProfileImage
+        {
+            get { return profileImage; }
+            set
+            {
+                profileImage = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // The DriveItem of the parent of a folder
+        private DriveItem backButtonParent;
+
+        public DriveItem BackButtonParent
+        {
+            get { return backButtonParent; }
+            set
+            {
+                backButtonParent = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // The indicator showing whether the parentBackButton has been pressed
+        private bool backParentIsPressed;
+
+        // The string of the drive of a folder needed to go back to it
+
         private string SelectedDriveId { get; set; }
 
         public DriveItem PreviousSelectedCategory { get; private set; }
@@ -92,9 +139,12 @@ namespace OneDrive_Cloud_Player.Main
             GetDrivesCommand = new CommandHandler(GetDrives, CanExecuteMethod);
             GetChildrenFomItemCommand = new CommandHandler(GetChildrenFomItem, CanExecuteMethod);
             GetChildrenFomDriveCommand = new CommandHandler(GetChildrenFomDrive, CanExecuteMethod);
+            ReturnToParentFolderCommand = new CommandHandler(ReturnToParentFolder, CanExecuteMethod);
             LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
+            GetProfileInfoCommand = new CommandHandler(GetProfileInfo, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetDrivesCommand.Execute(null);
+            GetProfileInfoCommand.Execute(null);
         }
 
         private bool CanExecuteMethod(object arg)
@@ -143,8 +193,6 @@ namespace OneDrive_Cloud_Player.Main
             Console.WriteLine(" + Loaded Drives.");
         }
 
-
-
         /// <summary>
         /// Retrieves the children that are inside the drive and fills the the Childrenlist property with those items.
         /// </summary>
@@ -177,6 +225,9 @@ namespace OneDrive_Cloud_Player.Main
 
             IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, sharedItemId);
 
+            //Setting the parent of the folder
+            BackButtonParent = selectedDriveFolder;
+
             List<DriveItem> localItemList = new List<DriveItem>();
 
             foreach (DriveItem item in driveItemsCollection)
@@ -204,7 +255,11 @@ namespace OneDrive_Cloud_Player.Main
             if (SelectedExplorerItem.Folder != null)
             {
                 string ItemId = SelectedExplorerItem.Id;
+
                 IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
+
+                //Setting the parent of the folder
+                BackButtonParent = selectedExplorerItem;
 
                 //Adds every item inside the folder to the localDriveItemList. The item needs to be of type video, audio or folder.
                 foreach (DriveItem item in driveItemsCollection)
@@ -222,6 +277,8 @@ namespace OneDrive_Cloud_Player.Main
 
                 //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
                 ExplorerItemsList = localDriveItemList;
+
+                //Calls the function to get the parent of the currently selected folder location
             }
             else
             {
@@ -282,6 +339,18 @@ namespace OneDrive_Cloud_Player.Main
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        public void ReturnToParentFolder(object obj)
+        {
+            SelectedExplorerItem = backButtonParent;
+            GetChildrenFomItem(null);
+        }
 
+        public async void GetProfileInfo(object obj)
+        {
+            User user = await graph.GetOneDriveUserInformationAsync();
+            System.IO.Stream user2 = await graph.GetOneDriveOwnerPhotoAsync();
+            ProfileName = "Hi, " + user.GivenName;
+            ProfileImage = user2;
+        }
     }
 }
