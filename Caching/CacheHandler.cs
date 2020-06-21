@@ -6,6 +6,7 @@ using OneDrive_Cloud_Player.Caching.GraphData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -471,6 +472,82 @@ namespace OneDrive_Cloud_Player.Caching
 			{
 				// Don't return items which are not folders or cannot be played by libVLC.
 				return null;
+			}
+		}
+
+		public List<CachedDriveItem> GetDriveOrItemsWithParentId(CachedDrive SelectedDriveFolder, string ParentId)
+		{
+			// We need to get the parent of the current ParentItem. If we have that parent, we can get it's children.
+			// That parent is either a CachedDrive or a CachedDriveItem
+			lock (CacheLock)
+			{
+				try
+				{
+					// check to see if the SelectedDriveFolder is the parent of the current ParentItem
+					CachedDrive CurrentDrive = CurrentUserCache.Drives.First((currentDrive) => SelectedDriveFolder.DriveId.Equals(currentDrive.DriveId) && SelectedDriveFolder.Id.Equals(currentDrive.Id));
+					List<CachedDriveItem> ParentItems = new List<CachedDriveItem>();
+					//if (CurrentDrive.Id.Equals(ParentId))
+					//{
+						CurrentDrive.ItemList.ForEach((currentItem) =>
+						{
+							if (currentItem.ParentItemId.Equals(ParentId))
+							{
+								ParentItems.Add(currentItem);
+							}
+						});
+					//}
+					//else
+					//{
+						//The parent of the current ParentItem is not a CachedDrive, so it must be a CachedDriveItem
+					//	CurrentDrive.ItemList.ForEach((currentItem) =>
+					//	{
+					//		if (currentItem.ItemId.Equals(ParentId))
+					//		{
+					//			ParentItems.Add(currentItem);
+					//		}
+					//	});
+					//}
+					return ParentItems;
+				}
+				catch (InvalidOperationException)
+				{
+					return null;
+				}
+			}
+		}
+
+		public bool IsParentChildOfDrive(CachedDrive SelectedDriveFolder, string ParentId)
+		{
+			lock (CacheLock)
+			{
+				try
+				{
+					CachedDrive CurrentDrive = CurrentUserCache.Drives.First((currentDrive) => SelectedDriveFolder.DriveId.Equals(currentDrive.DriveId) && SelectedDriveFolder.Id.Equals(ParentId));
+					return true;
+				}
+				catch (InvalidOperationException)
+				{
+					return false;
+				}
+			}
+		}
+
+		public CachedDriveItem GetParentItemByParentItemId(CachedDrive SelectedDriveFolder, string ParentId)
+		{
+			lock (CacheLock)
+			{
+				try
+				{
+					// Get the current drive from the cache
+					CachedDrive CurrentDrive = CurrentUserCache.Drives.First((currentDrive) => currentDrive.DriveId.Equals(SelectedDriveFolder.DriveId) && currentDrive.Id.Equals(SelectedDriveFolder.Id));
+					CachedDriveItem Parent = CurrentDrive.ItemList.First((currentItem) => currentItem.ItemId.Equals(ParentId));
+					return Parent;
+				}
+				catch (InvalidOperationException)
+				{
+					// This should not happen.
+					return null;
+				}
 			}
 		}
 

@@ -195,6 +195,9 @@ namespace OneDrive_Cloud_Player.Main
         /// <param name="obj"></param>
         public async void GetChildrenFomDrive(object obj)
         {
+            //
+            ParentItem = null;
+
             //Prevents exception when user clicks an empty space in the ListBox.
             if (SelectedDriveFolder is null) { return; };
 
@@ -241,8 +244,6 @@ namespace OneDrive_Cloud_Player.Main
             //Sets the current selected item as a parent item.
             ParentItem = SelectedExplorerItem;
 
-            List<CachedDriveItem> localDriveItemList = new List<CachedDriveItem>();
-
             //Checks if the SelectedExplorerItem is an folder.
             if (SelectedExplorerItem.IsFolder)
             {
@@ -250,22 +251,10 @@ namespace OneDrive_Cloud_Player.Main
                 //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
                 List<CachedDriveItem> driveItems = await App.Current.CacheHandler.GetCachedChildrenFromItem(SelectedDriveFolder, ItemId);
 
-                //Adds every item inside the folder to the localDriveItemList. The item needs to be of type video, audio or folder.
-                foreach (CachedDriveItem item in driveItems)
-                {
-                    if (item.IsFolder)
-                    {
-                        localDriveItemList.Add(item);
-                    }
-                    else if (item.MimeType.Contains("video") || item.MimeType.Contains("audio"))
-                    {
-                        localDriveItemList.Add(item);
-                    }
-                }
                 Console.WriteLine(" + Loaded folder.");
 
                 //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
-                ExplorerItemsList = localDriveItemList;
+                ExplorerItemsList = driveItems;
             }
             else
             {
@@ -284,6 +273,8 @@ namespace OneDrive_Cloud_Player.Main
 
         private void ToParentFolder(object obj)
         {
+            if (SelectedDriveFolder is null) { return; }
+
             if (ParentItem is null) { return; }
 
             //App.Current.CacheHandler.GetCachedChildrenFromDrive
@@ -291,6 +282,18 @@ namespace OneDrive_Cloud_Player.Main
 
             
             string id = ParentItem.ParentItemId;
+            List<CachedDriveItem> ParentItemList = App.Current.CacheHandler.GetDriveOrItemsWithParentId(SelectedDriveFolder, id);
+            ExplorerItemsList = ParentItemList;
+
+            if (App.Current.CacheHandler.IsParentChildOfDrive(SelectedDriveFolder, id))
+            {
+                ParentItem = null;
+            }
+            else
+            {
+                // Every time we go up a folder, we need to set the ParentItem to one higher
+                ParentItem = App.Current.CacheHandler.GetParentItemByParentItemId(SelectedDriveFolder, ParentItem.ParentItemId);
+            }
         }
 
 
