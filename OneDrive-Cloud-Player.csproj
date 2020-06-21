@@ -23,6 +23,9 @@
     <None Remove="Assets\Icons\play_arrow.png" />
     <None Remove="Assets\Icons\Reload.png" />
     <None Remove="Assets\Icons\stop.png" />
+    <None Remove="Assets\Icons\volume-down.png" />
+    <None Remove="Assets\Icons\volume-mute.png" />
+    <None Remove="Assets\Icons\volume-off.png" />
     <None Remove="Assets\Icons\volume-up.png" />
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +58,9 @@
     <Resource Include="Assets\Icons\play_arrow.png" />
     <Resource Include="Assets\Icons\Reload.png" />
     <Resource Include="Assets\Icons\stop.png" />
+    <Resource Include="Assets\Icons\volume-down.png" />
+    <Resource Include="Assets\Icons\volume-mute.png" />
+    <Resource Include="Assets\Icons\volume-off.png" />
     <Resource Include="Assets\Icons\volume-up.png" />
   </ItemGroup>
   <ItemGroup>

@@ -99,8 +99,10 @@
                                     <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
                                 </Button>
                             </Grid>
-                            <Grid Grid.Column="0" Margin="5,0,0,0">
-                                <Image Width="50" Height="50" Source="/Assets/Icons/volume-up.png"></Image>
+                            <Grid  Grid.Column="0" Margin="5,0,0,0">
+                                    <Button Background="Transparent" Click="MuteVolume_Click" Width="50" Height="50" Margin="0,0,0,0">
+                                        <Image Source="{Binding VolumeImageSource}"></Image>
+                                </Button>
                             </Grid>
                         </Grid>
                         
