@@ -323,9 +323,9 @@
                     </Style>
                 </ListBox.ItemContainerStyle>
                 
-                <ListBox.Resources>
+                <!--<ListBox.Resources>
                     <local:MainWindowViewModel x:Key="converter"/>
-                </ListBox.Resources>
+                </ListBox.Resources>-->
                 
                 <i:Interaction.Triggers>
                     <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
@@ -336,7 +336,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <StackPanel x:Name="DrivesStackPanel">
-                            <Grid >
+                            <Grid>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="*" MaxWidth="200"/>
@@ -409,7 +409,6 @@
                     
                     Padding="60, 30"/>
             </StackPanel>
-
             <Grid Grid.Row="1" Opacity="0.5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50"/>
@@ -495,11 +494,12 @@
                         <Setter Property="Margin" Value="0" />
                         <Setter Property="TextBlock.Foreground" Value="white"/>
                     </Style>
+                    <local:MainWindowViewModel x:Key="converter"/>
                 </ListBox.Resources>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-
+                        <!--<StackPanel >-->
                         <StackPanel x:Name="FolderStackPanel" Height="50">
                             <StackPanel.InputBindings>
                                 <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
@@ -513,11 +513,11 @@
                                         <ColumnDefinition Width="100"/>
                                         <ColumnDefinition Width="85"/>
                                     </Grid.ColumnDefinitions>
-                                    
-                                    <Image Grid.Column="0" Source="/Assets/Icons/folder.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+
+                                    <Image Grid.Column="0" Source="{Binding Path=IsFolder, Converter={StaticResource converter}, ConverterParameter='ContentTypeExplorerItem'}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
                                     <TextBlock Grid.Column="1" x:Name="ExplorerItem" Text="{Binding Name}" Padding="40, 15, 15, 15"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding }" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding Size}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="2" Text="{Binding Converter={StaticResource converter}, ConverterParameter='ContentChildCountExplorer'}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Size, Converter={StaticResource converter}, ConverterParameter='ContentItemSizeExplorer'}" VerticalAlignment="Center"/>
                                 </Grid>
                             </Border>
                         </StackPanel>

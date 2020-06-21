@@ -20,7 +20,7 @@ using System.Diagnostics;
 
 namespace OneDrive_Cloud_Player.Main
 {
-    class MainWindowViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
+    class MainWindowViewModel : MetroWindow, INotifyPropertyChanged,  IValueConverter
     {
         public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
@@ -305,23 +305,50 @@ namespace OneDrive_Cloud_Player.Main
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //Console.WriteLine("Converted called!");
-            //if (value != null)
-            //{
-            //    return null;
-            //}
-            //Console.WriteLine(value);
-            //var color = value.ToString();
-
-
-            if (!(bool)value)
+            //Changes the ItemContentType icon of the items in the explorer.
+            if (parameter.Equals("ContentTypeExplorerItem"))
             {
-                return new SolidColorBrush(Colors.Green);
+                if ((bool)value)
+                {
+                    return "/Assets/Icons/folder.png";
+                }
+                else
+                {
+                    return "/Assets/Icons/MultiMediaIcon.png";
+                }
             }
-            else
+
+            //Returns the item child when it's a folder. Otherwise return a line.
+            if (parameter.Equals("ContentChildCountExplorer"))
             {
-                return new SolidColorBrush(Colors.Transparent);
+                CachedDriveItem item = (CachedDriveItem)value;
+                if (item.IsFolder)
+                {
+                    return item.ChildCount;
+                }
+                return "-";
             }
+
+            //Returns the correct size format.
+            if (parameter.Equals("ContentItemSizeExplorer"))
+            {
+                Console.WriteLine(value);
+                long size = (long)value;
+                if (size > 1000 && size <1000000000)
+                {
+
+                    return Math.Round((size / (double)Math.Pow(1024, 2))) + " MB";
+                }
+                else if(size > 1000000000)
+                {
+                    return Decimal.Round((Decimal)(size / (double)Math.Pow(1024, 3)), 2) + " GB";
+                }
+                else
+                {
+                    return size + " Bytes";
+                }
+            }
+            return null;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -21,6 +21,7 @@
     <None Remove="Assets\Icons\folder.png" />
     <None Remove="Assets\Icons\Fullscreen.png" />
     <None Remove="Assets\Icons\logout.png" />
+    <None Remove="Assets\Icons\MultiMediaIcon.png" />
     <None Remove="Assets\Icons\pause.png" />
     <None Remove="Assets\Icons\play_arrow.png" />
     <None Remove="Assets\Icons\Reload.png" />
@@ -57,6 +58,7 @@
     <Resource Include="Assets\Icons\folder.png" />
     <Resource Include="Assets\Icons\Fullscreen.png" />
     <Resource Include="Assets\Icons\logout.png" />
+    <Resource Include="Assets\Icons\MultiMediaIcon.png" />
     <Resource Include="Assets\Icons\pause.png" />
     <Resource Include="Assets\Icons\play_arrow.png" />
     <Resource Include="Assets\Icons\Reload.png" />
