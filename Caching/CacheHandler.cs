@@ -273,7 +273,7 @@ namespace OneDrive_Cloud_Player.Caching
 				if (HasNoChildrenCache)
 				{
 					// Found no children from the specified drive in cache, so we need to fetch the latest from Graph
-					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+					itemsToReturn = await GetDriveChildrenFromGraph(SelectedDriveId, ItemId);
 					lock (CacheLock)
 					{
 						// Since there are no items with a ParentItemId set to the drive, there cannot be any other items,
@@ -304,46 +304,27 @@ namespace OneDrive_Cloud_Player.Caching
 			}
 		}
 
-		public async Task<List<CachedDriveItem>> GetCachedDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
+		public async Task<List<CachedDriveItem>> GetDriveChildrenFromGraph(string SelectedDriveId, string ItemId)
 		{
-			List<DriveItem> localItemsFromGraph = (await Graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId)).ToList();
+			List<DriveItem> ItemsFromGraph = (await Graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId)).ToList();
 			// Convert Graph DriveItems to CachedDriveItems
-			List<CachedDriveItem> itemsToReturn = new List<CachedDriveItem>();
-			localItemsFromGraph.ForEach((graphDriveItem) =>
+			List<CachedDriveItem> DriveChildren = new List<CachedDriveItem>();
+			ItemsFromGraph.ForEach((graphDriveItem) =>
 			{
-				CachedDriveItem itemToAdd = new CachedDriveItem();
-				itemToAdd.ItemId = graphDriveItem.Id;
-				itemToAdd.ParentItemId = ItemId;
-				itemToAdd.IsFolder = graphDriveItem.Folder != null;
-				itemToAdd.Name = graphDriveItem.Name;
-				itemToAdd.Size = graphDriveItem.Size ?? 0;
-				if (graphDriveItem.Folder is null)
+				CachedDriveItem ConvertedItem = this.ConvertGraphItem(graphDriveItem);
+				if (ConvertedItem != null)
 				{
-					itemToAdd.ChildCount = null;
-				}
-				else
-				{
-					itemToAdd.ChildCount = graphDriveItem.Folder.ChildCount;
-				}
-				if (graphDriveItem.File != null)
-				{
-					itemToAdd.MimeType = graphDriveItem.File.MimeType;
-				}
-				if (graphDriveItem.Folder != null)
-				{
-					itemsToReturn.Add(itemToAdd);
-				}
-				else if (graphDriveItem.File != null && (graphDriveItem.File.MimeType.Contains("video") || graphDriveItem.File.MimeType.Contains("audio")))
-				{
-					itemsToReturn.Add(itemToAdd);
+					ConvertedItem.ParentItemId = ItemId;
+					DriveChildren.Add(ConvertedItem);
 				}
 			});
-			return itemsToReturn;
+
+			return DriveChildren;
 		}
 
         public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
         {
-            List<CachedDriveItem> NewlyFecthedItems = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+            List<CachedDriveItem> NewlyFecthedItems = await GetDriveChildrenFromGraph(SelectedDriveId, ItemId);
 			List<CachedDriveItem> CurrentlyCachedDriveItems = null;
 			lock (CacheLock)
 			{
@@ -419,24 +400,12 @@ namespace OneDrive_Cloud_Player.Caching
 
 			ItemsFromGraph.ForEach((graphItem) =>
 			{
-				CachedDriveItem itemToAdd = new CachedDriveItem();
-				itemToAdd.ItemId = graphItem.Id;
-				itemToAdd.ParentItemId = graphItem.ParentReference.Id;
-				itemToAdd.IsFolder = graphItem.Folder != null;
-				itemToAdd.Name = graphItem.Name;
-				itemToAdd.Size = graphItem.Size ?? 0;
-				if (itemToAdd.IsFolder)
+				CachedDriveItem ConvertedItem = this.ConvertGraphItem(graphItem);
+				if (ConvertedItem != null)
 				{
-					itemToAdd.ChildCount = graphItem.Folder.ChildCount;
+					ConvertedItem.ParentItemId = graphItem.ParentReference.Id;
+					ChildrenFromItem.Add(ConvertedItem);
 				}
-				else
-				{
-					if (graphItem.File != null)
-					{
-						itemToAdd.MimeType = graphItem.File.MimeType;
-					}
-				}
-				ChildrenFromItem.Add(itemToAdd);
 			});
 
 			return ChildrenFromItem;
@@ -468,6 +437,36 @@ namespace OneDrive_Cloud_Player.Caching
 				});
 
 				ItemsInCache.AddRange(ItemsFromGraph);
+			}
+		}
+
+		public CachedDriveItem ConvertGraphItem(DriveItem GraphItem)
+		{
+			// Check which items to convert: either folders, or files with the correct mimetype (either contains audio or video).
+			if (GraphItem.Folder != null || (GraphItem.File != null && (GraphItem.File.MimeType.Contains("video") || GraphItem.File.MimeType.Contains("audio"))))
+			{
+				CachedDriveItem ConvertedItem = new CachedDriveItem
+				{
+					ItemId = GraphItem.Id,
+					IsFolder = GraphItem.Folder != null,
+					Name = GraphItem.Name,
+					Size = GraphItem.Size ?? 0
+				};
+				if (ConvertedItem.IsFolder)
+				{
+					ConvertedItem.ChildCount = GraphItem.Folder.ChildCount;
+				}
+				else
+				{
+					// GraphItem.File won't be null since we checked that beforehand
+					ConvertedItem.MimeType = GraphItem.File.MimeType;
+				}
+				return ConvertedItem;
+			}
+			else
+			{
+				// Don't return items which are not folders or cannot be played by libVLC.
+				return null;
 			}
 		}
 
