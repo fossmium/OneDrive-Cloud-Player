@@ -314,6 +314,20 @@
                         <Setter Property="FontWeight" Value="Regular"/>
                         <Setter Property="Foreground" Value="white"/>
                         <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#414E58"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
                 
@@ -417,6 +431,7 @@
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     Text="Name"
+                    Padding="40, 0, 0, 0"
 
                     FontSize="16"
                     FontFamily="{StaticResource Lato}"
@@ -443,24 +458,45 @@
             </Grid>
 
             <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#3A454E" HorizontalAlignment="Stretch">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <Button Padding="0" Margin="0">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Image Grid.Column="0" Source="/Assets/Icons/up-left.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
-                    <TextBlock
-                        Grid.Column="1"
-                        Text="..."
+                        <Image Grid.Column="0" Source="/Assets/Icons/up-left.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="..."
                 
-                        Padding="40, 15, 15, 15"
+                            Padding="40, 15, 15, 15"
 
-                        FontSize="16"
-                        FontFamily="{StaticResource Lato}"
-                        FontWeight="Regular"
-                        Foreground="White"/>
-                </Grid>
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
             </Border>
 
             <ListBox Grid.Row="3" x:Name="ExplorerListBox" ItemsSource="{Binding ExplorerItemsList}" SelectedItem="{Binding SelectedExplorerItem}" Background="Transparent" HorizontalAlignment="Stretch">
@@ -475,6 +511,20 @@
                         <Setter Property="Foreground" Value="white"/>
                         <Setter Property="Padding" Value="0"/>
                         <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#414E58"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
 
