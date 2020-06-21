@@ -12,7 +12,8 @@
         BorderThickness="1"
         ResizeMode="CanResizeWithGrip"
         Background="Black"
-        Title="OneDrive Cloud Player" Width="1280" Height="720" >
+        WindowStartupLocation="CenterScreen"
+        Title="Video Player" Width="1280" Height="720" >
     
     <Window.Resources>
 

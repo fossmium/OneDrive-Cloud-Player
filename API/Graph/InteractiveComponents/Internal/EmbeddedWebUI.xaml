@@ -8,7 +8,8 @@
         WindowStyle="ToolWindow"
         Loaded="Window_Loaded"
         Closed="Window_Closed"
-        Title="EmbeddedWebUiWindow" Height="450" Width="800">
+        WindowStartupLocation="CenterOwner"
+        Title="Login with Microsoft" Height="450" Width="800">
     <Grid>
         <WebBrowser x:Name="webBrowser"
                     Navigating="WebBrowser_Navigating"/>

@@ -149,7 +149,7 @@ namespace OneDrive_Cloud_Player.Main
             ReloadCommand = new CommandHandler(ReloadCache, CanExecuteMethod);
             LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
             ToParentFolderCommand = new CommandHandler(ToParentFolder, CanExecuteMethod);
-            GetProfileInfoCommand = new CommandHandler(GetProfileInfo, CanExecuteMethod);
+            //GetProfileInfoCommand = new CommandHandler(GetProfileInfo, CanExecuteMethod);
             //GetProfileInfoCommand.Execute(null);
             // OnLoad runs the login and gets the shared drives
             GetUserInformation();
@@ -157,7 +157,7 @@ namespace OneDrive_Cloud_Player.Main
 
         public async void GetUserInformation()
         {
-            CurrentUsername = "Hi, " (await graph.GetOneDriveUserInformationAsync()).GivenName;
+            CurrentUsername = "Hi, " + (await graph.GetOneDriveUserInformationAsync()).GivenName;
             ProfileImage = await graph.GetOneDriveOwnerPhotoAsync();
         }
 
@@ -275,6 +275,7 @@ namespace OneDrive_Cloud_Player.Main
             }
             else
             {
+                App.Current.MainWindow.Hide();
                 OpenItemWithVideoPlayer(SelectedExplorerItem);
             }
             Console.WriteLine(" + Loaded children from folder item.");
@@ -315,9 +316,8 @@ namespace OneDrive_Cloud_Player.Main
 
 
         /// <summary>
-        /// Test code. Do not remove without asking @Tim Gels first.
+        /// Changes XAML Elements on runtime.
         /// </summary>
-        /// This method is created so i could test how to detect and change the personal user drive on runtime.
         /// <param name="value"></param>
         /// <param name="targetType"></param>
         /// <param name="parameter"></param>

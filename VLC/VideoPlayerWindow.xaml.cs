@@ -200,6 +200,7 @@ namespace OneDrive_Cloud_Player.VLC
         protected override void OnClosed(EventArgs e)
         {
             this.DisposeVLC();
+            App.Current.MainWindow.Show();
         }
 
         /// <summary>

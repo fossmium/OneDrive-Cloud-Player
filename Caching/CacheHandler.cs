@@ -133,8 +133,7 @@ namespace OneDrive_Cloud_Player.Caching
 		{
 			new Thread(() =>
 			{
-				//TODO: Dont forget to set indenting to none on release.
-				string JsonToWrite = JsonConvert.SerializeObject(Cache, Formatting.Indented);
+				string JsonToWrite = JsonConvert.SerializeObject(Cache, Formatting.None);
 				IO.JsonHandler.WriteJson(JsonToWrite, "graphcache.json");
 			}).Start();	
 		}
