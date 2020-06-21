@@ -49,9 +49,7 @@ namespace OneDrive_Cloud_Player
         /// <param name="e"></param>
         private void Application_Exit(object sender, ExitEventArgs e)
         {
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff"));
             App.Current.CacheHandler.WriteGraphCache();
-            Console.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.ffff"));
         }
 
         /// <summary>

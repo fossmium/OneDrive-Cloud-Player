@@ -233,19 +233,20 @@ namespace OneDrive_Cloud_Player.Caching
 					string key = currentDrive.DriveId + currentDrive.Id;
 					drivesCombinedWithItems.Add(key, currentDrive.ItemList);
 				});
-			}
-			// Match the drive's DriveId and Id to a list wiht items belonging to that key, so the list of cached items is not throwed away.
-			UpdatedDrives.ForEach((currentUpdatedDrive) =>
-			{
-				string key = currentUpdatedDrive.DriveId + currentUpdatedDrive.Id;
-				if (drivesCombinedWithItems.ContainsKey(key))
+
+				// Match the drive's DriveId and Id to a list wiht items belonging to that key, so the list of cached items is not throwed away.
+				UpdatedDrives.ForEach((currentUpdatedDrive) =>
 				{
-					List<CachedDriveItem> listToRestore = drivesCombinedWithItems.GetValueOrDefault(key);
-					currentUpdatedDrive.ItemList = listToRestore;
-				}
-			});
-			lock (CacheLock)
-			{
+					string key = currentUpdatedDrive.DriveId + currentUpdatedDrive.Id;
+					if (drivesCombinedWithItems.ContainsKey(key))
+					{
+						List<CachedDriveItem> listToRestore = drivesCombinedWithItems.GetValueOrDefault(key);
+						currentUpdatedDrive.ItemList = listToRestore;
+						//currentUpdatedDrive.ChildrenCount = listToRestore.Count;
+					}
+				});
+
+
 				CurrentUserCache.Drives = UpdatedDrives;
 			}
 		}
@@ -275,7 +276,8 @@ namespace OneDrive_Cloud_Player.Caching
 					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
 					lock (CacheLock)
 					{
-						// Since there are no items with a ParentItemId set to the drive, there cannot be any other items, since they would be eventually be children of items which are children of the drive
+						// Since there are no items with a ParentItemId set to the drive, there cannot be any other items,
+						// since they would be eventually be children of items which are children of the drive
 						DriveToSearch.ItemList = itemsToReturn;
 					}
 				}
@@ -327,14 +329,21 @@ namespace OneDrive_Cloud_Player.Caching
 				{
 					itemToAdd.MimeType = graphDriveItem.File.MimeType;
 				}
-				itemsToReturn.Add(itemToAdd);
+				if (graphDriveItem.Folder != null)
+				{
+					itemsToReturn.Add(itemToAdd);
+				}
+				else if (graphDriveItem.File != null && (graphDriveItem.File.MimeType.Contains("video") || graphDriveItem.File.MimeType.Contains("audio")))
+				{
+					itemsToReturn.Add(itemToAdd);
+				}
 			});
 			return itemsToReturn;
 		}
 
         public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
         {
-            List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
+            List<CachedDriveItem> NewlyFecthedItems = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
 			List<CachedDriveItem> CurrentlyCachedDriveItems = null;
 			lock (CacheLock)
 			{
@@ -358,24 +367,22 @@ namespace OneDrive_Cloud_Player.Caching
 					CurrentlyCachedDriveItems.Remove(currentItem);
 				});
 
-				CurrentlyCachedDriveItems.AddRange(newlyFecthedDrives);
+				CurrentlyCachedDriveItems.AddRange(NewlyFecthedItems);
 			}
 		}
 
 		public async Task<List<CachedDriveItem>> GetCachedChildrenFromItem(CachedDrive SelectedDrive, string ItemId)
 		{
 			List<CachedDriveItem> CurrentlyCachedItems = null;
+			List<CachedDriveItem> ChildrenFromItem = null;
 			lock (CacheLock)
 			{
 				CurrentlyCachedItems = CurrentUserCache.Drives.First((currentItem) =>
 					currentItem.DriveId.Equals(SelectedDrive.DriveId) && currentItem.Id.Equals(SelectedDrive.Id)
 				).ItemList;
-			}
 
-			List<CachedDriveItem> ChildrenFromItem = new List<CachedDriveItem>();
+				ChildrenFromItem = new List<CachedDriveItem>();
 
-			lock(CacheLock)
-			{
 				// There are children, so we need to search the ItemList for them by comparing the ParentItemId and ItemId
 				CurrentlyCachedItems.ForEach((currentItem) =>
 				{
@@ -390,6 +397,11 @@ namespace OneDrive_Cloud_Player.Caching
 			{
 				// There were no items with the correct ParentItemId, so we need to call Graph
 				ChildrenFromItem = await GetItemChildrenFromGraph(SelectedDrive.DriveId, ItemId);
+				// check for non-existant folder
+				if (ChildrenFromItem is null)
+				{
+					ChildrenFromItem = new List<CachedDriveItem>();
+				}
 			}
 			// Now update the cache on another thread.
 			new Thread(async () =>
