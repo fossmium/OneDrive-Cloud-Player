@@ -32,6 +32,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -61,6 +62,114 @@
                 </StackPanel>
             </Border>
 
+            <!-- LOGOUT / SETTINGS BUTTONS -->
+            <Grid Grid.Row="1" Margin="0, 0, 0, 20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.Column="0"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                
+                    BorderBrush="#FFFFFF"
+                    BorderThickness="2"
+                    
+                    Command="{Binding SettingsCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="#1C262E"/>
+                            <Setter Property="BorderBrush" Value="Red"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="/Assets/Icons/settings.png" Width="20" HorizontalAlignment="Left"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="Settings"
+
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
+
+                <Button
+                    Grid.Column="1"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                
+                    BorderBrush="#FFFFFF"
+                    BorderThickness="2"
+                    
+                    Command="{Binding LogoutCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="#1C262E"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" HorizontalAlignment="Left"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="Logout"
+
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
+            </Grid>
+
             <!--SEARCH INPUT-->
             <!--<StackPanel
                 Grid.Row="1"
@@ -70,7 +179,7 @@
 
             <TextBox
                 Text="Search..."
-                Grid.Row="1"
+                Grid.Row="2"
 
                 FontSize="16"
                 FontFamily="{StaticResource Lato}"
@@ -88,7 +197,7 @@
             </TextBox>
 
             <!-- LOGOUT / SETTINGS POPUP -->
-            <Canvas HorizontalAlignment="Center">
+            <!--<Canvas HorizontalAlignment="Center">
                 <Canvas.Style>
                     <Style TargetType="Canvas">
                         <Setter Property="Visibility" Value="Hidden"/>
@@ -183,12 +292,12 @@
                         </Grid>
                     </Button>
                 </Grid>
-            </Canvas>
+            </Canvas>-->
 
             <!--CATEGORY LIST-->
             <ListBox
                 x:Name="DriveListBox"
-                Grid.Row="2"
+                Grid.Row="3"
                 
                 Background="Transparent"
                 BorderThickness="0"
