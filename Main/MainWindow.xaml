@@ -450,6 +450,10 @@
 
             <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#3A454E" HorizontalAlignment="Stretch">
                 <Grid>
+                    <Grid.InputBindings>
+                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.ToParentFolderCommand , RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"/>
+                    </Grid.InputBindings>
+                    
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>

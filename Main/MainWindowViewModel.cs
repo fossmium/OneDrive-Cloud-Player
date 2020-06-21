@@ -28,6 +28,7 @@ namespace OneDrive_Cloud_Player.Main
         public ICommand GetChildrenFomDriveCommand { get; set; }
         public ICommand ReloadCommand { get; set; }
         public ICommand LogoutCommand { get; set; }
+        public ICommand ToParentFolderCommand { get; set; }
 
         private readonly GraphHandler graph;
 
@@ -85,12 +86,14 @@ namespace OneDrive_Cloud_Player.Main
                 NotifyPropertyChanged();
             }
         }
-		
+
         private string visibilityReloadButton = "Visible";
 
-        public string VisibilityReloadButton {
+        public string VisibilityReloadButton
+        {
             get { return visibilityReloadButton; }
-            set {
+            set
+            {
                 visibilityReloadButton = value;
                 NotifyPropertyChanged();
             }
@@ -98,19 +101,29 @@ namespace OneDrive_Cloud_Player.Main
 
         private string currentUsername;
 
-        public string CurrentUsername {
+        public string CurrentUsername
+        {
             get { return currentUsername; }
-            set {
+            set
+            {
                 currentUsername = value;
                 NotifyPropertyChanged();
             }
         }
 
-
         private string SelectedDriveId { get; set; }
 
-        public DriveItem PreviousSelectedCategory { get; private set; }
+        private CachedDriveItem parentItem;
 
+        public CachedDriveItem ParentItem
+        {
+            get { return parentItem; }
+            set
+            {
+                parentItem = value;
+                NotifyPropertyChanged();
+            }
+        }
 
         public MainWindowViewModel()
         {
@@ -121,6 +134,7 @@ namespace OneDrive_Cloud_Player.Main
             GetChildrenFomDriveCommand = new CommandHandler(GetChildrenFomDrive, CanExecuteMethod);
             ReloadCommand = new CommandHandler(ReloadCache, CanExecuteMethod);
             LogoutCommand = new CommandHandler(Logout, CanExecuteMethod);
+            ToParentFolderCommand = new CommandHandler(ToParentFolder, CanExecuteMethod);
             // OnLoad runs the login and gets the shared drives
             GetUserInformation();
         }
@@ -129,10 +143,10 @@ namespace OneDrive_Cloud_Player.Main
         {
             CurrentUsername = (await graph.GetOneDriveUserInformationAsync()).DisplayName;
         }
-		
-		/// <param name="obj"></param>
-		private void ReloadCache(object obj)
-		{
+
+        /// <param name="obj"></param>
+        private void ReloadCache(object obj)
+        {
             Console.WriteLine("Reload Cache called");
             VisibilityReloadButton = "Collapsed";
             new Thread(async () =>
@@ -175,8 +189,6 @@ namespace OneDrive_Cloud_Player.Main
             DriveList = localDriveList;
         }
 
-
-
         /// <summary>
         /// Retrieves the children that are inside the drive and fills the the Childrenlist property with those items.
         /// </summary>
@@ -195,7 +207,7 @@ namespace OneDrive_Cloud_Player.Main
             //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, itemId);
             List<CachedDriveItem> driveItems = await App.Current.CacheHandler.GetCachedChildrenFromDrive(SelectedDriveId, itemId);
 
-			if (driveItems is null)
+            if (driveItems is null)
             {
                 // Show dialog and return
                 MessageBox.Show("An error has occured while entering this shared folder. Please try again later.");
@@ -225,6 +237,9 @@ namespace OneDrive_Cloud_Player.Main
             if (SelectedExplorerItem is null) { return; }
 
             if (SelectedDriveFolder is null) { return; }
+
+            //Sets the current selected item as a parent item.
+            ParentItem = SelectedExplorerItem;
 
             List<CachedDriveItem> localDriveItemList = new List<CachedDriveItem>();
 
@@ -266,6 +281,18 @@ namespace OneDrive_Cloud_Player.Main
         {
             new VideoPlayerWindow(SelectedDriveFolder.DriveId, SelectedExplorerItem.ItemId);
         }
+
+        private void ToParentFolder(object obj)
+        {
+            if (ParentItem is null) { return; }
+
+            //App.Current.CacheHandler.GetCachedChildrenFromDrive
+            //App.Current.CacheHandler.GetCachedChildrenFromItem
+
+            
+            string id = ParentItem.ParentItemId;
+        }
+
 
         /// <summary>
         /// Test code. Do not remove without asking @Tim Gels first.

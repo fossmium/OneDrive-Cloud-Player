@@ -14,7 +14,8 @@ namespace OneDrive_Cloud_Player.Caching.GraphData
 		public string ItemId { get; set; }
 
 		/// <summary>
-		/// This id will reference the id of another item in case this item has a parent. If this item does not have a parent, this id will be null.
+		/// This id will reference the id of another item in case this item has a parent. If this item does not have a parent,
+		/// this id will reference the Id (not DriveId) of the drive it resides in.
 		/// </summary>
 		[JsonProperty("parentItemId")]
 		public string ParentItemId { get; set; }
