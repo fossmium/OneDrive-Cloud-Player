@@ -197,10 +197,12 @@ namespace OneDrive_Cloud_Player.Caching
 			List<CachedDrive> newlyCachedDrives = new List<CachedDrive>();
 			foreach (DriveItem graphDrive in localDriveList)
 			{
-				CachedDrive driveToAdd = new CachedDrive();
-				driveToAdd.DriveName = graphDrive.Name;
-				driveToAdd.Id = graphDrive.Id;
-				driveToAdd.ChildrenCount = graphDrive.Folder.ChildCount;
+				CachedDrive driveToAdd = new CachedDrive
+				{
+					DriveName = graphDrive.Name,
+					Id = graphDrive.Id,
+					ChildrenCount = graphDrive.Folder.ChildCount
+				};
 				// Check if the current graphDrive in the localDriveList is the personal graphDrive
 				if (graphDrive.RemoteItem is null)
 				{
