@@ -24,6 +24,7 @@
     <None Remove="Assets\Icons\pause.png" />
     <None Remove="Assets\Icons\play_arrow.png" />
     <None Remove="Assets\Icons\Reload.png" />
+    <None Remove="Assets\Icons\reloadDrives.png" />
     <None Remove="Assets\Icons\settings.png" />
     <None Remove="Assets\Icons\stop.png" />
     <None Remove="Assets\Icons\volume-down.png" />
@@ -63,6 +64,7 @@
     <Resource Include="Assets\Icons\pause.png" />
     <Resource Include="Assets\Icons\play_arrow.png" />
     <Resource Include="Assets\Icons\Reload.png" />
+    <Resource Include="Assets\Icons\reloadDrives.png" />
     <Resource Include="Assets\Icons\settings.png" />
     <Resource Include="Assets\Icons\stop.png" />
     <Resource Include="Assets\Icons\volume-down.png" />

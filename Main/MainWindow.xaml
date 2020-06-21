@@ -33,6 +33,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
@@ -65,11 +66,10 @@
             <!-- LOGOUT / SETTINGS BUTTONS -->
             <Grid Grid.Row="1" Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="50*"/>
-                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button
+                <!--<Button
                     Grid.Column="0"
 
                     FontSize="16"
@@ -86,7 +86,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}" Padding="10">
+                                        <Border Background="{TemplateBinding Background}" Padding="10" BorderBrush="#1AFFFFFF" BorderThickness="0, 0, 2, 0">
                                             <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
                                         </Border>
                                     </ControlTemplate>
@@ -104,7 +104,7 @@
                             <ColumnDefinition Width="35"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        
+
                         <Image Grid.Column="0" Source="/Assets/Icons/settings.png" Width="20" HorizontalAlignment="Left"/>
                         <TextBlock
                             Grid.Column="1"
@@ -115,7 +115,7 @@
                             FontWeight="Regular"
                             Foreground="White"/>
                     </Grid>
-                </Button>
+                </Button>-->
 
                 <Button
                     Grid.Column="1"
@@ -167,13 +167,6 @@
                 </Button>
             </Grid>
 
-            <!--SEARCH INPUT-->
-            <!--<StackPanel
-                Grid.Row="1"
-                Background="Yellow">
-                <TextBlock Text="Search bar"/>
-            </StackPanel>-->
-
             <TextBox
                 Text="Search..."
                 Grid.Row="2"
@@ -185,12 +178,66 @@
                 
                 Background="Transparent"
                 BorderBrush="#353F46"
-                BorderThickness="2"
+                BorderThickness="0, 2"
                 Padding="20, 15, 15, 15"
-                Margin="0, 0, 0, 50">
+                Margin="0">
 
                 <!--Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"-->
             </TextBox>
+
+            <Grid Grid.Row="3" Margin="0, 0, 0, 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Button
+                    Grid.Column="0"
+
+                    FontSize="16"
+                    FontFamily="{StaticResource Lato}"
+                    FontWeight="Regular"
+                    Foreground="White"
+                    
+                    Command="{Binding SettingsCommand}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="Background" Value="#1C262E"/>
+                            <Setter Property="BorderBrush" Value="Red"/>
+                            <Setter Property="BorderThickness" Value="2"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Background="{TemplateBinding Background}" Padding="10">
+                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#414E58"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="35"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Grid.Column="0" Source="/Assets/Icons/reloadDrives.png" Width="20" HorizontalAlignment="Left"/>
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="Reload drives"
+
+                            FontSize="16"
+                            FontFamily="{StaticResource Lato}"
+                            FontWeight="Regular"
+                            Foreground="White"/>
+                    </Grid>
+                </Button>
+            </Grid>
 
             <!-- LOGOUT / SETTINGS POPUP -->
             <!--<Canvas HorizontalAlignment="Center">
@@ -293,7 +340,7 @@
             <!--CATEGORY LIST-->
             <ListBox
                 x:Name="DriveListBox"
-                Grid.Row="3"
+                Grid.Row="4"
                 
                 Background="Transparent"
                 BorderThickness="0"
