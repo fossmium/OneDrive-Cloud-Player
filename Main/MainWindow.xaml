@@ -447,12 +447,14 @@
                     Foreground="White"/>
             </Grid>
 
-            <Border Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#3A454E" HorizontalAlignment="Stretch">
+            <Border x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#3A454E" HorizontalAlignment="Stretch">
                 <Grid>
-                    <Grid.InputBindings>
-                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.ToParentFolderCommand , RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"/>
-                    </Grid.InputBindings>
-                    
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger SourceName="GoToParentBox" EventName="MouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding DataContext.ToParentFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type Grid}}}"/>
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="*"/>
