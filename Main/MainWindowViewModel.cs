@@ -168,31 +168,8 @@ namespace OneDrive_Cloud_Player.Main
         /// <returns></returns>
         public async void GetDrives(object obj)
         {
-            StackTrace stackTrace = new StackTrace();
-            // Get calling method name
-            Console.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
-            var yeet = stackTrace.GetFrame(1).GetMethod();
-            Console.WriteLine(new StackFrame(1).GetMethod().Name);
             //Creates local list to store the user drive and shared drives of the user.
             List<CachedDrive> localDriveList = await App.Current.CacheHandler.GetDrives();
-            //List<DriveItem> localDriveList = new List<DriveItem>();
-
-            //DriveItem personalDrive = await graph.GetUserRootDrive();
-
-            //localDriveList.Add(personalDrive);
-
-            //Retrieves and stores the drives that are shared with the user.
-            //IDriveSharedWithMeCollectionPage sharedDrivesCollection = await graph.GetSharedDrivesAsync();
-
-
-            //Adds only drives to the driveList when they are a folder. To filter out the shared files.
-            //foreach (DriveItem drive in sharedDrivesCollection)
-            //{
-            //	if (drive.Folder != null)
-            //	{
-            //		localDriveList.Add(drive);
-            //	}
-            //}
 
             //Sets the DriveItemList property so it updates the UI.
             DriveList = localDriveList;

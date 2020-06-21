@@ -8,8 +8,8 @@ namespace OneDrive_Cloud_Player.Main
 {
     class CommandHandler : ICommand
     {
-        Action<object> executeMethod;
-        Func<object, bool> canExecute;
+        readonly Action<object> executeMethod;
+        readonly Func<object, bool> canExecute;
 
         public CommandHandler(Action<object> executeMethod, Func<object, bool> canExecuteMethod)
         {
