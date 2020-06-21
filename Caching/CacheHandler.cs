@@ -121,7 +121,7 @@ namespace OneDrive_Cloud_Player.Caching
 			// check for non-existant file
 			if (JsonGraphCache != null)
 			{
-				Cache = JsonConvert.DeserializeObject<List<OneDriveCache>>(JsonGraphCache); ;
+				Cache = JsonConvert.DeserializeObject<List<OneDriveCache>>(JsonGraphCache);
 			}
 		}
 
@@ -138,6 +138,8 @@ namespace OneDrive_Cloud_Player.Caching
 			}).Start();	
 		}
 
+		static readonly object CacheLock = new object();
+
 		/// <summary>
 		/// First check if there is cache. If so, load that. If not, request data from Graph.
 		/// In any case, the cache is freshly updated on a new thread after the data has been fetched,
@@ -148,14 +150,25 @@ namespace OneDrive_Cloud_Player.Caching
 		public async Task<List<CachedDrive>> GetDrives()
 		{
 			List<CachedDrive> drives = null;
-			if (CurrentUserCache.Drives.Count != 0)
+			bool HasCache = true;
+			lock (CacheLock)
 			{
-				drives = CurrentUserCache.Drives;
+				HasCache = CurrentUserCache.Drives.Count != 0;
+			}
+			if (HasCache)
+			{
+				lock (CacheLock)
+				{
+					drives = CurrentUserCache.Drives;
+				}
 			}
 			else
 			{
 				drives = await GetDrivesFromGraph();
-				CurrentUserCache.Drives = drives;
+				lock (CacheLock)
+				{
+					CurrentUserCache.Drives = drives;
+				}
 			}
 			new Thread(async () =>
 			{
@@ -209,7 +222,32 @@ namespace OneDrive_Cloud_Player.Caching
 
 		public async Task UpdateDriveCache()
 		{
-			CurrentUserCache.Drives = await GetDrivesFromGraph();
+			List<CachedDrive> UpdatedDrives = await GetDrivesFromGraph();
+			// We need to restore the ItemList from the current cache, since otherwise we overwrite the current cache with drives that contain an empty ItemList.
+			// Graph doesn't return item information here.
+			Dictionary<string, List<CachedDriveItem>> drivesCombinedWithItems = new Dictionary<string, List<CachedDriveItem>>();
+			lock (CacheLock)
+			{
+				CurrentUserCache.Drives.ForEach((currentDrive) =>
+				{
+					string key = currentDrive.DriveId + currentDrive.Id;
+					drivesCombinedWithItems.Add(key, currentDrive.ItemList);
+				});
+			}
+			// Match the drive's DriveId and Id to a list wiht items belonging to that key, so the list of cached items is not throwed away.
+			UpdatedDrives.ForEach((currentUpdatedDrive) =>
+			{
+				string key = currentUpdatedDrive.DriveId + currentUpdatedDrive.Id;
+				if (drivesCombinedWithItems.ContainsKey(key))
+				{
+					List<CachedDriveItem> listToRestore = drivesCombinedWithItems.GetValueOrDefault(key);
+					currentUpdatedDrive.ItemList = listToRestore;
+				}
+			});
+			lock (CacheLock)
+			{
+				CurrentUserCache.Drives = UpdatedDrives;
+			}
 		}
 
 		public async Task<List<CachedDriveItem>> GetCachedChildrenFromDrive(string SelectedDriveId, string ItemId)
@@ -218,19 +256,35 @@ namespace OneDrive_Cloud_Player.Caching
 			// Search for CachedDriveItems in the CachedDrive with the specified DriveId and ItemId
 			try
 			{
-				CachedDrive DriveToSearch = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId) && drive.Id.Equals(ItemId));
-				// Get all items with a ParentItemId equal to the 2nd argument ItemId, so the direct children of a drive
-				IEnumerable<CachedDriveItem> ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ParentItemId.Equals(ItemId));
-				if (!ChildrenFromDrive.Any())
+				CachedDrive DriveToSearch = null;
+				IEnumerable<CachedDriveItem> ChildrenFromDrive = null;
+				lock (CacheLock)
+				{
+					DriveToSearch = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId) && drive.Id.Equals(ItemId));
+					// Get all items with a ParentItemId equal to the 2nd argument ItemId, so the direct children of a drive
+					ChildrenFromDrive = DriveToSearch.ItemList.Where(item => item.ParentItemId.Equals(ItemId));
+				}
+				bool HasNoChildrenCache = false;
+				lock (CacheLock)
+				{
+					HasNoChildrenCache = !ChildrenFromDrive.Any();
+				}
+				if (HasNoChildrenCache)
 				{
 					// Found no children from the specified drive in cache, so we need to fetch the latest from Graph
 					itemsToReturn = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
-					// Since there are no items with a ParentItemId set to the drive, there cannot be any other items, since they would be eventually be children of items which are children of the drive
-					DriveToSearch.ItemList = itemsToReturn;
+					lock (CacheLock)
+					{
+						// Since there are no items with a ParentItemId set to the drive, there cannot be any other items, since they would be eventually be children of items which are children of the drive
+						DriveToSearch.ItemList = itemsToReturn;
+					}
 				}
 				else
 				{
-					itemsToReturn = ChildrenFromDrive.ToList();
+					lock (CacheLock)
+					{
+						itemsToReturn = ChildrenFromDrive.ToList();
+					}
 				}
 				// We need to update the cache here on another thread without potentially destroying other saved items,
 				// so we can't just overwrite the ItemList
@@ -281,43 +335,56 @@ namespace OneDrive_Cloud_Player.Caching
         public async Task UpdateDriveChildrenCache(string SelectedDriveId, string ItemId)
         {
             List<CachedDriveItem> newlyFecthedDrives = await GetCachedDriveChildrenFromGraph(SelectedDriveId, ItemId);
-			List<CachedDriveItem> CurrentlyCachedDriveItems = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId) && drive.Id.Equals(ItemId)).ItemList;
-
-			// Remove all cached items with the same ItemId
-			// Now add all newly fetched items
-			List<CachedDriveItem> itemsToRemove = new List<CachedDriveItem>();
-
-			CurrentlyCachedDriveItems.ForEach((currentItem) =>
+			List<CachedDriveItem> CurrentlyCachedDriveItems = null;
+			lock (CacheLock)
 			{
-				if (currentItem.ParentItemId.Equals(ItemId))
+				CurrentlyCachedDriveItems = CurrentUserCache.Drives.First(drive => drive.DriveId.Equals(SelectedDriveId) && drive.Id.Equals(ItemId)).ItemList;
+
+				List<CachedDriveItem> itemsToRemove = new List<CachedDriveItem>();
+
+				// Remove all cached items with the same ItemId
+				// Now add all newly fetched items
+				CurrentlyCachedDriveItems.ForEach((currentItem) =>
 				{
-					itemsToRemove.Add(currentItem);
-				}
-			});
+					if (currentItem.ParentItemId.Equals(ItemId))
+					{
+						itemsToRemove.Add(currentItem);
+					}
+				});
 
-			// remove all the items here
-			itemsToRemove.ForEach((currentItem) =>
-			{
-				CurrentlyCachedDriveItems.Remove(currentItem);
-			});
+				// remove all the items here
+				itemsToRemove.ForEach((currentItem) =>
+				{
+					CurrentlyCachedDriveItems.Remove(currentItem);
+				});
 
-			CurrentlyCachedDriveItems.AddRange(newlyFecthedDrives);
+				CurrentlyCachedDriveItems.AddRange(newlyFecthedDrives);
+			}
 		}
 
 		public async Task<List<CachedDriveItem>> GetCachedChildrenFromItem(CachedDrive SelectedDrive, string ItemId)
 		{
-			List<CachedDriveItem> CurrentlyCachedItems = SelectedDrive.ItemList;
+			List<CachedDriveItem> CurrentlyCachedItems = null;
+			lock (CacheLock)
+			{
+				CurrentlyCachedItems = CurrentUserCache.Drives.First((currentItem) =>
+					currentItem.DriveId.Equals(SelectedDrive.DriveId) && currentItem.Id.Equals(SelectedDrive.Id)
+				).ItemList;
+			}
 
 			List<CachedDriveItem> ChildrenFromItem = new List<CachedDriveItem>();
 
-			// There are children, so we need to search the ItemList for them by comparing the ParentItemId and ItemId
-			CurrentlyCachedItems.ForEach((currentItem) =>
+			lock(CacheLock)
 			{
-				if (currentItem.ParentItemId.Equals(ItemId))
+				// There are children, so we need to search the ItemList for them by comparing the ParentItemId and ItemId
+				CurrentlyCachedItems.ForEach((currentItem) =>
 				{
-					ChildrenFromItem.Add(currentItem);
-				}
-			});
+					if (currentItem.ParentItemId.Equals(ItemId))
+					{
+						ChildrenFromItem.Add(currentItem);
+					}
+				});
+			}
 
 			if (ChildrenFromItem.Count == 0)
 			{
@@ -325,12 +392,10 @@ namespace OneDrive_Cloud_Player.Caching
 				ChildrenFromItem = await GetItemChildrenFromGraph(SelectedDrive.DriveId, ItemId);
 			}
 			// Now update the cache on another thread.
-			Thread t = new Thread(async () =>
+			new Thread(async () =>
 			{
 				await UpdateItemChildrenCache(SelectedDrive.DriveId, SelectedDrive.Id, ItemId);
-			});
-			t.Name = "UpdateItemChildrenThread";
-			t.Start();
+			}).Start();
 			return ChildrenFromItem;
 		}
 
@@ -369,31 +434,29 @@ namespace OneDrive_Cloud_Player.Caching
 		{
 			List<CachedDriveItem> ItemsFromGraph = await GetItemChildrenFromGraph(DriveId, ItemId);
 
-			List<CachedDriveItem> ItemsInCache = CurrentUserCache.Drives.First((currentItem) => currentItem.DriveId.Equals(DriveId) && currentItem.Id.Equals(DriveItemId)).ItemList;
-
-			// Create a list of all items in cache to remove, so we can simply append the items from Graph
-			List<CachedDriveItem> ItemsToRemove = new List<CachedDriveItem>();
-
-			if (ItemsToRemove is null)
+			lock (CacheLock)
 			{
-				return;
-			}
+				List <CachedDriveItem> ItemsInCache = CurrentUserCache.Drives.First((currentItem) => currentItem.DriveId.Equals(DriveId) && currentItem.Id.Equals(DriveItemId)).ItemList;
 
-			// Match the ParentItemIds of items in cache to the ItemId of the item of which we want to get children
-			ItemsInCache.ForEach((currentItem) =>
-			{
-				if (currentItem.ParentItemId.Equals(ItemId))
+				// Create a list of all items in cache to remove, so we can simply append the items from Graph
+				List<CachedDriveItem> ItemsToRemove = new List<CachedDriveItem>();
+
+				// Match the ParentItemIds of items in cache to the ItemId of the item of which we want to get children
+				ItemsInCache.ForEach((currentItem) =>
 				{
-					ItemsToRemove.Add(currentItem);
-				}
-			});
+					if (currentItem.ParentItemId.Equals(ItemId))
+					{
+						ItemsToRemove.Add(currentItem);
+					}
+				});
 
-			ItemsToRemove.ForEach((itemToRemove) =>
-			{
-				ItemsInCache.Remove(itemToRemove);
-			});
+				ItemsToRemove.ForEach((itemToRemove) =>
+				{
+					ItemsInCache.Remove(itemToRemove);
+				});
 
-			ItemsInCache.AddRange(ItemsFromGraph);
+				ItemsInCache.AddRange(ItemsFromGraph);
+			}
 		}
 
 	}

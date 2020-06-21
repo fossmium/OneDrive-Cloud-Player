@@ -140,6 +140,8 @@ namespace OneDrive_Cloud_Player.Main
                 await App.Current.CacheHandler.UpdateDriveCache();
                 DriveList = App.Current.CacheHandler.CurrentUserCache.Drives;
                 VisibilityReloadButton = "Visible";
+                // reset the current item list so we don't get an exception
+                ExplorerItemsList = null;
             }).Start();
         }
 
@@ -243,7 +245,9 @@ namespace OneDrive_Cloud_Player.Main
         public async void GetChildrenFomItem(object obj)
         {
             //Prevents exception when user clicks an empty space in the ListBox.
-            if (SelectedExplorerItem is null) { return; };
+            if (SelectedExplorerItem is null) { return; }
+
+            if (SelectedDriveFolder is null) { return; }
 
             List<CachedDriveItem> localDriveItemList = new List<CachedDriveItem>();
 
