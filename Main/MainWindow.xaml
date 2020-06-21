@@ -44,7 +44,11 @@
                 </Grid.ColumnDefinitions>
                 
                 <!--Profile pictures should be here-->
-                <Image Grid.Column="0" Source="{Binding ProfileImage}" Width="80" Height="80" Margin="0, 0, 20, 0"/>
+                <Ellipse Width="80" Height="80" Margin="0, 0, 20, 0">
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{Binding ProfileImage}" />
+                    </Ellipse.Fill>
+                </Ellipse>
                 <TextBlock
                     Grid.Column="1"
                     Text="{Binding ProfileName}"
@@ -100,7 +104,7 @@
                             <ColumnDefinition Width="35"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-
+                        
                         <Image Grid.Column="0" Source="/Assets/Icons/settings.png" Width="20" HorizontalAlignment="Left"/>
                         <TextBlock
                             Grid.Column="1"
