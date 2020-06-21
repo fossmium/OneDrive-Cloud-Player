@@ -199,7 +199,6 @@ namespace OneDrive_Cloud_Player.Caching
 			{
 				CachedDrive driveToAdd = new CachedDrive
 				{
-					DriveName = graphDrive.Name,
 					Id = graphDrive.Id,
 					ChildrenCount = graphDrive.Folder.ChildCount
 				};
@@ -207,12 +206,14 @@ namespace OneDrive_Cloud_Player.Caching
 				if (graphDrive.RemoteItem is null)
 				{
 					// this is the personal drive
+					driveToAdd.DriveName = "Your Drive";
 					driveToAdd.DriveId = graphDrive.ParentReference.DriveId;
 					driveToAdd.IsSharedFolder = false;
 					driveToAdd.OwnerName = CurrentUsername;
 				}
 				else
 				{
+					driveToAdd.DriveName = graphDrive.Name;
 					driveToAdd.DriveId = graphDrive.RemoteItem.ParentReference.DriveId;
 					driveToAdd.IsSharedFolder = true;
 					driveToAdd.OwnerName = graphDrive.RemoteItem.Shared.SharedBy.User.DisplayName;
