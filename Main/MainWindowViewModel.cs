@@ -139,6 +139,9 @@ namespace OneDrive_Cloud_Player.Main
             GetUserInformation();
         }
 
+        /// <summary>
+        /// Retrieves the user information to display the user's name and his profile picture.
+        /// </summary>
         public async void GetUserInformation()
         {
             CurrentUsername = "Hi, " + (await graph.GetOneDriveUserInformationAsync()).GivenName;
@@ -152,6 +155,9 @@ namespace OneDrive_Cloud_Player.Main
             }
         }
 
+        /// <summary>
+        /// Reloads the cache of the drives and removes the item explorer view so the user needs to select a drive again to access explorer items.
+        /// </summary>
         /// <param name="obj"></param>
         private void ReloadCache(object obj)
         {
@@ -203,7 +209,6 @@ namespace OneDrive_Cloud_Player.Main
         /// <param name="obj"></param>
         public async void GetChildrenFomDrive(object obj)
         {
-            //
             ParentItem = null;
 
             //Prevents exception when user clicks an empty space in the ListBox.
