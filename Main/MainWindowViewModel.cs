@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 
 namespace OneDrive_Cloud_Player.Main
 {
-    class MainWindowViewModel : MetroWindow, INotifyPropertyChanged,  IValueConverter
+    class MainWindowViewModel : MetroWindow, INotifyPropertyChanged, IValueConverter
     {
         public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
@@ -40,11 +40,9 @@ namespace OneDrive_Cloud_Player.Main
         // The list of the different drives
         private List<CachedDrive> driveList;
 
-        public List<CachedDrive> DriveList
-        {
+        public List<CachedDrive> DriveList {
             get { return driveList; }
-            set
-            {
+            set {
                 driveList = value;
                 NotifyPropertyChanged();
             }
@@ -53,11 +51,9 @@ namespace OneDrive_Cloud_Player.Main
         // The list of children that is given back when you click on a parent
         private List<CachedDriveItem> explorerItemsList;
 
-        public List<CachedDriveItem> ExplorerItemsList
-        {
+        public List<CachedDriveItem> ExplorerItemsList {
             get { return explorerItemsList; }
-            set
-            {
+            set {
                 explorerItemsList = value;
                 NotifyPropertyChanged();
             }
@@ -66,11 +62,9 @@ namespace OneDrive_Cloud_Player.Main
         // The folder that gets selected when you click on a onedrive
         private CachedDrive selectedDriveFolder;
 
-        public CachedDrive SelectedDriveFolder
-        {
+        public CachedDrive SelectedDriveFolder {
             get { return selectedDriveFolder; }
-            set
-            {
+            set {
                 selectedDriveFolder = value;
                 NotifyPropertyChanged();
             }
@@ -79,11 +73,9 @@ namespace OneDrive_Cloud_Player.Main
         // The folder that gets selected when you click on a onedrive
         private CachedDriveItem selectedExplorerItem;
 
-        public CachedDriveItem SelectedExplorerItem
-        {
+        public CachedDriveItem SelectedExplorerItem {
             get { return selectedExplorerItem; }
-            set
-            {
+            set {
                 selectedExplorerItem = value;
                 NotifyPropertyChanged();
             }
@@ -91,11 +83,9 @@ namespace OneDrive_Cloud_Player.Main
 
         private string visibilityReloadButton = "Visible";
 
-        public string VisibilityReloadButton
-        {
+        public string VisibilityReloadButton {
             get { return visibilityReloadButton; }
-            set
-            {
+            set {
                 visibilityReloadButton = value;
                 NotifyPropertyChanged();
             }
@@ -103,11 +93,9 @@ namespace OneDrive_Cloud_Player.Main
 
         private string currentUsername;
 
-        public string CurrentUsername
-        {
+        public string CurrentUsername {
             get { return currentUsername; }
-            set
-            {
+            set {
                 currentUsername = value;
                 NotifyPropertyChanged();
             }
@@ -115,11 +103,9 @@ namespace OneDrive_Cloud_Player.Main
         // The users profile picture
         private System.IO.Stream profileImage;
 
-        public System.IO.Stream ProfileImage
-        {
+        public System.IO.Stream ProfileImage {
             get { return profileImage; }
-            set
-            {
+            set {
                 profileImage = value;
                 NotifyPropertyChanged();
             }
@@ -129,11 +115,9 @@ namespace OneDrive_Cloud_Player.Main
 
         private CachedDriveItem parentItem;
 
-        public CachedDriveItem ParentItem
-        {
+        public CachedDriveItem ParentItem {
             get { return parentItem; }
-            set
-            {
+            set {
                 parentItem = value;
                 NotifyPropertyChanged();
             }
@@ -158,7 +142,14 @@ namespace OneDrive_Cloud_Player.Main
         public async void GetUserInformation()
         {
             CurrentUsername = "Hi, " + (await graph.GetOneDriveUserInformationAsync()).GivenName;
-            ProfileImage = await graph.GetOneDriveOwnerPhotoAsync();
+            try
+            {
+                ProfileImage = await graph.GetOneDriveOwnerPhotoAsync();
+            }
+            catch (ServiceException)
+            {
+                // A user may not have a picture.
+            }
         }
 
         /// <param name="obj"></param>
