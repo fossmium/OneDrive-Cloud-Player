@@ -1,4 +1,5 @@
 ﻿using OneDrive_Cloud_Player.Login;
+using OneDrive_Cloud_Player.VideoPlayer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,7 +68,7 @@ namespace OneDrive_Cloud_Player
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(LoginPage), e.Arguments);
+                    rootFrame.Navigate(typeof(VideoPlayerPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
