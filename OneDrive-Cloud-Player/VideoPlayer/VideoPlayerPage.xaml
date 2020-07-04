@@ -84,6 +84,8 @@
             </Setter>
         </Style>
     </Page.Resources>
+    
+    
     <Grid>
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <interactivity:Interaction.Behaviors>

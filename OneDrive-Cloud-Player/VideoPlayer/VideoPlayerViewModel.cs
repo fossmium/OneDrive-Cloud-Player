@@ -30,10 +30,15 @@ namespace OneDrive_Cloud_Player.VideoPlayer
         public VideoPlayerViewModel()
         {
             InitializedCommand = new RelayCommand<InitializedEventArgs>(Initialize);
-            Window.Current.CoreWindow.KeyDown += SwitchFullScreen;
+            Window.Current.CoreWindow.KeyDown += KeyDownEventHandler;
         }
 
-        private void SwitchFullScreen(CoreWindow sender, KeyEventArgs args)
+        /// <summary>
+        /// Handles the key down events in the page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="args"></param>
+        private void KeyDownEventHandler(CoreWindow sender, KeyEventArgs args)
         {
             var view = ApplicationView.GetForCurrentView();
             if (view.IsFullScreenMode)
