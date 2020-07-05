@@ -1,5 +1,5 @@
 ﻿using OneDrive_Cloud_Player.Login;
-using OneDrive_Cloud_Player.VideoPlayer;
+using OneDrive_Cloud_Player.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
