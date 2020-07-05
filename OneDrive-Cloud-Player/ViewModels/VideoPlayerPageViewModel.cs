@@ -20,13 +20,20 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary>
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable
     {
-        /// <summary>
-        /// Occurs when a property value changes
-        /// </summary>
-        //public event PropertyChangedEventHandler PropertyChanged;
+        private LibVLC LibVLC { get; set; }
 
+        private MediaPlayer _mediaPlayer;
 
         public RelayCommand DisplayMessageCommand { get; private set; }
+
+        /// <summary>
+        /// Gets the commands for the initialization
+        /// </summary>
+        public ICommand InitializedCommand { get; }
+        public ICommand SwitchScreenModeCommand { get; }
+        public ICommand StartedDraggingThumbCommand { get; }
+        public ICommand StoppedDraggingThumbCommand { get; }
+        public ICommand SeekedCommand { get; }
 
         private long timeLineValue;
 
@@ -37,7 +44,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 timeLineValue = value;
                 RaisePropertyChanged("TimeLineValue");
-                //Debug.WriteLine("Value updated! " + "[" + value + "]");
             }
         }
 
@@ -52,10 +58,18 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private long videoLength;
 
-        private LibVLC LibVLC { get; set; }
+        public long VideoLength
+        {
+            get { return videoLength; }
+            set
+            {
+                videoLength = value;
+                RaisePropertyChanged("VideoLength");
+            }
+        }
 
-        private MediaPlayer _mediaPlayer;
 
         /// <summary>
         /// Gets the media player
@@ -66,16 +80,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             private set => Set(nameof(MediaPlayer), ref _mediaPlayer, value);
         }
 
-
-        /// <summary>
-        /// Gets the commands for the initialization
-        /// </summary>
-        public ICommand InitializedCommand { get; }
-        public ICommand StartedDraggingThumbCommand { get; }
-        public ICommand StoppedDraggingThumbCommand { get; }
-        public ICommand SeekedCommand { get; }
-
-
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>
@@ -83,10 +87,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             InitializedCommand = new RelayCommand<InitializedEventArgs>(Initialize);
 
-            DisplayMessageCommand = new RelayCommand(this.DisplayMessage, CanExecuteCommand);
-            StartedDraggingThumbCommand = new RelayCommand(this.StartedDraggingThumb, CanExecuteCommand);
-            StoppedDraggingThumbCommand = new RelayCommand(this.StoppedDraggingThumb, CanExecuteCommand);
-            SeekedCommand = new RelayCommand(this.Seeked, CanExecuteCommand);
+            DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
+            SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
+            StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
+            StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
+            SeekedCommand = new RelayCommand(Seeked, CanExecuteCommand);
         }
 
         private bool CanExecuteCommand()
@@ -97,11 +102,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         private void DisplayMessage()
         {
             Debug.WriteLine("Message");
-        }
-
-        public void VideoPlayerLoaded()
-        {
-            Debug.WriteLine("Loaded player");
         }
 
         //private void Set<T>(string propertyName, ref T field, T value)
@@ -121,20 +121,39 @@ namespace OneDrive_Cloud_Player.ViewModels
             UpdateSeekBarFromVideoTime();
         }
 
-        private void PlayVideo()
+        /// <summary>
+        /// Plays the video.
+        /// </summary>
+        private async void PlayVideo()
         {
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
+            //Waits for the video to start playing to update the maximum value of the seekbar.
+            _mediaPlayer.Playing += async (sender, args) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+                {
+                    //Sets the max value of the seekbar.
+                    VideoLength = _mediaPlayer.Length;
+
+                    //PausePlayButtonImageSource = "/Assets/Icons/pause.png";
+                });
+            };
+
             MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")));
+
+            //Waits for the stream to be parsed so we do not raise a nullpointer exception.
+            await _mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
         }
 
-
+        /// <summary>
+        /// Updates the value of the seekbar with the value of the video time every timechanged event.
+        /// </summary>
         private async void UpdateSeekBarFromVideoTime()
         {
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
-
-            int i = 0;
-
-            await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
             {
                 //Set the video start time.
                 //_mediaPlayer.Time = VideoStartTime;
@@ -142,49 +161,53 @@ namespace OneDrive_Cloud_Player.ViewModels
 
                 _mediaPlayer.TimeChanged += async (sender, args) =>
                 {
-                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                     {
                         if (!IsSeeking)
                         {
-                            //if(i > 1)
-                            //{
-                                TimeLineValue = _mediaPlayer.Time;
-                            //    i = 0;
-                            //    Debug.WriteLine(i);
-                            //}
-                            //else
-                            //{
-                            //    i++;
-                            //}
-                            //Debug.WriteLine(TimeLineValue);
+                            TimeLineValue = _mediaPlayer.Time;
                         }
                     });
                 };
             });
         }
 
+        /// <summary>
+        /// Sets the IsSeekig boolean on true so the seekbar value does not get updated.
+        /// </summary>
         public void StartedDraggingThumb()
         {
-            Debug.WriteLine("Value" + TimeLineValue);
             IsSeeking = true;
         }
 
+        /// <summary>
+        /// Sets the IsIseeking boolean on false so the seekbar value can gets updates again.
+        /// </summary>
         public void StoppedDraggingThumb()
         {
             IsSeeking = false;
         }
 
+        /// <summary>
+        /// Sets the time of the video with the time of the seekbar value.
+        /// </summary>
         private void Seeked()
         {
-            Debug.WriteLine("Clicked!");
             SetVideoTime(TimeLineValue);
         }
 
+        /// <summary>
+        /// Sets the time of the video with the given time.
+        /// </summary>
+        /// <param name="time"></param>
         private void SetVideoTime(long time)
         {
             _mediaPlayer.Time = time;
         }
 
+        /// <summary>
+        /// Switches the screen from windowed mode to fullscreen and reversed.
+        /// </summary>
         private void SwitchScreenMode()
         {
             var view = ApplicationView.GetForCurrentView();
@@ -202,9 +225,8 @@ namespace OneDrive_Cloud_Player.ViewModels
                     // The SizeChanged event will be raised when the entry to full-screen mode is complete.
                 }
             }
-            Debug.WriteLine("Switched Fullscreen State.");
+            Debug.WriteLine(" + Switched Fullscreen State.");
         }
-
 
         /// <summary>
         /// Cleaning

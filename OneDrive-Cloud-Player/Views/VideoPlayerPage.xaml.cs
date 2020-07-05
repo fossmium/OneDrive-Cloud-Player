@@ -39,7 +39,6 @@ namespace OneDrive_Cloud_Player.Views
         /// <param name="e"></param>
         private void SeekBar_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            Debug.WriteLine("I need to be called First!!");
             ((VideoPlayerPageViewModel)(this.DataContext)).IsSeeking = true;
         }
 
@@ -48,9 +47,8 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SeekBar_Tapped(object sender, TappedRoutedEventArgs e)
+        private void SeekBar_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
-            Debug.WriteLine("I need to be called Last!!");
             ((VideoPlayerPageViewModel)(this.DataContext)).IsSeeking = false;
         }
     }

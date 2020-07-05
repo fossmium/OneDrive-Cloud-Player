@@ -70,11 +70,11 @@
                         </Grid.ColumnDefinitions>
 
                         <!--SeekBar-->
-                        <Slider Grid.Column="1" x:Name="SeekBar" Maximum="10000" VerticalAlignment="Center" ManipulationMode="All" 
+                        <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" VerticalAlignment="Center" ManipulationMode="All" 
                                     Value="{Binding TimeLineValue,Mode=TwoWay}" 
                                     HorizontalAlignment="Stretch" Height="Auto"
-                                   PointerPressed="SeekBar_PointerPressed"
-                                    Tapped="SeekBar_Tapped">
+                                    PointerPressed="SeekBar_PointerPressed"
+                                    PointerCaptureLost="SeekBar_PointerCaptureLost">
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="ManipulationCompleted">
                                     <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}" CommandParameter="value"/>
@@ -109,7 +109,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" Height="50">
+                            <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" Height="50" Command="{Binding SwitchScreenModeCommand}">
                                 <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
                             </Button>
                         </Grid>
