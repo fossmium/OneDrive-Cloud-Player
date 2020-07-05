@@ -70,6 +70,18 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private int videoVolume = 10;
+
+        public int VideoVolume
+        {
+            get { return videoVolume; }
+            set
+            {
+                SetVideoVolume(value);
+                RaisePropertyChanged("VideoVolume");
+            }
+        }
+
 
         /// <summary>
         /// Gets the media player
@@ -104,29 +116,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             Debug.WriteLine("Message");
         }
 
-        //private void Set<T>(string propertyName, ref T field, T value)
-        //{
-        //    if (field == null && value != null || field != null && !field.Equals(value))
-        //    {
-        //        field = value;
-        //        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //    }
-        //}
-
         private void Initialize(InitializedEventArgs eventArgs)
         {
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
-            PlayVideo();
-            UpdateSeekBarFromVideoTime();
-        }
-
-        /// <summary>
-        /// Plays the video.
-        /// </summary>
-        private async void PlayVideo()
-        {
-            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             //Waits for the video to start playing to update the maximum value of the seekbar.
             _mediaPlayer.Playing += async (sender, args) =>
@@ -140,8 +135,16 @@ namespace OneDrive_Cloud_Player.ViewModels
                 });
             };
 
-            MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4")));
+            PlayVideo();
+            UpdateSeekBarFromVideoTime();
+        }
 
+        /// <summary>
+        /// Plays the video.
+        /// </summary>
+        private async void PlayVideo()
+        {
+            MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")));
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
             await _mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
         }
@@ -170,6 +173,11 @@ namespace OneDrive_Cloud_Player.ViewModels
                     });
                 };
             });
+        }
+
+        private void SetVideoVolume(int volume)
+        {
+            _mediaPlayer.Volume = volume;
         }
 
         /// <summary>
