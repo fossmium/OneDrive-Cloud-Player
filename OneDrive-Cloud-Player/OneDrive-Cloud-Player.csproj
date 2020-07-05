@@ -126,6 +126,7 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="VideoPlayer\CommandHandler.cs" />
     <Compile Include="VideoPlayer\RelayCommand.cs" />
     <Compile Include="VideoPlayer\VideoPlayerPage.xaml.cs">
       <DependentUpon>VideoPlayerPage.xaml</DependentUpon>

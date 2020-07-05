@@ -11,7 +11,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.DataContext>
-        <local:VideoPlayerViewModel />
+        <local:VideoPlayerViewModel/>
     </Page.DataContext>
 
     <Page.Resources>
@@ -141,7 +141,7 @@
                             </Grid.ColumnDefinitions>
 
                             <!--SeekBar-->
-                            <Slider Grid.Column="1" x:Name="SeekBar" Maximum="100" VerticalAlignment="Center" Value="45" HorizontalAlignment="Stretch" Height="Auto"></Slider>
+                            <Slider Grid.Column="1" x:Name="SeekBar" Maximum="10000" VerticalAlignment="Center" ManipulationMode="System" Value="{Binding TimeLineValue}" HorizontalAlignment="Stretch" Height="Auto"></Slider>
                         </Grid>
                     </Border>
 
@@ -153,7 +153,13 @@
                             <ColumnDefinition Width="50"/>
                         </Grid.ColumnDefinitions>
                         <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
-                        <Slider  Visibility="Visible"  VerticalAlignment="Center" Grid.Column="1" Value="50" Width="50" Maximum="100"></Slider>
+                        <Slider  Visibility="Visible"  VerticalAlignment="Center" Grid.Column="1" Width="50" Maximum="100" Value="10">
+                            <interactivity:Interaction.Behaviors>
+                                <interactions:EventTriggerBehavior EventName="DragStarting">
+                                    <interactions:InvokeCommandAction Command="{Binding StartedSeekingCommand}"/>
+                                </interactions:EventTriggerBehavior>
+                            </interactivity:Interaction.Behaviors>
+                        </Slider>
                         <!--</Border>-->
 
                         <!--Right bottom controls-->
