@@ -44,8 +44,9 @@
                     </Grid.ColumnDefinitions>
                     <!--Play/Pause Button-->
                     <Button Background="#1E2931" Grid.Column="0" HorizontalAlignment="Left" 
-                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
-                        <Image Source="{Binding PlayPauseButtonImageSource}" />
+                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
+                                    Command="{Binding ChangePlayingStateCommand}">
+                        <Image Source="{Binding PlayPauseButtonImageSource}"/>
                     </Button>
                     <!--Stop Button-->
                     <Button Background="#1E2931" Grid.Column="1"  HorizontalAlignment="Center" 

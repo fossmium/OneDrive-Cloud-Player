@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -23,7 +24,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public bool IsSeeking { get; set; }
         public RelayCommand DisplayMessageCommand { get; private set; }
         private LibVLC LibVLC { get; set; }
-        private MediaPlayer _mediaPlayer;
+        private MediaPlayer mediaPlayer;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -32,6 +33,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand SwitchScreenModeCommand { get; }
         public ICommand StartedDraggingThumbCommand { get; }
         public ICommand StoppedDraggingThumbCommand { get; }
+        public ICommand ChangePlayingStateCommand { get; }
         public ICommand SeekedCommand { get; }
 
         private long timeLineValue;
@@ -45,8 +47,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                 RaisePropertyChanged("TimeLineValue");
             }
         }
-
-      
 
         private long videoLength;
 
@@ -96,16 +96,13 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-
-
-
         /// <summary>
         /// Gets the media player
         /// </summary>
         public MediaPlayer MediaPlayer
         {
-            get => _mediaPlayer;
-            private set => Set(nameof(MediaPlayer), ref _mediaPlayer, value);
+            get => mediaPlayer;
+            private set => Set(nameof(MediaPlayer), ref mediaPlayer, value);
         }
 
         /// <summary>
@@ -119,6 +116,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
+            ChangePlayingStateCommand = new RelayCommand(ChangePlayingState, CanExecuteCommand);
             SeekedCommand = new RelayCommand(Seeked, CanExecuteCommand);
         }
 
@@ -140,12 +138,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             MediaPlayer = new MediaPlayer(LibVLC);
 
             //Waits for the video to start playing to update the maximum value of the seekbar.
-            _mediaPlayer.Playing += async (sender, args) =>
+            mediaPlayer.Playing += async (sender, args) =>
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     //Sets the max value of the seekbar.
-                    VideoLength = _mediaPlayer.Length;
+                    VideoLength = mediaPlayer.Length;
 
                     //PausePlayButtonImageSource = "/Assets/Icons/pause.png";
                 });
@@ -162,7 +160,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")));
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
-            await _mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+            await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
         }
 
         /// <summary>
@@ -175,16 +173,16 @@ namespace OneDrive_Cloud_Player.ViewModels
             await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
             {
                 //Set the video start time.
-                //_mediaPlayer.Time = VideoStartTime;
+                //mediaPlayer.Time = VideoStartTime;
                 //VideoStartTime = 100;
 
-                _mediaPlayer.TimeChanged += async (sender, args) =>
+                mediaPlayer.TimeChanged += async (sender, args) =>
                 {
                     await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                     {
                         if (!IsSeeking)
                         {
-                            TimeLineValue = _mediaPlayer.Time;
+                            TimeLineValue = mediaPlayer.Time;
                         }
                     });
                 };
@@ -193,7 +191,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void SetVideoVolume(int volume)
         {
-            _mediaPlayer.Volume = volume;
+            mediaPlayer.Volume = volume;
         }
 
         /// <summary>
@@ -226,7 +224,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="time"></param>
         private void SetVideoTime(long time)
         {
-            _mediaPlayer.Time = time;
+            mediaPlayer.Time = time;
         }
 
         /// <summary>
@@ -250,6 +248,23 @@ namespace OneDrive_Cloud_Player.ViewModels
                 }
             }
             Debug.WriteLine(" + Switched screen mode.");
+        }
+
+        /// <summary>
+        /// Changes the video playing state from paused to playing and vice versa. 
+        /// </summary>
+        private void ChangePlayingState()
+        {
+            bool isPlaying = mediaPlayer.IsPlaying;
+
+            if (isPlaying)
+            {
+                mediaPlayer.SetPause(true);
+            }
+            else if(!isPlaying)
+            {
+                mediaPlayer.SetPause(false);
+            }
         }
 
         /// <summary>
