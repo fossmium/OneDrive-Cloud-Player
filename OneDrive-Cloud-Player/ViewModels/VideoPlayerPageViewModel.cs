@@ -75,7 +75,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private string volumeButtonIconSource;
+        private string volumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_low.png";
 
         public string VolumeButtonIconSource
         {
@@ -231,6 +231,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             Debug.WriteLine("Volume changed to: " + volumeLevel);
             mediaPlayer.Volume = volumeLevel;
+            UpdateVolumeButtonIconSource(volumeLevel);
         }
 
         /// <summary>
@@ -238,17 +239,17 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void UpdateVolumeButtonIconSource(int volumeLevel)
         {
-            if (volumeLevel <= 33)
+            if (volumeLevel <= 33 && !VolumeButtonIconSource.Equals("../Assets/Icons/VolumeLevels/volume_low.png"))
             {
                 VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_low.png";
             }
-            else if (volumeLevel > 33 && volumeLevel <= 66)
+            else if (volumeLevel > 33 && volumeLevel <= 66 && !VolumeButtonIconSource.Equals("../Assets/Icons/VolumeLevels/volume_medium.png"))
             {
-
+                VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_medium.png";
             }
-            else if (volumeLevel > 66)
+            else if (volumeLevel > 66 && !VolumeButtonIconSource.Equals("../Assets/Icons/VolumeLevels/volume_high.png"))
             {
-
+                VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_high.png";
             }
         }
 
