@@ -29,7 +29,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Gets the commands for the initialization
         /// </summary>
-        public ICommand InitializedCommand { get; }
+        public ICommand InitializeLibVLCCommand { get; }
         public ICommand SwitchScreenModeCommand { get; }
         public ICommand StartedDraggingThumbCommand { get; }
         public ICommand StoppedDraggingThumbCommand { get; }
@@ -92,7 +92,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 playPauseButtonImageSource = value;
-                RaisePropertyChanged("PlayPauseButtonnImageSource");
+                RaisePropertyChanged("PlayPauseButtonImageSource");
             }
         }
 
@@ -110,7 +110,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public VideoPlayerPageViewModel()
         {
-            InitializedCommand = new RelayCommand<InitializedEventArgs>(Initialize);
+            InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
 
             DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
             SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
@@ -130,14 +130,17 @@ namespace OneDrive_Cloud_Player.ViewModels
             Debug.WriteLine("Message");
         }
 
-        private void Initialize(InitializedEventArgs eventArgs)
+        private void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
-            //Waits for the video to start playing to update the maximum value of the seekbar.
+            /*
+             * Subscribing to LibVLC events.
+             */
+            //Subscribes to the Playing event.
             mediaPlayer.Playing += async (sender, args) =>
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
@@ -145,48 +148,50 @@ namespace OneDrive_Cloud_Player.ViewModels
                     //Sets the max value of the seekbar.
                     VideoLength = mediaPlayer.Length;
 
-                    //PausePlayButtonImageSource = "/Assets/Icons/pause.png";
+                    PlayPauseButtonImageSource = "/Assets/Icons/pause.png";
                 });
             };
 
-            PlayVideo();
-            UpdateSeekBarFromVideoTime();
+            //Subscribes to the Paused event.
+            mediaPlayer.Paused += async (sender, args) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+                {
+                    //Sets the max value of the seekbar.
+                    //VideoLength = mediaPlayer.Length;
+                    PlayPauseButtonImageSource = "/Assets/Icons/play_arrow.png";
+
+                });
+            };
+
+            //Set the video start time.
+            //mediaPlayer.Time = VideoStartTime;
+            //VideoStartTime = 100;
+
+            mediaPlayer.TimeChanged += async (sender, args) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
+                    if (!IsSeeking)
+                    {
+                        TimeLineValue = mediaPlayer.Time;
+                    }
+                });
+            };
+
+            //Play the media.
+            PlayMedia();
         }
 
         /// <summary>
         /// Plays the video.
         /// </summary>
-        private async void PlayVideo()
+        private void PlayMedia()
         {
             MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")));
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
-            await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
-        }
-
-        /// <summary>
-        /// Updates the value of the seekbar with the value of the video time every timechanged event.
-        /// </summary>
-        private async void UpdateSeekBarFromVideoTime()
-        {
-            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-
-            await dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Low, () =>
-            {
-                //Set the video start time.
-                //mediaPlayer.Time = VideoStartTime;
-                //VideoStartTime = 100;
-
-                mediaPlayer.TimeChanged += async (sender, args) =>
-                {
-                    await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                    {
-                        if (!IsSeeking)
-                        {
-                            TimeLineValue = mediaPlayer.Time;
-                        }
-                    });
-                };
-            });
+            //await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
         }
 
         private void SetVideoVolume(int volume)
@@ -232,7 +237,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void SwitchScreenMode()
         {
-            var view = ApplicationView.GetForCurrentView();
+            ApplicationView view = ApplicationView.GetForCurrentView();
             if (view.IsFullScreenMode)
             {
                 view.ExitFullScreenMode();
@@ -243,7 +248,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 if (view.TryEnterFullScreenMode())
                 {
-                    ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.FullScreen;
+                    ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
                     // The SizeChanged event will be raised when the entry to full-screen mode is complete.
                 }
             }
@@ -261,7 +266,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 mediaPlayer.SetPause(true);
             }
-            else if(!isPlaying)
+            else if (!isPlaying)
             {
                 mediaPlayer.SetPause(false);
             }

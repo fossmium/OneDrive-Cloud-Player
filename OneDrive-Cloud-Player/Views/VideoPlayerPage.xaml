@@ -17,7 +17,7 @@
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Initialized">
-                    <Core:InvokeCommandAction Command="{Binding InitializedCommand}"/>
+                    <Core:InvokeCommandAction Command="{Binding InitializeLibVLCCommand}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
