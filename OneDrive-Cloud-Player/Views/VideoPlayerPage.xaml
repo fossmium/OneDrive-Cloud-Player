@@ -48,15 +48,19 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
                             <!--Play/Pause Button-->
-                            <Button Background="#1E2931" Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
+                            <Button Background="#1E2931" Grid.Column="0" HorizontalAlignment="Left" 
+                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
                                 <!--<Image Source="{Binding PausePlayButtonImageSource}" />-->
                             </Button>
                             <!--Stop Button-->
-                            <Button Background="#1E2931" Grid.Column="1"  HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
+                            <Button Background="#1E2931" Grid.Column="1"  HorizontalAlignment="Center" 
+                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
                                 <Image Source="/Assets/Icons/stop.png"></Image>
                             </Button>
                             <!--Reload Button-->
-                            <Button Background="#1E2931" Grid.Column="2" x:Name="ReloadButton" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
+                            <Button Background="#1E2931" Grid.Column="2" x:Name="ReloadButton" 
+                                    HorizontalAlignment="Right" VerticalAlignment="Center" 
+                                    Margin="0,0,0,0" Width="50" Height="50">
                                 <Image Source="/Assets/Icons/Reload.png"></Image>
                             </Button>
                         </Grid>
@@ -70,12 +74,13 @@
                         </Grid.ColumnDefinitions>
 
                         <!--SeekBar-->
-                        <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" VerticalAlignment="Center" ManipulationMode="All" 
+                        <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" VerticalAlignment="Center" 
+                                    ManipulationMode="All" 
                                     Value="{Binding TimeLineValue,Mode=TwoWay}" 
                                     HorizontalAlignment="Stretch" Height="Auto"
                                     PointerPressed="SeekBar_PointerPressed"
-                                    PointerCaptureLost="SeekBar_PointerCaptureLost"
-                                    >
+                                    PointerCaptureLost="SeekBar_PointerCaptureLost">
+
                             <Interactivity:Interaction.Behaviors>
                                 <Core:EventTriggerBehavior EventName="ManipulationCompleted">
                                     <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
@@ -89,7 +94,6 @@
                             </Interactivity:Interaction.Behaviors>
                         </Slider>
                     </Grid>
-                    <!--</Border>-->
 
                     <!--Volume Slider-->
                     <Grid Grid.Column="2" Grid.Row="3">
@@ -98,10 +102,8 @@
                             <ColumnDefinition Width="50"/>
                         </Grid.ColumnDefinitions>
                         <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
-                        <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" Width="Auto" Maximum="100" Value="{Binding VideoVolume, Mode=TwoWay}" Margin="20,0,10,0">
-                        </Slider>
-
-                        <!--</Border>-->
+                        <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" Width="Auto" 
+                                 Maximum="100" Value="{Binding VideoVolume, Mode=TwoWay}" Margin="20,0,10,0"/>
 
                         <!--Right bottom controls-->
                         <!--<Border  Grid.Row="3" Grid.Column="3">-->
@@ -109,7 +111,8 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
-                            <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" Height="50" Command="{Binding SwitchScreenModeCommand}">
+                            <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" 
+                                    Height="50" Command="{Binding SwitchScreenModeCommand}">
                                 <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
                             </Button>
                         </Grid>
