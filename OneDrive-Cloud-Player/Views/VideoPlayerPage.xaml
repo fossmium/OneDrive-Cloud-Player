@@ -11,8 +11,7 @@
     xmlns:lvs="using:LibVLCSharp.Platforms.UWP"
     mc:Ignorable="d"
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    >
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
@@ -23,102 +22,103 @@
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
 
-
-
         <Grid Background="#1E2931" x:Name="VideoControls" MaxHeight="200" VerticalAlignment="Bottom">
-            <Border>
-                <Grid  x:Name="LowerHeightControls">
+            <Grid  x:Name="LowerHeightControls">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--Left bottom controls-->
+                <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <!--Left bottom controls-->
-                    <Border Grid.Column="0" Grid.Row="3">
-                        <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0" >
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <!--Play/Pause Button-->
-                            <Button Background="#1E2931" Grid.Column="0" HorizontalAlignment="Left" 
+                    <!--Play/Pause Button-->
+                    <Button Background="#1E2931" Grid.Column="0" HorizontalAlignment="Left" 
                                     VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
-                                <!--<Image Source="{Binding PausePlayButtonImageSource}" />-->
-                            </Button>
-                            <!--Stop Button-->
-                            <Button Background="#1E2931" Grid.Column="1"  HorizontalAlignment="Center" 
+                        <Image Source="{Binding PlayPauseButtonImageSource}" />
+                    </Button>
+                    <!--Stop Button-->
+                    <Button Background="#1E2931" Grid.Column="1"  HorizontalAlignment="Center" 
                                     VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
-                                <Image Source="/Assets/Icons/stop.png"></Image>
-                            </Button>
-                            <!--Reload Button-->
-                            <Button Background="#1E2931" Grid.Column="2" x:Name="ReloadButton" 
+                        <Image Source="/Assets/Icons/stop.png"></Image>
+                    </Button>
+                    <!--Reload Button-->
+                    <Button Background="#1E2931" Grid.Column="2" x:Name="ReloadButton" 
                                     HorizontalAlignment="Right" VerticalAlignment="Center" 
                                     Margin="0,0,0,0" Width="50" Height="50">
-                                <Image Source="/Assets/Icons/Reload.png"></Image>
-                            </Button>
-                        </Grid>
-                    </Border>
+                        <Image Source="/Assets/Icons/Reload.png"></Image>
+                    </Button>
+                </Grid>
 
-                    <!--Middle bottom controls-->
-                    <!--<Border  Grid.Row="3" Grid.Column="1">-->
-                    <Grid Grid.Column="1" Grid.Row="3">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100*" />
-                        </Grid.ColumnDefinitions>
+                <!--Middle bottom controls-->
+                <Grid Grid.Column="1" Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100*" />
+                    </Grid.ColumnDefinitions>
 
-                        <!--SeekBar-->
-                        <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" VerticalAlignment="Center" 
+                    <!--SeekBar-->
+                    <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" VerticalAlignment="Center" 
                                     ManipulationMode="All" 
                                     Value="{Binding TimeLineValue,Mode=TwoWay}" 
                                     HorizontalAlignment="Stretch" Height="Auto"
                                     PointerPressed="SeekBar_PointerPressed"
                                     PointerCaptureLost="SeekBar_PointerCaptureLost">
 
-                            <Interactivity:Interaction.Behaviors>
-                                <Core:EventTriggerBehavior EventName="ManipulationCompleted">
-                                    <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
-                                </Core:EventTriggerBehavior>
-                                <Core:EventTriggerBehavior EventName="ManipulationStarted">
-                                    <Core:InvokeCommandAction Command="{Binding StartedDraggingThumbCommand}"/>
-                                </Core:EventTriggerBehavior>
-                                <Core:EventTriggerBehavior EventName="PointerCaptureLost">
-                                    <Core:InvokeCommandAction Command="{Binding SeekedCommand}"/>
-                                </Core:EventTriggerBehavior>
-                            </Interactivity:Interaction.Behaviors>
-                        </Slider>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="ManipulationCompleted">
+                                <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
+                            </Core:EventTriggerBehavior>
+                            <Core:EventTriggerBehavior EventName="ManipulationStarted">
+                                <Core:InvokeCommandAction Command="{Binding StartedDraggingThumbCommand}"/>
+                            </Core:EventTriggerBehavior>
+                            <Core:EventTriggerBehavior EventName="PointerCaptureLost">
+                                <Core:InvokeCommandAction Command="{Binding SeekedCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Slider>
+                </Grid>
+
+                <!--Volume Slider-->
+                <Grid Grid.Column="2" Grid.Row="3">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="75"/>
+                        <ColumnDefinition Width="50"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!--Volume Icon-->
+                    <Grid  Grid.Column="0" Margin="5,0,0,0">
+                        <Button Background="Transparent" Width="50" Height="50" Margin="0,0,0,0">
+                            <Image Source="{Binding VolumeImageSource}"></Image>
+                        </Button>
                     </Grid>
+                    
+                    <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
+                    <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
+                                 Maximum="100" Value="{Binding VideoVolume, Mode=TwoWay}" Margin="0,0,5,0"/>
 
-                    <!--Volume Slider-->
-                    <Grid Grid.Column="2" Grid.Row="3">
+                    <!--Right bottom controls-->
+                    <Grid Grid.Column="2" Margin="0,0,0,0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
-                        <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="0" Width="Auto" 
-                                 Maximum="100" Value="{Binding VideoVolume, Mode=TwoWay}" Margin="20,0,10,0"/>
-
-                        <!--Right bottom controls-->
-                        <!--<Border  Grid.Row="3" Grid.Column="3">-->
-                        <Grid Grid.Column="1" Margin="0,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" 
+                        <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" 
                                     Height="50" Command="{Binding SwitchScreenModeCommand}">
-                                <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
-                            </Button>
-                        </Grid>
+                            <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
+                        </Button>
                     </Grid>
                 </Grid>
-            </Border>
+            </Grid>
         </Grid>
 
 

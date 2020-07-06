@@ -20,11 +20,10 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary>
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable
     {
-        private LibVLC LibVLC { get; set; }
-
-        private MediaPlayer _mediaPlayer;
-
+        public bool IsSeeking { get; set; }
         public RelayCommand DisplayMessageCommand { get; private set; }
+        private LibVLC LibVLC { get; set; }
+        private MediaPlayer _mediaPlayer;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -47,16 +46,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private bool isSeeking;
-
-        public bool IsSeeking
-        {
-            get { return isSeeking; }
-            set
-            {
-                isSeeking = value;
-            }
-        }
+      
 
         private long videoLength;
 
@@ -81,6 +71,32 @@ namespace OneDrive_Cloud_Player.ViewModels
                 RaisePropertyChanged("VideoVolume");
             }
         }
+
+        private string volumeImageSource;
+
+        public string VolumeImageSource
+        {
+            get { return volumeImageSource; }
+            set
+            {
+                volumeImageSource = value;
+                RaisePropertyChanged("VolumeImageSource");
+            }
+        }
+
+        private string playPauseButtonImageSource = "../Assets/Icons/play_arrow.png";
+
+        public string PlayPauseButtonImageSource
+        {
+            get { return playPauseButtonImageSource; }
+            set
+            {
+                playPauseButtonImageSource = value;
+                RaisePropertyChanged("PlayPauseButtonnImageSource");
+            }
+        }
+
+
 
 
         /// <summary>
@@ -233,7 +249,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                     // The SizeChanged event will be raised when the entry to full-screen mode is complete.
                 }
             }
-            Debug.WriteLine(" + Switched Fullscreen State.");
+            Debug.WriteLine(" + Switched screen mode.");
         }
 
         /// <summary>
