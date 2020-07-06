@@ -5,6 +5,7 @@ using LibVLCSharp.Shared;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -36,6 +37,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand PointerEnteredMediaControlGridCommand { get; }
         public ICommand PointerExitedMediaControlGridCommand { get; }
         public ICommand PointerMovedMediaPlayerCommand { get; }
+        public ICommand ReloadCurrentMediaCommand { get; }
 
         private long timeLineValue;
 
@@ -61,15 +63,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private int videoVolume = 10;
+        private int mediaVolumeLevel = 0;
 
-        public int VideoVolume
+        public int MediaVolumeLevel
         {
-            get { return videoVolume; }
+            get { return mediaVolumeLevel; }
             set
             {
                 SetMediaVolume(value);
-                RaisePropertyChanged("VideoVolume");
+                RaisePropertyChanged("MediaVolumeLevel");
             }
         }
 
@@ -133,6 +135,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             PointerEnteredMediaControlGridCommand = new RelayCommand(PointerEnteredMediaControlGrid, CanExecuteCommand);
             PointerExitedMediaControlGridCommand = new RelayCommand(PointerExitedMediaControlGrid, CanExecuteCommand);
             PointerMovedMediaPlayerCommand = new RelayCommand(PointerMovedMediaPlayer, CanExecuteCommand);
+            ReloadCurrentMediaCommand = new RelayCommand(ReloadCurrentMedia, CanExecuteCommand);
 
             //Create a timer with interval.
             pointerMovementDispatcherTimer = new DispatcherTimer();
@@ -152,7 +155,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             Debug.WriteLine("Message");
         }
 
-        private void InitializeLibVLC(InitializedEventArgs eventArgs)
+        private async void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
@@ -209,18 +212,19 @@ namespace OneDrive_Cloud_Player.ViewModels
                     };
 
             //Play the media.
-            PlayMedia();
-            SetMediaVolume(30);
+            await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
+            SetMediaVolume(MediaVolumeLevel);
+
         }
 
         /// <summary>
         /// Plays the media.
         /// </summary>
-        private void PlayMedia()
+        private async Task PlayMedia(string networkLocation)
         {
-            MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4")));
+            MediaPlayer.Play(new Media(LibVLC, new Uri(networkLocation)));
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
-            //await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+            await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
         }
 
         private void SetMediaVolume(int volumeLevel)
@@ -279,6 +283,14 @@ namespace OneDrive_Cloud_Player.ViewModels
         private void SetVideoTime(long time)
         {
             mediaPlayer.Time = time;
+        }
+
+        /// <summary>
+        /// Tries to restart the media that is currently playing.
+        /// </summary>
+        private void ReloadCurrentMedia()
+        {
+            PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
         }
 
         /// <summary>

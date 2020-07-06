@@ -73,8 +73,8 @@
                     <!--Reload Button-->
                     <Button Grid.Column="2" x:Name="ReloadButton" 
                                     HorizontalAlignment="Right" VerticalAlignment="Center" 
-                                    Margin="0,0,0,0" Width="50" Height="50">
-                        <Image Source="/Assets/Icons/Reload.png"></Image>
+                                    Margin="0,0,0,0" Width="50" Height="50" Command="{Binding ReloadCurrentMediaCommand}">
+                        <Image Source="../Assets/Icons/Reload.png"></Image>
                     </Button>
                 </Grid>
 
@@ -123,7 +123,7 @@
 
                     <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
                     <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
-                                 Maximum="100" Value="{Binding VideoVolume, Mode=TwoWay}" Margin="0,0,5,0"/>
+                                 Maximum="100" Value="{Binding MediaVolumeLevel, Mode=TwoWay}" Margin="0,0,5,0"/>
 
                     <!--Right bottom controls-->
                     <Grid Grid.Column="2" Margin="0,0,0,0">
