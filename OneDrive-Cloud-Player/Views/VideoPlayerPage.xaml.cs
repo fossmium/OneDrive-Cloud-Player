@@ -27,11 +27,9 @@ namespace OneDrive_Cloud_Player.Views
         public VideoPlayerPage()
         {
             this.InitializeComponent();
-            SeekBar.AddHandler(PointerPressedEvent,
-            new PointerEventHandler(SeekBar_PointerPressed), true);
+            SeekBar.AddHandler(PointerPressedEvent, new PointerEventHandler(SeekBar_PointerPressed), true);
         }
 
-        //TODO: When clicked 3 times, the seekbar wont update anymore. I think it has to do with the boolean of IsSeeking turning to true after the Tapped event.
         /// <summary>
         /// When user clicks it needs to set the IsSeeking boolean to true.
         /// </summary>
@@ -50,6 +48,11 @@ namespace OneDrive_Cloud_Player.Views
         private void SeekBar_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
             ((VideoPlayerPageViewModel)(this.DataContext)).IsSeeking = false;
+        }
+
+        private void VideoControls_PointerMoved(object sender, PointerRoutedEventArgs e)
+        {
+            //Debug.WriteLine("Pointer moved!");
         }
     }
 }

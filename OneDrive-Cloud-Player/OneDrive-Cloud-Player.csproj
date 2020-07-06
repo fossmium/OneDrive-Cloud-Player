@@ -173,10 +173,10 @@
     <Content Include="Assets\Icons\settings.png" />
     <Content Include="Assets\Icons\stop.png" />
     <Content Include="Assets\Icons\up-left.png" />
-    <Content Include="Assets\Icons\volume-down.png" />
-    <Content Include="Assets\Icons\volume-mute.png" />
-    <Content Include="Assets\Icons\volume-off.png" />
-    <Content Include="Assets\Icons\volume-up.png" />
+    <Content Include="Assets\Icons\VolumeLevels\volume_medium.png" />
+    <Content Include="Assets\Icons\VolumeLevels\volume_low.png" />
+    <Content Include="Assets\Icons\VolumeLevels\volume_muted.png" />
+    <Content Include="Assets\Icons\VolumeLevels\volume_high.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />

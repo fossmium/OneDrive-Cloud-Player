@@ -14,6 +14,12 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid>
+        <Interactivity:Interaction.Behaviors>
+            <Core:EventTriggerBehavior EventName="PointerMoved">
+                <Core:InvokeCommandAction Command="{Binding PointerMovedMediaPlayerCommand}"/>
+            </Core:EventTriggerBehavior>
+        </Interactivity:Interaction.Behaviors>
+        
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Initialized">
@@ -22,7 +28,18 @@
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
 
-        <Grid Background="#1E2931" x:Name="VideoControls" MaxHeight="200" VerticalAlignment="Bottom">
+        <Grid Background="#1E2931" x:Name="MediaControlGrid" MaxHeight="200"
+              VerticalAlignment="Bottom" Visibility="{Binding MediaControlGridVisibility}">
+            
+            <Interactivity:Interaction.Behaviors>
+                <Core:EventTriggerBehavior EventName="PointerEntered">
+                    <Core:InvokeCommandAction Command="{Binding PointerEnteredMediaControlGridCommand}"/>
+                </Core:EventTriggerBehavior>
+                <Core:EventTriggerBehavior EventName="PointerExited">
+                    <Core:InvokeCommandAction Command="{Binding PointerExitedMediaControlGridCommand}"/>
+                </Core:EventTriggerBehavior>
+            </Interactivity:Interaction.Behaviors>
+            
             <Grid  x:Name="LowerHeightControls">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -43,18 +60,18 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <!--Play/Pause Button-->
-                    <Button Background="#1E2931" Grid.Column="0" HorizontalAlignment="Left" 
+                    <Button Grid.Column="0" HorizontalAlignment="Left" 
                                     VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
                                     Command="{Binding ChangePlayingStateCommand}">
-                        <Image Source="{Binding PlayPauseButtonImageSource}"/>
+                        <Image Source="{Binding PlayPauseButtonIconSource}"/>
                     </Button>
                     <!--Stop Button-->
-                    <Button Background="#1E2931" Grid.Column="1"  HorizontalAlignment="Center" 
+                    <Button Grid.Column="1"  HorizontalAlignment="Center" 
                                     VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
                         <Image Source="/Assets/Icons/stop.png"></Image>
                     </Button>
                     <!--Reload Button-->
-                    <Button Background="#1E2931" Grid.Column="2" x:Name="ReloadButton" 
+                    <Button Grid.Column="2" x:Name="ReloadButton" 
                                     HorizontalAlignment="Right" VerticalAlignment="Center" 
                                     Margin="0,0,0,0" Width="50" Height="50">
                         <Image Source="/Assets/Icons/Reload.png"></Image>
@@ -100,10 +117,10 @@
                     <!--Volume Icon-->
                     <Grid  Grid.Column="0" Margin="5,0,0,0">
                         <Button Background="Transparent" Width="50" Height="50" Margin="0,0,0,0">
-                            <Image Source="{Binding VolumeImageSource}"></Image>
+                            <Image Source="{Binding VolumeButtonIconSource}"></Image>
                         </Button>
                     </Grid>
-                    
+
                     <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
                     <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
                                  Maximum="100" Value="{Binding VideoVolume, Mode=TwoWay}" Margin="0,0,5,0"/>

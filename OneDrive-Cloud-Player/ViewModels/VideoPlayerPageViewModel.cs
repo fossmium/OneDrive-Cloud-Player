@@ -3,16 +3,12 @@ using GalaSoft.MvvmLight.Command;
 using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -25,6 +21,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         public RelayCommand DisplayMessageCommand { get; private set; }
         private LibVLC LibVLC { get; set; }
         private MediaPlayer mediaPlayer;
+        private bool isPointerOverMediaControlGrid;
+        private readonly DispatcherTimer pointerMovementDispatcherTimer;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -35,6 +33,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand StoppedDraggingThumbCommand { get; }
         public ICommand ChangePlayingStateCommand { get; }
         public ICommand SeekedCommand { get; }
+        public ICommand PointerEnteredMediaControlGridCommand { get; }
+        public ICommand PointerExitedMediaControlGridCommand { get; }
+        public ICommand PointerMovedMediaPlayerCommand { get; }
 
         private long timeLineValue;
 
@@ -67,32 +68,44 @@ namespace OneDrive_Cloud_Player.ViewModels
             get { return videoVolume; }
             set
             {
-                SetVideoVolume(value);
+                SetMediaVolume(value);
                 RaisePropertyChanged("VideoVolume");
             }
         }
 
-        private string volumeImageSource;
+        private string volumeButtonIconSource;
 
-        public string VolumeImageSource
+        public string VolumeButtonIconSource
         {
-            get { return volumeImageSource; }
+            get { return volumeButtonIconSource; }
             set
             {
-                volumeImageSource = value;
-                RaisePropertyChanged("VolumeImageSource");
+                volumeButtonIconSource = value;
+                RaisePropertyChanged("VolumeButtonIconSource");
             }
         }
 
         private string playPauseButtonImageSource = "../Assets/Icons/play_arrow.png";
 
-        public string PlayPauseButtonImageSource
+        public string PlayPauseButtonIconSource
         {
             get { return playPauseButtonImageSource; }
             set
             {
                 playPauseButtonImageSource = value;
-                RaisePropertyChanged("PlayPauseButtonImageSource");
+                RaisePropertyChanged("PlayPauseButtonIconSource");
+            }
+        }
+
+        private string mediaControlGridVisibility = "Visible";
+
+        public string MediaControlGridVisibility
+        {
+            get { return mediaControlGridVisibility; }
+            set
+            {
+                mediaControlGridVisibility = value;
+                RaisePropertyChanged("MediaControlGridVisibility");
             }
         }
 
@@ -111,13 +124,22 @@ namespace OneDrive_Cloud_Player.ViewModels
         public VideoPlayerPageViewModel()
         {
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
-
             DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
             SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
             ChangePlayingStateCommand = new RelayCommand(ChangePlayingState, CanExecuteCommand);
             SeekedCommand = new RelayCommand(Seeked, CanExecuteCommand);
+            PointerEnteredMediaControlGridCommand = new RelayCommand(PointerEnteredMediaControlGrid, CanExecuteCommand);
+            PointerExitedMediaControlGridCommand = new RelayCommand(PointerExitedMediaControlGrid, CanExecuteCommand);
+            PointerMovedMediaPlayerCommand = new RelayCommand(PointerMovedMediaPlayer, CanExecuteCommand);
+
+            //Create a timer with interval.
+            pointerMovementDispatcherTimer = new DispatcherTimer();
+            pointerMovementDispatcherTimer.Tick += PointerMovementDispatcherTimer_Tick;
+            pointerMovementDispatcherTimer.Interval = new TimeSpan(0, 0, 2);
+
+            pointerMovementDispatcherTimer.Start();
         }
 
         private bool CanExecuteCommand()
@@ -148,40 +170,47 @@ namespace OneDrive_Cloud_Player.ViewModels
                     //Sets the max value of the seekbar.
                     VideoLength = mediaPlayer.Length;
 
-                    PlayPauseButtonImageSource = "/Assets/Icons/pause.png";
+                    PlayPauseButtonIconSource = "../Assets/Icons/pause.png";
                 });
             };
 
             //Subscribes to the Paused event.
             mediaPlayer.Paused += async (sender, args) =>
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-                {
-                    //Sets the max value of the seekbar.
-                    //VideoLength = mediaPlayer.Length;
-                    PlayPauseButtonImageSource = "/Assets/Icons/play_arrow.png";
+                    {
+                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        {
+                            PlayPauseButtonIconSource = "../Assets/Icons/play_arrow.png";
+                        });
+                    };
 
+            //Subscribes to the Paused event.
+            mediaPlayer.VolumeChanged += async (sender, args) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    //UpdateVolumeButtonIconSource(mediaPlayer.Volume);
+                    Debug.WriteLine("Volume changed event fired!");
                 });
             };
-
             //Set the video start time.
             //mediaPlayer.Time = VideoStartTime;
             //VideoStartTime = 100;
 
             mediaPlayer.TimeChanged += async (sender, args) =>
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
-                    if (!IsSeeking)
                     {
-                        TimeLineValue = mediaPlayer.Time;
-                    }
-                });
-            };
+                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        {
+                            //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
+                            if (!IsSeeking)
+                            {
+                                TimeLineValue = mediaPlayer.Time;
+                            }
+                        });
+                    };
 
             //Play the media.
             PlayMedia();
+            SetMediaVolume(30);
         }
 
         /// <summary>
@@ -194,9 +223,29 @@ namespace OneDrive_Cloud_Player.ViewModels
             //await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
         }
 
-        private void SetVideoVolume(int volume)
+        private void SetMediaVolume(int volumeLevel)
         {
-            mediaPlayer.Volume = volume;
+            Debug.WriteLine("Volume changed to: " + volumeLevel);
+            mediaPlayer.Volume = volumeLevel;
+        }
+
+        /// <summary>
+        /// Updates the icon of the volume button to a icon that fits by the volume level.
+        /// </summary>
+        private void UpdateVolumeButtonIconSource(int volumeLevel)
+        {
+            if (volumeLevel <= 33)
+            {
+                VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_low.png";
+            }
+            else if (volumeLevel > 33 && volumeLevel <= 66)
+            {
+
+            }
+            else if (volumeLevel > 66)
+            {
+
+            }
         }
 
         /// <summary>
@@ -270,6 +319,54 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 mediaPlayer.SetPause(false);
             }
+        }
+
+        /// <summary>
+        /// Gets called when a pointer moves across the mediaplayer.
+        /// </summary>
+        private void PointerMovedMediaPlayer()
+        {
+            if (MediaControlGridVisibility.Equals("Collapsed"))
+            {
+                MediaControlGridVisibility = "Visible";
+            }
+            pointerMovementDispatcherTimer.Start();
+        }
+
+        /// <summary>
+        /// Gets called when a pointer enters the media control grid of the mediaplayer.
+        /// </summary>
+        private void PointerEnteredMediaControlGrid()
+        {
+            isPointerOverMediaControlGrid = true;
+            Debug.WriteLine(" + Pointer entered control grid.");
+            //MediaControlGridVisibility = "Collapsed";
+
+        }
+
+        /// <summary>
+        /// Gets called when a pointer exits the media control grid of the mediaplayer.
+        /// </summary>
+        private void PointerExitedMediaControlGrid()
+        {
+            isPointerOverMediaControlGrid = false;
+            Debug.WriteLine(" + Pointer exited control grid.");
+        }
+
+        /// <summary>
+        /// Gets called when the dispatcher event fires of the pointer movement.
+        /// It collapses the mediaplayer control grid on certain conditions.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PointerMovementDispatcherTimer_Tick(object sender, object e)
+        {
+            Debug.WriteLine("Timer ticked");
+            if (!isPointerOverMediaControlGrid)
+            {
+                MediaControlGridVisibility = "Collapsed";
+            }
+            pointerMovementDispatcherTimer.Stop();
         }
 
         /// <summary>
