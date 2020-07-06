@@ -185,7 +185,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Plays the video.
+        /// Plays the media.
         /// </summary>
         private void PlayMedia()
         {
@@ -216,7 +216,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Sets the time of the video with the time of the seekbar value.
+        /// Sets the time of the media with the time of the seekbar value.
         /// </summary>
         private void Seeked()
         {
@@ -224,7 +224,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Sets the time of the video with the given time.
+        /// Sets the time of the media with the given time.
         /// </summary>
         /// <param name="time"></param>
         private void SetVideoTime(long time)
@@ -256,7 +256,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Changes the video playing state from paused to playing and vice versa. 
+        /// Changes the media playing state from paused to playing and vice versa. 
         /// </summary>
         private void ChangePlayingState()
         {
