@@ -12,14 +12,12 @@
     mc:Ignorable="d"
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
     <Grid>
         <Interactivity:Interaction.Behaviors>
             <Core:EventTriggerBehavior EventName="PointerMoved">
                 <Core:InvokeCommandAction Command="{Binding PointerMovedMediaPlayerCommand}"/>
             </Core:EventTriggerBehavior>
         </Interactivity:Interaction.Behaviors>
-        
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Initialized">
@@ -117,7 +115,11 @@
                     <!--Volume Icon-->
                     <Grid  Grid.Column="0" Margin="5,0,0,0">
                         <Button Background="Transparent" Width="50" Height="50" Margin="0,0,0,0">
-                            <Image Source="{Binding VolumeButtonIconSource}"></Image>
+                            <Image>
+                                <Image.Source>
+                                    <BitmapImage UriSource="{Binding VolumeButtonIconSource}"/>
+                                </Image.Source>
+                            </Image>
                         </Button>
                     </Grid>
 
@@ -139,7 +141,11 @@
             </Grid>
         </Grid>
 
-
+        <Image>
+            <Image.Source>
+                <BitmapImage DecodePixelHeight="100" DecodePixelWidth="100" UriSource="C:\Users\Tim\source\repos\OneDrive-Cloud-Player\OneDrive-Cloud-Player\Assets\Icons\VolumeLevels\volume_low.png"/>
+            </Image.Source>
+        </Image>
         <!--Code snippet how to use the interaction behaviors-->
         <!--<Grid Width="200" Height="200" Background="Beige">
             <Interactivity:Interaction.Behaviors>

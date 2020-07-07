@@ -28,7 +28,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             //Register your services used here
             SimpleIoc.Default.Register<INavigationService, NavigationService>();
-            SimpleIoc.Default.Register<StartPageViewModel>();
+            //SimpleIoc.Default.Register<StartPageViewModel>();
             SimpleIoc.Default.Register<VideoPlayerPageViewModel>();
 
         }
@@ -40,13 +40,13 @@ namespace OneDrive_Cloud_Player.ViewModels
         // <value>
         // The StartPage view model.
         // </value>
-        public StartPageViewModel StartPageInstance
-        {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<StartPageViewModel>();
-            }
-        }
+        //public StartPageViewModel StartPageInstance
+        //{
+        //    get
+        //    {
+        //        return ServiceLocator.Current.GetInstance<StartPageViewModel>();
+        //    }
+        //}
 
 
         // <summary>

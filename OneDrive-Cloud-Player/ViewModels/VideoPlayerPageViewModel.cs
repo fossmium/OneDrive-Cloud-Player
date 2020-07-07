@@ -5,11 +5,13 @@ using LibVLCSharp.Shared;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -75,9 +77,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private string volumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_low.png";
+        private Uri volumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_low.png");
 
-        public string VolumeButtonIconSource
+        public Uri VolumeButtonIconSource
         {
             get { return volumeButtonIconSource; }
             set
@@ -213,8 +215,8 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             //Play the media.
             await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
-            SetMediaVolume(MediaVolumeLevel);
 
+            SetMediaVolume(MediaVolumeLevel);
         }
 
         /// <summary>
@@ -225,6 +227,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             MediaPlayer.Play(new Media(LibVLC, new Uri(networkLocation)));
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
             await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+            return;
         }
 
         private void SetMediaVolume(int volumeLevel)
@@ -234,22 +237,23 @@ namespace OneDrive_Cloud_Player.ViewModels
             UpdateVolumeButtonIconSource(volumeLevel);
         }
 
+        //TODO: Better alternative than this ugly code.
         /// <summary>
         /// Updates the icon of the volume button to a icon that fits by the volume level.
         /// </summary>
         private void UpdateVolumeButtonIconSource(int volumeLevel)
         {
-            if (volumeLevel <= 33 && !VolumeButtonIconSource.Equals("../Assets/Icons/VolumeLevels/volume_low.png"))
+            if (volumeLevel <= 33 && !VolumeButtonIconSource.Equals(new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_low.png")))
             {
-                VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_low.png";
+                VolumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_low.png");
             }
-            else if (volumeLevel > 33 && volumeLevel <= 66 && !VolumeButtonIconSource.Equals("../Assets/Icons/VolumeLevels/volume_medium.png"))
+            else if (volumeLevel > 33 && volumeLevel <= 66 && !VolumeButtonIconSource.Equals(new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_medium.png")))
             {
-                VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_medium.png";
+                VolumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_medium.png");
             }
-            else if (volumeLevel > 66 && !VolumeButtonIconSource.Equals("../Assets/Icons/VolumeLevels/volume_high.png"))
+            else if (volumeLevel > 66 && !VolumeButtonIconSource.Equals(new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_high.png")))
             {
-                VolumeButtonIconSource = "../Assets/Icons/VolumeLevels/volume_high.png";
+                VolumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_high.png");
             }
         }
 
@@ -289,9 +293,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Tries to restart the media that is currently playing.
         /// </summary>
-        private void ReloadCurrentMedia()
+        private async void ReloadCurrentMedia()
         {
-            PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
+            await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
         }
 
         /// <summary>
@@ -374,7 +378,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="e"></param>
         private void PointerMovementDispatcherTimer_Tick(object sender, object e)
         {
-            Debug.WriteLine("Timer ticked");
             if (!isPointerOverMediaControlGrid)
             {
                 MediaControlGridVisibility = "Collapsed";
