@@ -40,6 +40,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand PointerExitedMediaControlGridCommand { get; }
         public ICommand PointerMovedMediaPlayerCommand { get; }
         public ICommand ReloadCurrentMediaCommand { get; }
+        public ICommand StopMediaCommand { get; }
 
         private long timeLineValue;
 
@@ -138,6 +139,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             PointerExitedMediaControlGridCommand = new RelayCommand(PointerExitedMediaControlGrid, CanExecuteCommand);
             PointerMovedMediaPlayerCommand = new RelayCommand(PointerMovedMediaPlayer, CanExecuteCommand);
             ReloadCurrentMediaCommand = new RelayCommand(ReloadCurrentMedia, CanExecuteCommand);
+            StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
 
             //Create a timer with interval.
             pointerMovementDispatcherTimer = new DispatcherTimer();
@@ -383,6 +385,13 @@ namespace OneDrive_Cloud_Player.ViewModels
                 MediaControlGridVisibility = "Collapsed";
             }
             pointerMovementDispatcherTimer.Stop();
+        }
+
+        public void StopMedia()
+        {
+            ChangePlayingState();
+            mediaPlayer.Stop();
+            Dispose();
         }
 
         /// <summary>

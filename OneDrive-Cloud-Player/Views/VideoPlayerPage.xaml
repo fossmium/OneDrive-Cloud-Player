@@ -28,7 +28,7 @@
 
         <Grid Background="#1E2931" x:Name="MediaControlGrid" MaxHeight="200"
               VerticalAlignment="Bottom" Visibility="{Binding MediaControlGridVisibility}">
-            
+
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="PointerEntered">
                     <Core:InvokeCommandAction Command="{Binding PointerEnteredMediaControlGridCommand}"/>
@@ -37,7 +37,7 @@
                     <Core:InvokeCommandAction Command="{Binding PointerExitedMediaControlGridCommand}"/>
                 </Core:EventTriggerBehavior>
             </Interactivity:Interaction.Behaviors>
-            
+
             <Grid  x:Name="LowerHeightControls">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -65,7 +65,8 @@
                     </Button>
                     <!--Stop Button-->
                     <Button Grid.Column="1"  HorizontalAlignment="Center" 
-                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50">
+                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
+                                    Command="{Binding StopMediaCommand}">
                         <Image Source="/Assets/Icons/stop.png"></Image>
                     </Button>
                     <!--Reload Button-->
@@ -140,12 +141,6 @@
                 </Grid>
             </Grid>
         </Grid>
-
-        <Image>
-            <Image.Source>
-                <BitmapImage DecodePixelHeight="100" DecodePixelWidth="100" UriSource="C:\Users\Tim\source\repos\OneDrive-Cloud-Player\OneDrive-Cloud-Player\Assets\Icons\VolumeLevels\volume_low.png"/>
-            </Image.Source>
-        </Image>
         <!--Code snippet how to use the interaction behaviors-->
         <!--<Grid Width="200" Height="200" Background="Beige">
             <Interactivity:Interaction.Behaviors>
