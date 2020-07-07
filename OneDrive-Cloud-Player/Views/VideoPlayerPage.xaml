@@ -64,9 +64,9 @@
                         <Image Source="{Binding PlayPauseButtonIconSource}"/>
                     </Button>
                     <!--Stop Button-->
-                    <Button Grid.Column="1"  HorizontalAlignment="Center" 
+                    <Button x:Name="StopButton" Grid.Column="1"  HorizontalAlignment="Center" 
                                     VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
-                                    Command="{Binding StopMediaCommand}">
+                                    Command="{Binding StopMediaCommand}" PointerCaptureLost="StopButton_PointerCaptureLost">
                         <Image Source="/Assets/Icons/stop.png"></Image>
                     </Button>
                     <!--Reload Button-->
@@ -141,6 +141,7 @@
                 </Grid>
             </Grid>
         </Grid>
+        
         <!--Code snippet how to use the interaction behaviors-->
         <!--<Grid Width="200" Height="200" Background="Beige">
             <Interactivity:Interaction.Behaviors>

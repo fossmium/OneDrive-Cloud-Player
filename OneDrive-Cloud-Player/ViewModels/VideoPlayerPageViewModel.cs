@@ -224,12 +224,13 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Plays the media.
         /// </summary>
-        private async Task PlayMedia(string networkLocation)
+        private async Task PlayMedia(string networkLocation, long startTime = 0)
         {
             MediaPlayer.Play(new Media(LibVLC, new Uri(networkLocation)));
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
             await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
-            return;
+
+            mediaPlayer.Time = startTime;
         }
 
         private void SetMediaVolume(int volumeLevel)
@@ -292,12 +293,20 @@ namespace OneDrive_Cloud_Player.ViewModels
             mediaPlayer.Time = time;
         }
 
+        //TODO: Implement a Dialog system that shows a dialog when there is an error.
         /// <summary>
         /// Tries to restart the media that is currently playing.
         /// </summary>
         private async void ReloadCurrentMedia()
         {
-            await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
+            try
+            {
+                await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", TimeLineValue);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
         }
 
         /// <summary>

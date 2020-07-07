@@ -50,9 +50,17 @@ namespace OneDrive_Cloud_Player.Views
             ((VideoPlayerPageViewModel)(this.DataContext)).IsSeeking = false;
         }
 
-        private void VideoControls_PointerMoved(object sender, PointerRoutedEventArgs e)
+        private void StopButton_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
         {
-            //Debug.WriteLine("Pointer moved!");
+            try
+            {
+                Window.Current.Close();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
         }
     }
 }
