@@ -1,14 +1,19 @@
-﻿using OneDrive_Cloud_Player.Login;
+﻿using Microsoft.Identity.Client;
+using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,6 +29,14 @@ namespace OneDrive_Cloud_Player
     /// </summary>
     sealed partial class App : Application
     {
+
+        //Other classes can now call this class with the use of 'App.Current'. 
+        public static new App Current => (App)Application.Current;
+
+        public IPublicClientApplication PublicClientApplication { get; private set; }
+        public string[] Scopes { get; private set; }
+        //public CacheHandler CacheHandler { get; private set; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -31,6 +44,7 @@ namespace OneDrive_Cloud_Player
         public App()
         {
             this.InitializeComponent();
+            this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += OnSuspending;
         }
 
@@ -68,12 +82,38 @@ namespace OneDrive_Cloud_Player
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    rootFrame.Navigate(typeof(LoginPage), e.Arguments);
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
+
+                //OpenLoginWindow();
             }
         }
+
+        private async void OpenLoginWindow()
+        {
+            await TryOpenNewWindow(typeof(LoginPage));
+        }
+
+        public static async Task<bool> TryOpenNewWindow(Type page)
+        {
+            CoreApplicationView newView = CoreApplication.CreateNewView();
+            int newViewId = 0;
+            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                Frame frame = new Frame();
+                frame.Navigate(page);
+                Window.Current.Content = frame;
+                // You have to activate the window in order to show it later.
+                Window.Current.Activate();
+
+                newViewId = ApplicationView.GetForCurrentView().Id;
+            });
+            bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
+            return viewShown;
+        }
+
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails
@@ -97,6 +137,25 @@ namespace OneDrive_Cloud_Player
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        /// <summary>
+        /// Create a plublic client application instance and set it to the PublicClientApplication property.
+        /// </summary>
+        private void CreateScopedPublicClientApplicationInstance()
+        {
+            PublicClientApplication = PublicClientApplicationBuilder.Create("cfc49d19-b88e-4986-8862-8b5de253d0fd")
+                .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
+                .Build();
+
+            Scopes = new[]
+                {
+                    "offline_access",
+                    "openid",
+                    "profile",
+                    "user.read",
+                    "Files.Read.All"
+                };
         }
     }
 }
