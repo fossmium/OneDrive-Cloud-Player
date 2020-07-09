@@ -75,53 +75,31 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Button
-                    Grid.Column="1"
+                <!--<Grid RequestedTheme="Dark">
+                    <Button Content="Button" Style="{ThemeResource ButtonRevealStyle}"/>
+                </Grid>-->
 
-                    FontSize="16"
-                    FontFamily="Arial"
-                    Foreground="White"
-                
-                    BorderBrush="#FFFFFF"
-                    BorderThickness="2"
-                    
-                    Command="{Binding LogoutCommand}">
-                    <!--<Button.Style>
-                        <Style TargetType="{x:Type Button}">
-                            <Setter Property="Background" Value="#1C262E"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}" Padding="10">
-                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#414E58"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>-->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
+                <Grid RequestedTheme="Dark">
+                    <Button Style="{StaticResource ButtonRevealStyle}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" HorizontalAlignment="Left"/>
-                        <TextBlock
+                            <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" HorizontalAlignment="Left"/>
+                            <TextBlock
                             Grid.Column="1"
                             Text="Logout"
 
                             FontSize="16"
                             FontFamily="Arial"
                             Foreground="White"/>
-                    </Grid>
-                </Button>
+                        </Grid>
+                    </Button>
+                </Grid>
             </Grid>
+
 
             <TextBox
                 Text="Search..."
@@ -140,7 +118,7 @@
                 <!--Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"-->
             </TextBox>
 
-            <Grid Grid.Row="3" Margin="0, 0, 0, 0">
+            <Grid Grid.Row="3" Margin="0, 0, 0, 0" RequestedTheme="Dark">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -151,29 +129,8 @@
                     FontSize="16"
                     FontFamily="Arial"
                     Foreground="White"
-                    
+                    Style="{StaticResource ButtonRevealStyle}"
                     Command="{Binding ReloadCommand}">
-                    <!--<Button.Style>
-                        <Style TargetType="{x:Type Button}">
-                            <Setter Property="Background" Value="#1C262E"/>
-                            <Setter Property="BorderBrush" Value="Red"/>
-                            <Setter Property="BorderThickness" Value="2"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Background="{TemplateBinding Background}" Padding="10">
-                                            <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="#414E58"/>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>-->
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="35"/>
@@ -348,16 +305,15 @@
                     Foreground="White"/>
             </Grid>
 
-            <Border x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF" HorizontalAlignment="Stretch">
-                <Grid Margin="0">
-
+            <Grid x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF" HorizontalAlignment="Stretch" RequestedTheme="Dark">
+                <Grid Margin="0" >
                     <!--<i:Interaction.Triggers>
                         <i:EventTrigger SourceName="GoToParentBox" EventName="MouseLeftButtonUp">
                             <i:InvokeCommandAction Command="{Binding DataContext.ToParentFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type Border}}}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>-->
-                    <Grid>
-                        <Grid.ColumnDefinitions>
+                <Grid>
+                    <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -374,7 +330,7 @@
                             Foreground="White"/>
                     </Grid>
                 </Grid>
-            </Border>
+            </Grid>
 
             <ListBox Grid.Row="3" x:Name="ExplorerListBox" ItemsSource="{Binding ExplorerItemsList}" SelectedItem="{Binding SelectedExplorerItem}" Background="Transparent" HorizontalAlignment="Stretch">
                 <!--Styles the listbox containing the drives.-->
