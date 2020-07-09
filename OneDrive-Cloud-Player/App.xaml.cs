@@ -127,17 +127,6 @@ namespace OneDrive_Cloud_Player
 			}
         }
 
-        /// <summary>
-        /// Check whether or not the user credentials are cached via MSAL
-        /// </summary>
-        /// <returns></returns>
-        public async Task<bool> IsLoggedIn()
-        {
-            IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
-            return Accounts.Count() != 0;
-        }
-
-
         private async void OpenLoginWindow()
         {
             await TryOpenNewWindow(typeof(LoginPage));
