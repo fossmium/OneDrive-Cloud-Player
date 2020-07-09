@@ -1,7 +1,8 @@
 ﻿using Newtonsoft.Json;
+using OneDrive_Cloud_Player.Models.GraphData;
 using System.Collections.Generic;
 
-namespace OneDrive_Cloud_Player.Caching.GraphData
+namespace OneDrive_Cloud_Player.Models.GraphData
 {
 	/// <summary>
 	/// This class represents a cached drive. This can either be your own OneDrive folder, or a shared folder.

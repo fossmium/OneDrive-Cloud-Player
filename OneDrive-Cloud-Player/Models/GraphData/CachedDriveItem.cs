@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace OneDrive_Cloud_Player.Caching.GraphData
+namespace OneDrive_Cloud_Player.Models.GraphData
 {
 	/// <summary>
 	/// This class represents a cached drive item. This can either be a folder or a file.

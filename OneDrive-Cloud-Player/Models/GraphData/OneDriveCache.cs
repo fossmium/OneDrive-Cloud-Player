@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace OneDrive_Cloud_Player.Caching.GraphData
+namespace OneDrive_Cloud_Player.Models.GraphData
 {
 	/// <summary>
 	/// This class represents the OneDrive cache of a user, as such it has a user id and a drive collection

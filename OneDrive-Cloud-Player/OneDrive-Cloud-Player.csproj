@@ -119,6 +119,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\GraphData\CachedDrive.cs" />
+    <Compile Include="Models\GraphData\CachedDriveItem.cs" />
+    <Compile Include="Models\GraphData\OneDriveCache.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Helpers\API\GraphHelper.cs" />
     <Compile Include="Services\Helpers\Authentication\GraphAuthHelper.cs" />
@@ -145,6 +148,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Models\GraphData\graphcache.json" />
     <Resource Include="Assets\Fonts\Lato-Bold.ttf" />
     <Resource Include="Assets\Fonts\Lato-Light.ttf" />
     <Resource Include="Assets\Fonts\Lato-LightItalic.ttf" />
@@ -235,7 +239,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Services\Utilities\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
