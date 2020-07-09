@@ -2,7 +2,7 @@
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using OneDrive_Cloud_Player.Models.GraphData;
-using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Services.Helpers.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace OneDrive_Cloud_Player.Services.Helpers
+namespace OneDrive_Cloud_Player.Services.Caching
 {
 	public class CacheHelper
 	{

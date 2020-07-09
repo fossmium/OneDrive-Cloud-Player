@@ -1,5 +1,5 @@
 ﻿using Microsoft.Graph;
-using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Services.Helpers.Authentication;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OneDrive_Cloud_Player.Services.Helpers
+namespace OneDrive_Cloud_Player.Services.Helpers.API
 {
     /// <summary>
     /// Used to create calls and retrieve information from the graph api.
