@@ -4,11 +4,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OneDrive_Cloud_Player.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    DataContext="{Binding MainPageInstance, Source={StaticResource Locator}}">
 
-
+    <Interactivity:Interaction.Behaviors>
+        <Core:EventTriggerBehavior EventName="Loaded">
+            <Core:InvokeCommandAction Command="{Binding GetDrivesCommand}"/>
+        </Core:EventTriggerBehavior>
+    </Interactivity:Interaction.Behaviors>
     <!--<Window.DataContext>
         <local:MainWindowViewModel/>
     </Window.DataContext>
@@ -150,16 +157,16 @@
             </Grid>
 
             <!--CATEGORY LIST-->
-            <ListBox
+            <!--<ListBox
                 x:Name="DriveListBox"
                 Grid.Row="4"
-                
                 Background="Transparent"
                 BorderThickness="0"
-                
                 ItemsSource="{Binding DriveList}"
                 SelectedItem="{Binding SelectedDriveFolder}">
-                <!--Styles the listbox containing the drives.-->
+                -->
+            <!--Styles the listbox containing the drives.-->
+            <!--
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
                         <Setter Property="Background" Value="Transparent"/>
@@ -167,7 +174,8 @@
                         <Setter Property="FontSize" Value="16"/>
                         <Setter Property="Foreground" Value="white"/>
                         <Setter Property="Padding" Value="0"/>
-                        <!--<Setter Property="Template">
+                        -->
+            <!--<Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
                                     <Border Background="{TemplateBinding Background}">
@@ -176,23 +184,32 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>-->
-                        <!--<Style.Triggers>
+            <!--<Style.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Background" Value="#414E58"/>
                             </Trigger>
                         </Style.Triggers>-->
+            <!--
                     </Style>
                 </ListBox.ItemContainerStyle>
 
-                <!--<ListBox.Resources>
+                -->
+            <!--<ListBox.Resources>
                     <local:MainWindowViewModel x:Key="converter"/>
                 </ListBox.Resources>-->
 
-                <!--<i:Interaction.Triggers>
+            <!--<i:Interaction.Triggers>
                     <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
                         <i:InvokeCommandAction Command="{Binding DataContext.GetChildrenFomDriveCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
                     </i:EventTrigger>
                 </i:Interaction.Triggers>-->
+            <!--
+                
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="PointerPressed">
+                        <Core:InvokeCommandAction Command="{Binding GetChildrenFomDriveCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -209,24 +226,27 @@
                                         <Style TargetType="Border">
                                             <Setter Property="BorderBrush" Value="Transparent"/>
                                             <Setter Property="BorderThickness" Value="2"/>
-                                            <!--<Style.Triggers>
+                                            -->
+            <!--<Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="BorderBrush" Value="#1D8C72"/>
                                                 </DataTrigger>
                                             </Style.Triggers>-->
+            <!--
                                         </Style>
                                     </Border.Style>
                                 </Border>
-
                                 <TextBlock x:Name="DriveName" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding DriveName}">
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Opacity" Value="0.25"/>
-                                            <!--<Style.Triggers>
+                                            -->
+            <!--<Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="Opacity" Value="1"/>
                                                 </DataTrigger>
                                             </Style.Triggers>-->
+            <!--
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
@@ -235,11 +255,13 @@
                                     <TextBlock.Style>
                                         <Style TargetType="TextBlock">
                                             <Setter Property="Opacity" Value="0.25"/>
-                                            <!--<Style.Triggers>
+                                            -->
+            <!--<Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
                                                     <Setter Property="Opacity" Value="1"/>
                                                 </DataTrigger>
                                             </Style.Triggers>-->
+            <!--
                                         </Style>
                                     </TextBlock.Style>
                                 </TextBlock>
@@ -247,7 +269,48 @@
                         </StackPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-            </ListBox>
+            </ListBox>-->
+            <!--SelectedItem="{Binding SelectedDriveFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"-->
+            <ListView ItemsSource="{Binding DriveList, Mode=TwoWay}"
+                      SingleSelectionFollowsFocus="True"
+                      SelectionMode="Single"
+                      SelectedItem="{Binding SelectedDriveFolder, Mode=TwoWay}"
+                      IsSynchronizedWithCurrentItem="{x:Null}"
+                      IsItemClickEnabled="True"
+                    x:Name="DriveListBox"
+                    Grid.Row="4"
+                    Background="Transparent"
+                    BorderThickness="0"
+               >
+                <!--Retrieve the children of the drive-->
+                <!--<Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="ItemClick">
+                        <Core:InvokeCommandAction Command="{Binding GetChildrenFomDriveCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>-->
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        <Setter Property="Foreground" Value="White"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Background="red">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Text="{Binding DriveName}"/>
+
+                            <!-- x:Bind doesn't require visibility converter if min SDK is targeting Anniversary update -->
+                            <!--<TextBlock Text="I'm selected!" Grid.Column="1" Visibility="{x:Bind IsSelected, Mode=OneWay}"/>-->
+                        </Grid>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
 
         <Grid Grid.Column="1">
@@ -312,8 +375,8 @@
                             <i:InvokeCommandAction Command="{Binding DataContext.ToParentFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type Border}}}"/>
                         </i:EventTrigger>
                     </i:Interaction.Triggers>-->
-                <Grid>
-                    <Grid.ColumnDefinitions>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
@@ -332,7 +395,10 @@
                 </Grid>
             </Grid>
 
-            <ListBox Grid.Row="3" x:Name="ExplorerListBox" ItemsSource="{Binding ExplorerItemsList}" SelectedItem="{Binding SelectedExplorerItem}" Background="Transparent" HorizontalAlignment="Stretch">
+            <ListBox Grid.Row="3" x:Name="ExplorerListBox" 
+                     ItemsSource="{Binding ExplorerItemsList}" 
+                     SelectedItem="{Binding SelectedExplorerItem}" 
+                     Background="Transparent" HorizontalAlignment="Stretch">
                 <!--Styles the listbox containing the drives.-->
                 <ListBox.ItemContainerStyle>
                     <Style TargetType="ListBoxItem">
@@ -386,10 +452,10 @@
                                         <ColumnDefinition Width="85"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <Image Grid.Column="0" Source="{Binding Path=IsFolder, Converter={StaticResource converter}, ConverterParameter='ContentTypeExplorerItem'}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                                    <!--<Image Grid.Column="0" Source="{Binding Path=IsFolder, Converter={StaticResource converter}, ConverterParameter='ContentTypeExplorerItem'}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>-->
                                     <TextBlock Grid.Column="1" x:Name="ExplorerItem" Text="{Binding Name}" Padding="40, 15, 15, 15"/>
-                                    <TextBlock Grid.Column="2" Text="{Binding Converter={StaticResource converter}, ConverterParameter='ContentChildCountExplorer'}" VerticalAlignment="Center"/>
-                                    <TextBlock Grid.Column="3" Text="{Binding Size, Converter={StaticResource converter}, ConverterParameter='ContentItemSizeExplorer'}" VerticalAlignment="Center"/>
+                                    <!--<TextBlock Grid.Column="2" Text="{Binding Converter={StaticResource converter}, ConverterParameter='ContentChildCountExplorer'}" VerticalAlignment="Center"/>-->
+                                    <!--<TextBlock Grid.Column="3" Text="{Binding Size, Converter={StaticResource converter}, ConverterParameter='ContentItemSizeExplorer'}" VerticalAlignment="Center"/>-->
                                 </Grid>
                             </Border>
                         </StackPanel>

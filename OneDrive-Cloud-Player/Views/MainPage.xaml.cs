@@ -1,5 +1,8 @@
-﻿using System;
+﻿using OneDrive_Cloud_Player.Models.GraphData;
+using OneDrive_Cloud_Player.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -25,6 +28,12 @@ namespace OneDrive_Cloud_Player.Views
         public MainPage()
         {
             this.InitializeComponent();
+        }
+
+        private void DriveName_GotFocus(object sender, RoutedEventArgs e)
+        {
+            sender = sender as CachedDrive;
+            Debug.WriteLine("Focus is now on: " + sender.ToString());
         }
     }
 }
