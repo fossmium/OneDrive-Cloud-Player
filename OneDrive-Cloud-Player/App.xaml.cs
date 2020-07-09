@@ -2,7 +2,9 @@
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
+using System.Windows;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -21,6 +23,8 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using LibVLCSharp.Shared;
+using Windows.UI.Popups;
 
 namespace OneDrive_Cloud_Player
 {
@@ -35,7 +39,7 @@ namespace OneDrive_Cloud_Player
 
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
-        //public CacheHandler CacheHandler { get; private set; }
+        public CacheHelper CacheHelper { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -46,6 +50,7 @@ namespace OneDrive_Cloud_Player
             this.InitializeComponent();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += OnSuspending;
+            CacheHelper = new CacheHelper();
         }
 
         /// <summary>
@@ -53,7 +58,7 @@ namespace OneDrive_Cloud_Player
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -89,7 +94,23 @@ namespace OneDrive_Cloud_Player
 
                 //OpenLoginWindow();
             }
+
+            if (await IsLoggedIn())
+			{
+                //await new MessageDialog("+ Logged in").ShowAsync();
+			}
         }
+
+        /// <summary>
+        /// Check whether or not the user credentials are cached via MSAL
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> IsLoggedIn()
+        {
+            IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
+            return Accounts.Count() != 0;
+        }
+
 
         private async void OpenLoginWindow()
         {
