@@ -31,8 +31,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private async void Login()
         {
-           
-
             GraphAuthHelper help = new GraphAuthHelper();
             await help.GetAccessToken();
             var accounts = await App.Current.PublicClientApplication.GetAccountsAsync();
@@ -45,8 +43,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             await ApplicationView.GetForCurrentView().TryConsolidateAsync();
             //Window.Current.Close();
-
-            
         }
 
         public static async Task<bool> TryOpenNewWindow(Type page)
