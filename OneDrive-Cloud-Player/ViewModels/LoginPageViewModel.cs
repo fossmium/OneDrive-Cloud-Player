@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using OneDrive_Cloud_Player.Services.AuthHelpers;
+using OneDrive_Cloud_Player.Services.Helpers.Authentication;
 using OneDrive_Cloud_Player.Views;
 using System;
 using System.Diagnostics;

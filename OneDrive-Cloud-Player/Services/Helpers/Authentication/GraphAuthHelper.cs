@@ -8,7 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace OneDrive_Cloud_Player.Services.AuthHelpers
+namespace OneDrive_Cloud_Player.Services.Helpers.Authentication
 {
     class GraphAuthHelper
     {
