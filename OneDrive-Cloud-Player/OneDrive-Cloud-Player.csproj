@@ -126,7 +126,7 @@
     <Compile Include="Services\Helpers\CacheHelper.cs" />
     <Compile Include="Services\Helpers\GraphHelper.cs" />
     <Compile Include="Services\Helpers\GraphAuthHelper.cs" />
-    <Compile Include="Services\Utilities\IO\JsonHandler.cs" />
+    <Compile Include="Services\Utilities\JsonHandler.cs" />
     <Compile Include="ViewModels\LoginPageViewModel.cs" />
     <Compile Include="ViewModels\StartPageViewModel.cs" />
     <Compile Include="ViewModels\VideoPlayerPageViewModel.cs" />

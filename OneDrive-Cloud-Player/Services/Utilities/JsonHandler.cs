@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using Newtonsoft.Json;
+﻿using System.IO;
 
-namespace OneDrive_Cloud_Player.IO
+namespace OneDrive_Cloud_Player.Services.Utilities
 {
-	class JsonHandler
+    class JsonHandler
 	{
 		/// <summary>
 		/// Read a JSON file

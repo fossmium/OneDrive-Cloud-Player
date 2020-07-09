@@ -3,16 +3,16 @@ using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Services.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace OneDrive_Cloud_Player.Services
 {
-	public class CacheHelper
+    public class CacheHelper
 	{
 		GraphHelper Graph { get; set; }
 
@@ -118,7 +118,7 @@ namespace OneDrive_Cloud_Player.Services
 		/// </summary>
 		public void ReadGraphCache()
 		{
-			string JsonGraphCache = IO.JsonHandler.ReadJson("graphcache.json");
+			string JsonGraphCache = JsonHandler.ReadJson("graphcache.json");
 			// check for non-existant file
 			if (JsonGraphCache != null)
 			{
@@ -134,7 +134,7 @@ namespace OneDrive_Cloud_Player.Services
 			new Thread(() =>
 			{
 				string JsonToWrite = JsonConvert.SerializeObject(Cache, Formatting.None);
-				IO.JsonHandler.WriteJson(JsonToWrite, "graphcache.json");
+				JsonHandler.WriteJson(JsonToWrite, "graphcache.json");
 			}).Start();	
 		}
 
