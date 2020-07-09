@@ -35,7 +35,7 @@ namespace OneDrive_Cloud_Player
 
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
-        //public CacheHandler CacheHandler { get; private set; }
+        public CacheHelper CacheHelper { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -43,9 +43,36 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         public App()
         {
+            Initialize();
+        }
+
+        /// <summary>
+        /// Initialize the application.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public async void Initialize()
+        {
             this.InitializeComponent();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += OnSuspending;
+            this.CacheHelper = new CacheHelper();
+            if (await IsLoggedIn())
+            {
+                await App.Current.CacheHelper.Initialize(false);
+                // show Explorer Window
+                //StartupUri = new Uri("Main/MainWindow.xaml", UriKind.Relative);
+            }
+        }
+
+        /// <summary>
+        /// Check whether or not the user credentials are cached via MSAL
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> IsLoggedIn()
+        {
+            IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
+            return Accounts.Count() != 0;
         }
 
         /// <summary>
@@ -144,7 +171,7 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         private void CreateScopedPublicClientApplicationInstance()
         {
-            PublicClientApplication = PublicClientApplicationBuilder.Create("cfc49d19-b88e-4986-8862-8b5de253d0fd")
+            this.PublicClientApplication = PublicClientApplicationBuilder.Create("cfc49d19-b88e-4986-8862-8b5de253d0fd")
                 .WithRedirectUri("https://login.microsoftonline.com/common/oauth2/nativeclient")
                 .Build();
 
