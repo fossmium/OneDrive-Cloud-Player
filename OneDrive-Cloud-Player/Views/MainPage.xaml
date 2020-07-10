@@ -82,14 +82,15 @@
                 </Grid.ColumnDefinitions>
 
                 <Grid RequestedTheme="Dark">
-                    <Button Style="{StaticResource ButtonRevealStyle}">
+                    <Button Style="{StaticResource ButtonRevealStyle}" Command="{Binding LogoutCommand}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="35"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
 
-                            <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" HorizontalAlignment="Left"/>
+                            <Image Grid.Column="0" Source="/Assets/Icons/logout.png" Width="20" 
+                                   HorizontalAlignment="Left"/>
                             <TextBlock
                             Grid.Column="1"
                             Text="Logout"

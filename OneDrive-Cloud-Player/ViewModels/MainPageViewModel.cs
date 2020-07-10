@@ -1,6 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using LibVLCSharp.Shared;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services.Helpers;
@@ -12,7 +11,6 @@ using System.Threading;
 using System.Windows.Input;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -109,6 +107,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 RaisePropertyChanged("CurrentUsername");
             }
         }
+
         // The users profile picture
         private BitmapImage profileImage;
 
@@ -161,15 +160,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             CurrentUsername = "Hi, " + (await graph.GetOneDriveUserInformationAsync()).GivenName;
             try
             {
-
                 var bitmapImage = new BitmapImage();
                 IRandomAccessStream imageRandomAccessStream = (await graph.GetOneDriveOwnerPhotoAsync()).AsRandomAccessStream();
                 await bitmapImage.SetSourceAsync(imageRandomAccessStream);
 
                 ProfileImage = bitmapImage;
-
             }
-
             catch (ServiceException)
             {
                 // A user may not have a picture.
@@ -196,7 +192,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                     IsReloadButtonEnabled = true;
                     // reset the current item list so we don't get an exception
                     ExplorerItemsList = null;
-                }); 
+                });
             }).Start();
         }
 
@@ -305,6 +301,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             //new VideoPlayerWindow(SelectedDriveFolder.DriveId, SelectedExplorerItem.ItemId);
         }
 
+        /// <summary>
+        /// Update the explorer listview met items that resides in the parent folder.
+        /// </summary>
         private void ToParentFolder()
         {
             if (SelectedDriveFolder is null) { return; }
