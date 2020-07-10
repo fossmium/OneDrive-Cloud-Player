@@ -17,17 +17,11 @@ namespace OneDrive_Cloud_Player.Services.Utilities
         {
             try
             {
-                
-
-               StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
-
-               StorageFile sampleFile = await storageFolder.GetFileAsync(filePath);
-
-                return await FileIO.ReadTextAsync(sampleFile);
-
-                //return File.ReadAllText(Path);
-
-                //return FileIO.Read
+                StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
+                StorageFile sampleFile = await storageFolder.GetFileAsync(filePath);
+                string fileContent = await FileIO.ReadTextAsync(sampleFile);
+                Debug.WriteLine(" + Retrieved JSON from a file.");
+                return fileContent;
             }
             catch (FileNotFoundException)
             {
@@ -35,24 +29,18 @@ namespace OneDrive_Cloud_Player.Services.Utilities
             }
         }
 
+        /// <summary>
+        /// Writes JSON to a file.
+        /// </summary>
+        /// <param name="JsonToWrite"></param>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
         public static async Task WriteJsonAsync(string JsonToWrite, string fileName)
         {
-            // write json to a file
+            // Write json to a file
             StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(file, JsonToWrite);
-            Debug.WriteLine(" + Written to file.");
-
-            //await FileIO.WriteTextAsync(jsonFile, json);
-
-            //using (var stream = await StorageFileObject.OpenStreamForWriteAsync())
-            //{
-            //    using (var writer = new StreamWriter(stream))
-            //    {
-            //        await FileIO.WriteTextAsync(StorageFileObject, JsonToWrite);
-            //        //writer.Write();
-            //        Debug.WriteLine(" + Written cache to file.");
-            //    }
-            //}
+            Debug.WriteLine(" + Written JSON to a file.");
         }
     }
 }
