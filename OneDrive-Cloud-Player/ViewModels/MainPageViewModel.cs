@@ -65,7 +65,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 selectedDriveFolder = value;
-                GetChildrenFomDrive();
+                //Retrieve the items of the drive
+                GetChildrenFomDrive(); 
                 RaisePropertyChanged("SelectedDriveFolder");
             }
         }
@@ -261,6 +262,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="obj"></param>
         public async void GetChildrenFomItem()
         {
+            Debug.WriteLine("Called GetChildrenFomItem() method!");
             //Prevents exception when user clicks an empty space in the ListBox.
             if (SelectedExplorerItem is null) { return; }
 
@@ -323,6 +325,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
 
+        //TODO:Put converters in their own classes and namespace.
         /// <summary>
         /// Changes XAML Elements on runtime.
         /// </summary>

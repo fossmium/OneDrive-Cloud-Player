@@ -6,7 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
-    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
+    xmlns:local1="using:OneDrive_Cloud_Player.ViewModels"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
     DataContext="{Binding MainPageInstance, Source={StaticResource Locator}}">
@@ -16,18 +17,12 @@
             <Core:InvokeCommandAction Command="{Binding GetDrivesCommand}"/>
         </Core:EventTriggerBehavior>
     </Interactivity:Interaction.Behaviors>
-    <!--<Window.DataContext>
-        <local:MainWindowViewModel/>
-    </Window.DataContext>
 
-    <i:Interaction.Triggers>
-        <i:EventTrigger EventName="Loaded">
-            <i:InvokeCommandAction Command="{Binding GetDrivesCommand}" />
-        </i:EventTrigger>
-    </i:Interaction.Triggers>-->
-
+    <!--Loads the converter from the view model. In the future the converters need their own classes and grouped namespace.-->
+    <Page.Resources>
+        <local1:MainPageViewModel x:Key="converter"/>
+    </Page.Resources>
     <!--Applies the gradient background-->
-
 
     <!--GRID EXPLORER WINDOW-->
     <Grid>
@@ -271,23 +266,17 @@
                 </ListBox.ItemTemplate>
             </ListBox>-->
             <!--SelectedItem="{Binding SelectedDriveFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"-->
-            <ListView ItemsSource="{Binding DriveList, Mode=TwoWay}"
-                      SingleSelectionFollowsFocus="True"
-                      SelectionMode="Single"
-                      SelectedItem="{Binding SelectedDriveFolder, Mode=TwoWay}"
-                      IsSynchronizedWithCurrentItem="{x:Null}"
-                      IsItemClickEnabled="True"
+            <ListView 
+                    ItemsSource="{Binding DriveList, Mode=TwoWay}"
+                    SingleSelectionFollowsFocus="True"
+                    SelectionMode="Single"
+                    SelectedItem="{Binding SelectedDriveFolder, Mode=TwoWay}"
+                    IsItemClickEnabled="True"
                     x:Name="DriveListBox"
                     Grid.Row="4"
                     Background="Transparent"
                     BorderThickness="0"
-               >
-                <!--Retrieve the children of the drive-->
-                <!--<Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="ItemClick">
-                        <Core:InvokeCommandAction Command="{Binding GetChildrenFomDriveCommand}"/>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>-->
+                    RequestedTheme="Dark">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -297,16 +286,12 @@
                 </ListView.ItemContainerStyle>
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Background="red">
+                        <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
                             <TextBlock Text="{Binding DriveName}"/>
-
-                            <!-- x:Bind doesn't require visibility converter if min SDK is targeting Anniversary update -->
-                            <!--<TextBlock Text="I'm selected!" Grid.Column="1" Visibility="{x:Bind IsSelected, Mode=OneWay}"/>-->
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -337,7 +322,7 @@
                     <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="85"/>
                 </Grid.ColumnDefinitions>
 
                 <Image Grid.Column="0" Source="/Assets/Icons/folder.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
@@ -369,12 +354,13 @@
             </Grid>
 
             <Grid x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF" HorizontalAlignment="Stretch" RequestedTheme="Dark">
-                <Grid Margin="0" >
-                    <!--<i:Interaction.Triggers>
-                        <i:EventTrigger SourceName="GoToParentBox" EventName="MouseLeftButtonUp">
-                            <i:InvokeCommandAction Command="{Binding DataContext.ToParentFolderCommand, RelativeSource={RelativeSource AncestorType={x:Type Border}}}"/>
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>-->
+                <Grid Margin="0">
+                    <!--Go to parent folder-->
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="PointerPressed">
+                            <Core:InvokeCommandAction Command="{Binding ToParentFolderCommand}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="50"/>
@@ -395,20 +381,30 @@
                 </Grid>
             </Grid>
 
-            <ListBox Grid.Row="3" x:Name="ExplorerListBox" 
+            <ListView Grid.Row="3" x:Name="ExplorerListBox" 
                      ItemsSource="{Binding ExplorerItemsList}" 
-                     SelectedItem="{Binding SelectedExplorerItem}" 
-                     Background="Transparent" HorizontalAlignment="Stretch">
-                <!--Styles the listbox containing the drives.-->
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="Transparent"/>
+                     SelectedItem="{Binding SelectedExplorerItem, Mode=TwoWay}" 
+                     Background="Transparent" 
+                     HorizontalAlignment="Stretch"
+                     DoubleTapped="FolderStackPanel_DoubleTapped"
+                     RequestedTheme="Dark">
 
+
+                <Interactivity:Interaction.Behaviors>
+                    <Core:EventTriggerBehavior EventName="DoubleTapped">
+                        <Core:InvokeCommandAction Command="{Binding GetChildrenFomItemCommand}"/>
+                    </Core:EventTriggerBehavior>
+                </Interactivity:Interaction.Behaviors>
+                <!--Styles the listbox containing the drives.-->
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                         <Setter Property="FontSize" Value="16"/>
                         <Setter Property="FontFamily" Value="Arial"/>
                         <Setter Property="Foreground" Value="white"/>
                         <Setter Property="Padding" Value="0"/>
-                        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                        <!--<Setter Property="HorizontalAlignment" Value="Stretch"/>-->
                         <!--<Setter Property="Template">
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -424,25 +420,22 @@
                             </Trigger>
                         </Style.Triggers>-->
                     </Style>
-                </ListBox.ItemContainerStyle>
 
-                <ListBox.Resources>
-                    <!--Make the listbox items transparent.-->
-                    <!--<Style TargetType="{x:Type ListBoxItem}">
+                </ListView.ItemContainerStyle>
+
+                <!--<ListBox.Resources>-->
+                <!--Make the listbox items transparent.-->
+                <!--<Style TargetType="{x:Type ListBoxItem}">
                         <Setter Property="Background" Value="Transparent" />
                         <Setter Property="Margin" Value="0" />
                         <Setter Property="TextBlock.Foreground" Value="white"/>
                     </Style>-->
-                </ListBox.Resources>
+                <!--</ListBox.Resources>-->
 
-                <ListBox.ItemTemplate>
+                <ListView.ItemTemplate>
                     <DataTemplate>
 
                         <StackPanel x:Name="FolderStackPanel" Height="51">
-                            <!--<StackPanel.InputBindings>
-                                <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding DataContext.GetChildrenFomItemCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
-                            </StackPanel.InputBindings>-->
-
                             <Border BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -452,16 +445,16 @@
                                         <ColumnDefinition Width="85"/>
                                     </Grid.ColumnDefinitions>
 
-                                    <!--<Image Grid.Column="0" Source="{Binding Path=IsFolder, Converter={StaticResource converter}, ConverterParameter='ContentTypeExplorerItem'}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>-->
-                                    <TextBlock Grid.Column="1" x:Name="ExplorerItem" Text="{Binding Name}" Padding="40, 15, 15, 15"/>
-                                    <!--<TextBlock Grid.Column="2" Text="{Binding Converter={StaticResource converter}, ConverterParameter='ContentChildCountExplorer'}" VerticalAlignment="Center"/>-->
-                                    <!--<TextBlock Grid.Column="3" Text="{Binding Size, Converter={StaticResource converter}, ConverterParameter='ContentItemSizeExplorer'}" VerticalAlignment="Center"/>-->
+                                    <Image Grid.Column="0" Source="{Binding Path=IsFolder, Converter={StaticResource converter}, ConverterParameter='ContentTypeExplorerItem'}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                                    <TextBlock Grid.Column="1" x:Name="ExplorerItem" Text="{Binding Name}" Padding="40, 15, 15, 15" />
+                                    <TextBlock Grid.Column="2" Text="{Binding Converter={StaticResource converter}, ConverterParameter='ContentChildCountExplorer'}" VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="3" Text="{Binding Size, Converter={StaticResource converter}, ConverterParameter='ContentItemSizeExplorer'}" VerticalAlignment="Center"/>
                                 </Grid>
                             </Border>
                         </StackPanel>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                </ListView.ItemTemplate>
+            </ListView>
         </Grid>
     </Grid>
 </Page>
