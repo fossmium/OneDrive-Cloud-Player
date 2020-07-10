@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OneDrive_Cloud_Player"
     xmlns:vm="using:OneDrive_Cloud_Player.ViewModels"
-    RequestedTheme="Light">
+    RequestedTheme="Light"
+    >
     <Application.Resources>
         <vm:ViewModelLocator xmlns:vm="using:OneDrive_Cloud_Player.ViewModels" x:Key="Locator" />
     </Application.Resources>

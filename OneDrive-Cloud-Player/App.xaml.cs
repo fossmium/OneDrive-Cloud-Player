@@ -25,6 +25,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using LibVLCSharp.Shared;
 using Windows.UI.Popups;
+using Windows.Media.SpeechSynthesis;
 
 namespace OneDrive_Cloud_Player
 {
@@ -59,7 +60,7 @@ namespace OneDrive_Cloud_Player
         {
             this.InitializeComponent();
             this.CreateScopedPublicClientApplicationInstance();
-            this.Suspending += OnSuspending;
+            this.Suspending += Application_Suspending;
             this.CacheHelper = new CacheHelper();
             if (await IsLoggedIn())
             {
@@ -122,9 +123,9 @@ namespace OneDrive_Cloud_Player
             }
 
             if (await IsLoggedIn())
-			{
+            {
                 //await new MessageDialog("+ Logged in").ShowAsync();
-			}
+            }
         }
 
         private async void OpenLoginWindow()
@@ -162,20 +163,6 @@ namespace OneDrive_Cloud_Player
         }
 
         /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
-        /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
-        }
-
-        /// <summary>
         /// Create a plublic client application instance and set it to the PublicClientApplication property.
         /// </summary>
         private void CreateScopedPublicClientApplicationInstance()
@@ -192,6 +179,19 @@ namespace OneDrive_Cloud_Player
                     "user.read",
                     "Files.Read.All"
                 };
+        }
+
+        /// <summary>
+        /// Invoked when application execution is being suspended.  Application state is saved
+        /// without knowing whether the application will be terminated or resumed with the contents
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void Application_Suspending(object sender, SuspendingEventArgs e)
+        {
+            var deferral = e.SuspendingOperation.GetDeferral();
+            await this.CacheHelper.WriteGraphCache();
+            deferral.Complete();
         }
     }
 }
