@@ -26,6 +26,7 @@ using Windows.UI.Xaml.Navigation;
 using LibVLCSharp.Shared;
 using Windows.UI.Popups;
 using Windows.Media.SpeechSynthesis;
+using OneDrive_Cloud_Player.Services.Utilities;
 
 namespace OneDrive_Cloud_Player
 {
@@ -48,26 +49,10 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         public App()
         {
-            Initialize();
-        }
-
-        /// <summary>
-        /// Initialize the application.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        public async void Initialize()
-        {
             this.InitializeComponent();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
             this.CacheHelper = new CacheHelper();
-            if (await IsLoggedIn())
-            {
-                await App.Current.CacheHelper.Initialize(false);
-                // show Explorer Window
-                //StartupUri = new Uri("Main/MainWindow.xaml", UriKind.Relative);
-            }
         }
 
         /// <summary>
@@ -114,43 +99,20 @@ namespace OneDrive_Cloud_Player
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
-                    rootFrame.Navigate(typeof(LoginPage), e.Arguments);
+                    if (await IsLoggedIn())
+					{
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                        await this.CacheHelper.Initialize(false);
+                    }
+                    else
+					{
+                        rootFrame.Navigate(typeof(LoginPage), e.Arguments);
+                    }
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
-
-                //OpenLoginWindow();
-            }
-
-            if (await IsLoggedIn())
-            {
-                //await new MessageDialog("+ Logged in").ShowAsync();
             }
         }
-
-        private async void OpenLoginWindow()
-        {
-            await TryOpenNewWindow(typeof(LoginPage));
-        }
-
-        public static async Task<bool> TryOpenNewWindow(Type page)
-        {
-            CoreApplicationView newView = CoreApplication.CreateNewView();
-            int newViewId = 0;
-            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-            {
-                Frame frame = new Frame();
-                frame.Navigate(page);
-                Window.Current.Content = frame;
-                // You have to activate the window in order to show it later.
-                Window.Current.Activate();
-
-                newViewId = ApplicationView.GetForCurrentView().Id;
-            });
-            bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
-            return viewShown;
-        }
-
 
         /// <summary>
         /// Invoked when Navigation to a certain page fails

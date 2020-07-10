@@ -29,16 +29,5 @@ namespace OneDrive_Cloud_Player.Views
         {
             this.InitializeComponent();
         }
-
-        private void DriveName_GotFocus(object sender, RoutedEventArgs e)
-        {
-            sender = sender as CachedDrive;
-            Debug.WriteLine("Focus is now on: " + sender.ToString());
-        }
-
-        private void FolderStackPanel_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            Debug.WriteLine("Double tap!");
-        }
     }
 }

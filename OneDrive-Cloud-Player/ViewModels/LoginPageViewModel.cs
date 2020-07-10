@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Services.Utilities;
 using OneDrive_Cloud_Player.Views;
 using System;
 using System.Diagnostics;
@@ -38,33 +39,16 @@ namespace OneDrive_Cloud_Player.ViewModels
             var LocalResult = await App.Current.PublicClientApplication.AcquireTokenSilent(App.Current.Scopes, accounts.FirstOrDefault())
                       .ExecuteAsync();
             Debug.WriteLine(LocalResult.Account.Username);
-            //Window.Current.CoreWindow.
 
+            // If the Cache.Count is not 0 upon login, this means that the user has logged out and is logging back in.
+            // This is used to decide whether or not to read cache from disk. It prevents reading from old disk cache, since the cache is only written to disk upon application suspension.
             bool HasAlreadyLoggedIn = App.Current.CacheHelper.Cache.Count != 0;
             await App.Current.CacheHelper.Initialize(HasAlreadyLoggedIn);
 
-            await TryOpenNewWindow(typeof(MainPage));
+            await WindowSwitcher.TryOpenNewWindow(typeof(MainPage));
 
             await ApplicationView.GetForCurrentView().TryConsolidateAsync();
             //Window.Current.Close();
-        }
-
-        public static async Task<bool> TryOpenNewWindow(Type page)
-        {
-            CoreApplicationView newView = CoreApplication.CreateNewView();
-            int newViewId = 0;
-            await newView.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-            {
-                Frame frame = new Frame();
-                frame.Navigate(page);
-                Window.Current.Content = frame;
-                // You have to activate the window in order to show it later.
-                Window.Current.Activate();
-
-                newViewId = ApplicationView.GetForCurrentView().Id;
-            });
-            bool viewShown = await ApplicationViewSwitcher.TryShowAsStandaloneAsync(newViewId);
-            return viewShown;
         }
     }
 }

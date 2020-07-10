@@ -270,7 +270,6 @@
                      SelectedItem="{Binding SelectedExplorerItem, Mode=TwoWay}" 
                      Background="Transparent" 
                      HorizontalAlignment="Stretch"
-                     DoubleTapped="FolderStackPanel_DoubleTapped"
                      RequestedTheme="Dark">
 
 
