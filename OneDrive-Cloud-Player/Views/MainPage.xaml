@@ -56,9 +56,13 @@
                 <!--Profile pictures should be here-->
                 <Ellipse Width="80" Height="80" Margin="0, 0, 20, 0">
                     <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding ProfileImage}" />
+                        <ImageBrush ImageSource="{Binding ProfileImage}"/>
                     </Ellipse.Fill>
                 </Ellipse>
+                <!--<Image Source="{Binding ProfileImage}">
+                    
+                </Image>-->
+                
                 <TextBlock
                     Grid.Column="1"
                     Text="{Binding CurrentUsername}"
@@ -71,15 +75,11 @@
                     Opacity="0.5"/>
             </Grid>
 
-            <!-- LOGOUT / SETTINGS BUTTONS -->
+            <!-- Logout button -->
             <Grid Grid.Row="1" Margin="0, 0, 0, 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-
-                <!--<Grid RequestedTheme="Dark">
-                    <Button Content="Button" Style="{ThemeResource ButtonRevealStyle}"/>
-                </Grid>-->
 
                 <Grid RequestedTheme="Dark">
                     <Button Style="{StaticResource ButtonRevealStyle}">
@@ -102,22 +102,17 @@
                 </Grid>
             </Grid>
 
-
             <TextBox
                 Text="Search..."
                 Grid.Row="2"
-
                 FontSize="16"
                 FontFamily="Arial"
-                Foreground="#353F46"
-                
+                Foreground="#353F46" 
                 Background="Transparent"
                 BorderBrush="#353F46"
                 BorderThickness="0, 2"
                 Padding="20, 15, 15, 15"
                 Margin="0">
-
-                <!--Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}"-->
             </TextBox>
 
             <Grid Grid.Row="3" Margin="0, 0, 0, 0" RequestedTheme="Dark">
@@ -127,12 +122,13 @@
 
                 <Button
                     Grid.Column="0"
-
                     FontSize="16"
                     FontFamily="Arial"
                     Foreground="White"
+                    BorderThickness="0"
                     Style="{StaticResource ButtonRevealStyle}"
-                    Command="{Binding ReloadCommand}">
+                    Command="{Binding ReloadCommand}"
+                    HorizontalAlignment="Stretch">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="35"/>
@@ -151,121 +147,7 @@
                 </Button>
             </Grid>
 
-            <!--CATEGORY LIST-->
-            <!--<ListBox
-                x:Name="DriveListBox"
-                Grid.Row="4"
-                Background="Transparent"
-                BorderThickness="0"
-                ItemsSource="{Binding DriveList}"
-                SelectedItem="{Binding SelectedDriveFolder}">
-                -->
-            <!--Styles the listbox containing the drives.-->
-            <!--
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Setter Property="Background" Value="Transparent"/>
-
-                        <Setter Property="FontSize" Value="16"/>
-                        <Setter Property="Foreground" Value="white"/>
-                        <Setter Property="Padding" Value="0"/>
-                        -->
-            <!--<Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                                    <Border Background="{TemplateBinding Background}">
-                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
-                                    </Border>
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>-->
-            <!--<Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#414E58"/>
-                            </Trigger>
-                        </Style.Triggers>-->
-            <!--
-                    </Style>
-                </ListBox.ItemContainerStyle>
-
-                -->
-            <!--<ListBox.Resources>
-                    <local:MainWindowViewModel x:Key="converter"/>
-                </ListBox.Resources>-->
-
-            <!--<i:Interaction.Triggers>
-                    <i:EventTrigger SourceName="DriveListBox" EventName="MouseLeftButtonUp">
-                        <i:InvokeCommandAction Command="{Binding DataContext.GetChildrenFomDriveCommand, RelativeSource={RelativeSource AncestorType={x:Type ListBox}}}"/>
-                    </i:EventTrigger>
-                </i:Interaction.Triggers>-->
-            <!--
-                
-                <Interactivity:Interaction.Behaviors>
-                    <Core:EventTriggerBehavior EventName="PointerPressed">
-                        <Core:InvokeCommandAction Command="{Binding GetChildrenFomDriveCommand}"/>
-                    </Core:EventTriggerBehavior>
-                </Interactivity:Interaction.Behaviors>
-
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel x:Name="DrivesStackPanel">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="auto"/>
-                                    <ColumnDefinition Width="*" MaxWidth="200"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-
-                                <Border Grid.Column="0" Height="50" Margin="0, 0, 20, 0">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="BorderBrush" Value="Transparent"/>
-                                            <Setter Property="BorderThickness" Value="2"/>
-                                            -->
-            <!--<Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                    <Setter Property="BorderBrush" Value="#1D8C72"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>-->
-            <!--
-                                        </Style>
-                                    </Border.Style>
-                                </Border>
-                                <TextBlock x:Name="DriveName" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding DriveName}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Opacity" Value="0.25"/>
-                                            -->
-            <!--<Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                    <Setter Property="Opacity" Value="1"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>-->
-            <!--
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-
-                                <TextBlock x:Name="DriveChildCount" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" TextAlignment="Right" Padding="0, 0, 10, 0" Text="{Binding Folder.ChildCount}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Opacity" Value="0.25"/>
-                                            -->
-            <!--<Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
-                                                    <Setter Property="Opacity" Value="1"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>-->
-            <!--
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                            </Grid>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>-->
-            <!--SelectedItem="{Binding SelectedDriveFolder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"-->
+            <!--Drives list-->
             <ListView 
                     ItemsSource="{Binding DriveList, Mode=TwoWay}"
                     SingleSelectionFollowsFocus="True"

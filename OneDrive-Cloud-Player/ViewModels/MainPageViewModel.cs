@@ -1,18 +1,18 @@
-﻿using OneDrive_Cloud_Player.Models.GraphData;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using Microsoft.Graph;
+using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using System.Threading;
-using Microsoft.Graph;
-using Windows.UI.Xaml.Data;
-using System.Globalization;
 using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Input;
+using Windows.Storage.Streams;
+using Windows.UI.Core;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -66,7 +66,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 selectedDriveFolder = value;
                 //Retrieve the items of the drive
-                GetChildrenFomDrive(); 
+                GetChildrenFomDrive();
                 RaisePropertyChanged("SelectedDriveFolder");
             }
         }
@@ -108,9 +108,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
         // The users profile picture
-        private System.IO.Stream profileImage;
+        private BitmapImage profileImage;
 
-        public System.IO.Stream ProfileImage
+        public BitmapImage ProfileImage
         {
             get { return profileImage; }
             set
@@ -159,8 +159,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             CurrentUsername = "Hi, " + (await graph.GetOneDriveUserInformationAsync()).GivenName;
             try
             {
-                ProfileImage = await graph.GetOneDriveOwnerPhotoAsync();
+
+                var bitmapImage = new BitmapImage();
+                IRandomAccessStream imageRandomAccessStream = (await graph.GetOneDriveOwnerPhotoAsync()).AsRandomAccessStream();
+                await bitmapImage.SetSourceAsync(imageRandomAccessStream);
+
+                ProfileImage = bitmapImage;
+
             }
+
             catch (ServiceException)
             {
                 // A user may not have a picture.
@@ -173,15 +180,22 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="obj"></param>
         private void ReloadCache()
         {
+
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             Console.WriteLine("Reload Cache called");
             VisibilityReloadButton = "Collapsed";
             new Thread(async () =>
             {
                 await App.Current.CacheHelper.UpdateDriveCache();
-                DriveList = App.Current.CacheHelper.CurrentUserCache.Drives;
-                VisibilityReloadButton = "Visible";
-                // reset the current item list so we don't get an exception
-                ExplorerItemsList = null;
+
+                //A call to the UI thread is needed because of the properties that are being set.
+                await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+                {
+                    DriveList = App.Current.CacheHelper.CurrentUserCache.Drives;
+                    VisibilityReloadButton = "Visible";
+                    // reset the current item list so we don't get an exception
+                    ExplorerItemsList = null;
+                }); 
             }).Start();
         }
 
