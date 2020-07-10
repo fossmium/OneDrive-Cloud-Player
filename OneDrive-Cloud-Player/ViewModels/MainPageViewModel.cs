@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using LibVLCSharp.Shared;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services.Helpers;
@@ -11,6 +12,7 @@ using System.Threading;
 using System.Windows.Input;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -84,15 +86,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private string visibilityReloadButton = "Visible";
+        private bool isReloadButtonEnabled = true;
 
-        public string VisibilityReloadButton
+        public bool IsReloadButtonEnabled
         {
-            get { return visibilityReloadButton; }
+            get { return isReloadButtonEnabled; }
             set
             {
-                visibilityReloadButton = value;
-                RaisePropertyChanged("VisibilityReloadButton");
+                isReloadButtonEnabled = value;
+                RaisePropertyChanged("IsReloadButtonEnabled");
             }
         }
 
@@ -180,10 +182,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="obj"></param>
         private void ReloadCache()
         {
-
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            Console.WriteLine("Reload Cache called");
-            VisibilityReloadButton = "Collapsed";
+            Console.WriteLine(" + Reloading drives.");
+            IsReloadButtonEnabled = false;
             new Thread(async () =>
             {
                 await App.Current.CacheHelper.UpdateDriveCache();
@@ -192,7 +193,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     DriveList = App.Current.CacheHelper.CurrentUserCache.Drives;
-                    VisibilityReloadButton = "Visible";
+                    IsReloadButtonEnabled = true;
                     // reset the current item list so we don't get an exception
                     ExplorerItemsList = null;
                 }); 
@@ -235,7 +236,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="obj"></param>
         public async void GetChildrenFomDrive()
         {
-            Debug.WriteLine("Called GetChildrenFomDriveCommand method");
             ParentItem = null;
 
             //Prevents exception when user clicks an empty space in the ListBox.
@@ -256,17 +256,9 @@ namespace OneDrive_Cloud_Player.ViewModels
                 //MessageBox.Show("An error has occured while entering this shared folder. Please try again later.");
                 return;
             }
-
-            //List<DriveItem> localItemList = new List<DriveItem>();
-
-            //foreach (DriveItem item in driveItemsCollection)
-            //{
-            //    localItemList.Add(item);
-            //}
-            Console.WriteLine(" + Loaded children from selected Drive.");
+            Debug.WriteLine(" + Loaded children from selected Drive.");
 
             //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
-            //ExplorerItemsList = localItemList;
             ExplorerItemsList = driveItems;
         }
 
@@ -292,7 +284,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
                 List<CachedDriveItem> driveItems = await App.Current.CacheHelper.GetCachedChildrenFromItem(SelectedDriveFolder, ItemId);
 
-                Console.WriteLine(" + Loaded folder.");
+                Debug.WriteLine(" + Loaded folder.");
 
                 //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
                 ExplorerItemsList = driveItems;
@@ -302,7 +294,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 //App.Current.MainWindow.Hide();
                 //OpenItemWithVideoPlayer(SelectedExplorerItem);
             }
-            Console.WriteLine(" + Loaded children from folder item.");
+            Debug.WriteLine(" + Loaded children from folder item.");
         }
 
         /// <summary>
@@ -319,10 +311,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             if (ParentItem is null) { return; }
 
-            //App.Current.CacheHandler.GetCachedChildrenFromDrive
-            //App.Current.CacheHandler.GetCachedChildrenFromItem
-
-
             string id = ParentItem.ParentItemId;
             List<CachedDriveItem> ParentItemList = App.Current.CacheHelper.GetDriveOrItemsWithParentId(SelectedDriveFolder, id);
             ExplorerItemsList = ParentItemList;
@@ -337,7 +325,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                 ParentItem = App.Current.CacheHelper.GetParentItemByParentItemId(SelectedDriveFolder, ParentItem.ParentItemId);
             }
         }
-
 
         //TODO:Put converters in their own classes and namespace.
         /// <summary>

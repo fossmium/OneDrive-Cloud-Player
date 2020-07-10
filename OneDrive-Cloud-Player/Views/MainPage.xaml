@@ -128,7 +128,8 @@
                     BorderThickness="0"
                     Style="{StaticResource ButtonRevealStyle}"
                     Command="{Binding ReloadCommand}"
-                    HorizontalAlignment="Stretch">
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding IsReloadButtonEnabled}">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="35"/>
