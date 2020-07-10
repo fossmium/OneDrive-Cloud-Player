@@ -5,6 +5,7 @@ using OneDrive_Cloud_Player.Views;
 using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.Core;
@@ -38,6 +39,9 @@ namespace OneDrive_Cloud_Player.ViewModels
                       .ExecuteAsync();
             Debug.WriteLine(LocalResult.Account.Username);
             //Window.Current.CoreWindow.
+
+            bool HasAlreadyLoggedIn = App.Current.CacheHelper.Cache.Count != 0;
+            await App.Current.CacheHelper.Initialize(HasAlreadyLoggedIn);
 
             await TryOpenNewWindow(typeof(MainPage));
 
