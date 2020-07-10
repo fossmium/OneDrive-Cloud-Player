@@ -43,7 +43,7 @@ namespace OneDrive_Cloud_Player.Services
             // Check whether or not the user has already logged in. If not, we need to read cache from disk.
             if (!HasAlreadyLoggedIn)
             {
-                ReadGraphCacheAsync();
+                await ReadGraphCacheAsync();
             }
 
             // Check whether or not we succesfully loaded cache from disk.

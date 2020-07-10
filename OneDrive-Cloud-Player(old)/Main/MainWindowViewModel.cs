@@ -1,6 +1,5 @@
 ﻿using MahApps.Metro.Controls;
 using Microsoft.Graph;
-using AuthenticationHandler = OneDrive_Cloud_Player.API.AuthenticationHandler;
 using OneDrive_Cloud_Player.API;
 using OneDrive_Cloud_Player.Caching.GraphData;
 using OneDrive_Cloud_Player.Login;
@@ -10,14 +9,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Threading;
-using System.Linq;
-using OneDrive_Cloud_Player.Login;
-using System.Threading.Tasks;
+using AuthenticationHandler = OneDrive_Cloud_Player.API.AuthenticationHandler;
 
 namespace OneDrive_Cloud_Player.Main
 {
