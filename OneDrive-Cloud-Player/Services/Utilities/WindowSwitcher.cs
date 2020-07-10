@@ -8,10 +8,10 @@ using Windows.UI.Xaml.Controls;
 
 namespace OneDrive_Cloud_Player.Services.Utilities
 {
-	public static class WindowSwitcher
-	{
-       public static async Task<bool> TryOpenNewWindow(Type page)
-       {
+    public static class WindowSwitcher
+    {
+        public static async Task<bool> TryOpenNewWindow(Type page)
+        {
             CoreApplicationView newView = CoreApplication.CreateNewView();
             int newViewId = 0;
             await newView.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>

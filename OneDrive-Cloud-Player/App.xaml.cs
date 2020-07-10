@@ -101,8 +101,8 @@ namespace OneDrive_Cloud_Player
                     // parameter
                     if (await IsLoggedIn())
 					{
-                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
                         await this.CacheHelper.Initialize(false);
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
                     }
                     else
 					{
