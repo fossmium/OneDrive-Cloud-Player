@@ -275,12 +275,12 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             if (SelectedDriveFolder is null) { return; }
 
-            //Sets the current selected item as a parent item.
-            ParentItem = SelectedExplorerItem;
-
             //Checks if the SelectedExplorerItem is an folder.
             if (SelectedExplorerItem.IsFolder)
             {
+                //Sets the current selected item as a parent item.
+                ParentItem = SelectedExplorerItem;
+
                 string ItemId = SelectedExplorerItem.ItemId;
                 //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
                 List<CachedDriveItem> driveItems = await App.Current.CacheHelper.GetCachedChildrenFromItem(SelectedDriveFolder, ItemId);
