@@ -68,7 +68,7 @@
             </Grid>
 
             <!-- Logout button -->
-            <Grid Grid.Row="1" Margin="0, 0, 0, 0">
+            <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -190,7 +190,6 @@
                     FontSize="34"
                     FontFamily="Arial"
                     Foreground="White"
-                    
                     Padding="60, 30"/>
             </StackPanel>
             <Grid Grid.Row="1" Opacity="0.5">
@@ -229,7 +228,8 @@
                     Foreground="White"/>
             </Grid>
 
-            <Grid x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF" HorizontalAlignment="Stretch" RequestedTheme="Dark">
+            <Grid x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" 
+                  BorderBrush="#1AFFFFFF" RequestedTheme="Dark" Margin="0,0,0,10">
                 <Grid Margin="0">
                     <!--Go to parent folder-->
                     <Interactivity:Interaction.Behaviors>
@@ -250,7 +250,7 @@
                             Grid.Column="1"
                             Text="..."
                 
-                            Padding="40, 15, 15, 15"
+                            Padding="40, 15, 15, 10"
 
                             FontSize="16"
                             FontFamily="Arial"
