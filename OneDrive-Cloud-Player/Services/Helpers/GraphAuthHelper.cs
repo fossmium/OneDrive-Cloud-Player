@@ -12,27 +12,8 @@ namespace OneDrive_Cloud_Player.Services.Helpers
 {
     class GraphAuthHelper
     {
-        // The MSAL Public client app
-        private static IPublicClientApplication PublicClientApp;
-
-        private static string MSGraphURL = "https://graph.microsoft.com/v1.0/";
-
         public GraphAuthHelper() { }
 
-        ///// <summary>
-        ///// Sign in user using MSAL and obtain a token for MS Graph
-        ///// </summary>
-        ///// <returns>GraphServiceClient</returns>
-        //private async static Task<GraphServiceClient> SignInAndInitializeGraphServiceClient(string[] scopes)
-        //{
-        //    GraphServiceClient graphClient = new GraphServiceClient(MSGraphURL,
-        //        new DelegateAuthenticationProvider(async (requestMessage) =>
-        //        {
-        //            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("bearer", await SignInUserAndGetTokenUsingMSAL(scopes));
-        //        }));
-
-        //    return await Task.FromResult(graphClient);
-        //}
 
         /// <summary>
         /// Tries to  silently retrieve the acces token without user interaction. If that fails it tries to retrieve the access token with an interactive login window.
