@@ -39,11 +39,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             await App.Current.CacheHelper.Initialize(HasAlreadyLoggedIn);
 
             _navigationService.NavigateTo("MainPage");
-
-            //await WindowSwitcher.TryOpenNewWindow(typeof(MainPage));
-
-            //await ApplicationView.GetForCurrentView().TryConsolidateAsync();
-            //Window.Current.Close();
         }
     }
 }

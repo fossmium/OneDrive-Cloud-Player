@@ -12,7 +12,7 @@
     mc:Ignorable="d"
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    
+
     <Grid PointerMoved="Grid_PointerMoved">
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>
@@ -47,21 +47,30 @@
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <!--Play/Pause Button-->
-                    <Button Grid.Column="0" HorizontalAlignment="Left" 
-                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
-                                    Command="{Binding ChangePlayingStateCommand}">
+                    <Button 
+                        Grid.Column="0" HorizontalAlignment="Left" 
+                        VerticalAlignment="Center" Margin="0,0,0,0" 
+                        Width="50" Height="50" 
+                        Command="{Binding ChangePlayingStateCommand}"
+                        Background="Transparent">
                         <Image Source="{Binding PlayPauseButtonIconSource}"/>
                     </Button>
                     <!--Stop Button-->
-                    <Button x:Name="StopButton" Grid.Column="1"  HorizontalAlignment="Center" 
-                                    VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
-                                    Command="{Binding StopMediaCommand}">
+                    <Button
+                        x:Name="StopButton" Grid.Column="1"
+                        HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Margin="0,0,0,0" Width="50" Height="50"
+                        Command="{Binding StopMediaCommand}"
+                        Background="Transparent">
                         <Image Source="/Assets/Icons/stop.png"></Image>
                     </Button>
                     <!--Reload Button-->
-                    <Button Grid.Column="2" x:Name="ReloadButton" 
-                                    HorizontalAlignment="Right" VerticalAlignment="Center" 
-                                    Margin="0,0,0,0" Width="50" Height="50" Command="{Binding ReloadCurrentMediaCommand}">
+                    <Button 
+                        Grid.Column="2" x:Name="ReloadButton" 
+                        HorizontalAlignment="Right" VerticalAlignment="Center" 
+                        Margin="0,0,0,0" Width="50" Height="50" 
+                        Command="{Binding ReloadCurrentMediaCommand}"
+                        Background="Transparent">
                         <Image Source="../Assets/Icons/Reload.png"></Image>
                     </Button>
                 </Grid>
@@ -103,8 +112,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!--Volume Icon-->
-                    <Grid  Grid.Column="0" Margin="5,0,0,0">
-                        <Button Background="Transparent" Width="50" Height="50" Margin="0,0,0,0">
+                    <Grid  Grid.Column="0" Margin="0,0,0,0">
+                        <Button Background="Transparent" Width="50" Height="50">
                             <Image>
                                 <Image.Source>
                                     <BitmapImage UriSource="{Binding VolumeButtonIconSource}"/>
@@ -114,15 +123,18 @@
                     </Grid>
 
                     <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
-                                 Maximum="100" Value="{Binding MediaVolumeLevel, Mode=TwoWay}" Margin="0,0,5,0"/>
+                                 Maximum="100" Value="{Binding MediaVolumeLevel, Mode=TwoWay}" Margin="5,0,5,0"/>
 
                     <!--Right bottom controls-->
                     <Grid Grid.Column="2" Margin="0,0,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Button Background="#1E2931" x:Name="ChangeFullscreenModeButton" Width="50" 
-                                    Height="50" Command="{Binding SwitchScreenModeCommand}">
+                        <Button 
+                            x:Name="ChangeFullscreenModeButton" 
+                            Width="50" Height="50" 
+                            Command="{Binding SwitchScreenModeCommand}"
+                            Background="Transparent">
                             <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
                         </Button>
                     </Grid>

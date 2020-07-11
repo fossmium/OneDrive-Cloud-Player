@@ -43,7 +43,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             //Register your services used here
             //SimpleIoc.Default.Register<INavigationService, NavigationService>();
             SimpleIoc.Default.Register<INavigationService>(() => nav);
-            //SimpleIoc.Default.Register<StartPageViewModel>();
             SimpleIoc.Default.Register<VideoPlayerPageViewModel>();
             SimpleIoc.Default.Register<LoginPageViewModel>();
             SimpleIoc.Default.Register<MainPageViewModel>();
