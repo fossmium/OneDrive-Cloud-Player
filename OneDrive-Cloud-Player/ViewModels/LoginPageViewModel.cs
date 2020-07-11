@@ -1,28 +1,21 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using OneDrive_Cloud_Player.Services.Helpers;
-using OneDrive_Cloud_Player.Services.Utilities;
-using OneDrive_Cloud_Player.Views;
-using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
-using Windows.ApplicationModel.Core;
-using Windows.UI.Core;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
     public class LoginPageViewModel : ViewModelBase
     {
+        private readonly INavigationService _navigationService;
         public ICommand LoginCommand { get; }
 
-        public LoginPageViewModel()
+        public LoginPageViewModel(INavigationService navigationService)
         {
+            _navigationService = navigationService;
             LoginCommand = new RelayCommand(Login, CanExecuteCommand);
         }
 
@@ -30,7 +23,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             return true;
         }
-
+     
         private async void Login()
         {
             GraphAuthHelper help = new GraphAuthHelper();
@@ -45,9 +38,11 @@ namespace OneDrive_Cloud_Player.ViewModels
             bool HasAlreadyLoggedIn = App.Current.CacheHelper.Cache.Count != 0;
             await App.Current.CacheHelper.Initialize(HasAlreadyLoggedIn);
 
-            await WindowSwitcher.TryOpenNewWindow(typeof(MainPage));
+            _navigationService.NavigateTo("MainPage");
 
-            await ApplicationView.GetForCurrentView().TryConsolidateAsync();
+            //await WindowSwitcher.TryOpenNewWindow(typeof(MainPage));
+
+            //await ApplicationView.GetForCurrentView().TryConsolidateAsync();
             //Window.Current.Close();
         }
     }

@@ -214,6 +214,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             GraphAuthHelper auth = new GraphAuthHelper();
             await auth.SignOut();
             App.Current.CacheHelper.ResetCache();
+            _navigationService.NavigateTo("LoginPage");
         }
 
         /// <summary>

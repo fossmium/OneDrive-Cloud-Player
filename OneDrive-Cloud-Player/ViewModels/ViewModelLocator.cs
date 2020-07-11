@@ -13,8 +13,10 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary> 
     public class ViewModelLocator
     {
-        public const string FirstPageKey = "MainPage";
-        public const string SecondPageKey = "VideoPlayerPage";
+        // Declaring the navigation keys
+        public const string MainPageKey = "MainPage";
+        public const string VideoPlayerPageKey = "VideoPlayerPage";
+        public const string LoginPageKey = "LoginPage";
 
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
@@ -23,8 +25,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
             var nav = new NavigationService();
-            nav.Configure(FirstPageKey, typeof(MainPage));
-            nav.Configure(SecondPageKey, typeof(VideoPlayerPage));
+
+            // Configure navigation keys
+            nav.Configure(MainPageKey, typeof(MainPage));
+            nav.Configure(VideoPlayerPageKey, typeof(VideoPlayerPage));
+            nav.Configure(LoginPageKey, typeof(LoginPage));
 
             if (ViewModelBase.IsInDesignModeStatic)
             {
