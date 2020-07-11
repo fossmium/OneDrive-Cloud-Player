@@ -5,13 +5,10 @@ using LibVLCSharp.Shared;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -21,11 +18,8 @@ namespace OneDrive_Cloud_Player.ViewModels
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable
     {
         public bool IsSeeking { get; set; }
-        public RelayCommand DisplayMessageCommand { get; private set; }
         private LibVLC LibVLC { get; set; }
         private MediaPlayer mediaPlayer;
-        private bool isPointerOverMediaControlGrid;
-        private readonly DispatcherTimer pointerMovementDispatcherTimer;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -36,9 +30,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand StoppedDraggingThumbCommand { get; }
         public ICommand ChangePlayingStateCommand { get; }
         public ICommand SeekedCommand { get; }
-        public ICommand PointerEnteredMediaControlGridCommand { get; }
-        public ICommand PointerExitedMediaControlGridCommand { get; }
-        public ICommand PointerMovedMediaPlayerCommand { get; }
         public ICommand ReloadCurrentMediaCommand { get; }
         public ICommand StopMediaCommand { get; }
 
@@ -120,7 +111,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public MediaPlayer MediaPlayer
         {
             get => mediaPlayer;
-            private set => Set(nameof(MediaPlayer), ref mediaPlayer, value);
+            set => Set(nameof(MediaPlayer), ref mediaPlayer, value);
         }
 
         /// <summary>
@@ -129,24 +120,13 @@ namespace OneDrive_Cloud_Player.ViewModels
         public VideoPlayerPageViewModel()
         {
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
-            DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
             SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
             ChangePlayingStateCommand = new RelayCommand(ChangePlayingState, CanExecuteCommand);
             SeekedCommand = new RelayCommand(Seeked, CanExecuteCommand);
-            PointerEnteredMediaControlGridCommand = new RelayCommand(PointerEnteredMediaControlGrid, CanExecuteCommand);
-            PointerExitedMediaControlGridCommand = new RelayCommand(PointerExitedMediaControlGrid, CanExecuteCommand);
-            PointerMovedMediaPlayerCommand = new RelayCommand(PointerMovedMediaPlayer, CanExecuteCommand);
             ReloadCurrentMediaCommand = new RelayCommand(ReloadCurrentMedia, CanExecuteCommand);
             StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
-
-            //Create a timer with interval.
-            pointerMovementDispatcherTimer = new DispatcherTimer();
-            pointerMovementDispatcherTimer.Tick += PointerMovementDispatcherTimer_Tick;
-            pointerMovementDispatcherTimer.Interval = new TimeSpan(0, 0, 2);
-
-            pointerMovementDispatcherTimer.Start();
         }
 
         private bool CanExecuteCommand()
@@ -347,53 +327,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 mediaPlayer.SetPause(false);
             }
-        }
-
-        /// <summary>
-        /// Gets called when a pointer moves across the mediaplayer.
-        /// </summary>
-        private void PointerMovedMediaPlayer()
-        {
-            if (MediaControlGridVisibility.Equals("Collapsed"))
-            {
-                MediaControlGridVisibility = "Visible";
-            }
-            pointerMovementDispatcherTimer.Start();
-        }
-
-        /// <summary>
-        /// Gets called when a pointer enters the media control grid of the mediaplayer.
-        /// </summary>
-        private void PointerEnteredMediaControlGrid()
-        {
-            isPointerOverMediaControlGrid = true;
-            Debug.WriteLine(" + Pointer entered control grid.");
-            //MediaControlGridVisibility = "Collapsed";
-
-        }
-
-        /// <summary>
-        /// Gets called when a pointer exits the media control grid of the mediaplayer.
-        /// </summary>
-        private void PointerExitedMediaControlGrid()
-        {
-            isPointerOverMediaControlGrid = false;
-            Debug.WriteLine(" + Pointer exited control grid.");
-        }
-
-        /// <summary>
-        /// Gets called when the dispatcher event fires of the pointer movement.
-        /// It collapses the mediaplayer control grid on certain conditions.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void PointerMovementDispatcherTimer_Tick(object sender, object e)
-        {
-            if (!isPointerOverMediaControlGrid)
-            {
-                MediaControlGridVisibility = "Collapsed";
-            }
-            pointerMovementDispatcherTimer.Stop();
         }
 
         public void StopMedia()
