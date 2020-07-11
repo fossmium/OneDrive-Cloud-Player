@@ -7,25 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
-    xmlns:local1="using:OneDrive_Cloud_Player.ViewModels"
+    xmlns:local1="using:OneDrive_Cloud_Player.Services.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    DataContext="{Binding MainPageInstance, Source={StaticResource Locator}}">
+    DataContext="{Binding MainPageInstance, Source={StaticResource Locator}}"
+    >
 
-    <Interactivity:Interaction.Behaviors>
-        <Core:EventTriggerBehavior EventName="Loaded">
-            <Core:InvokeCommandAction Command="{Binding GetDrivesCommand}"/>
-        </Core:EventTriggerBehavior>
-    </Interactivity:Interaction.Behaviors>
-
-    <!--Loads the converter from the view model. In the future the converters need their own classes and grouped namespace.-->
+    <!--Loads the MainPageExplorerConverter-->
     <Page.Resources>
-        <local1:MainPageViewModel x:Key="converter"/>
+        <local1:MainPageExplorerConverter x:Key="converter"/>
     </Page.Resources>
-    <!--Applies the gradient background-->
 
     <!--GRID EXPLORER WINDOW-->
     <Grid>
+        <!--Applies the gradient background-->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#1E2931" Offset="0.0"/>
@@ -59,10 +54,7 @@
                         <ImageBrush ImageSource="{Binding ProfileImage}"/>
                     </Ellipse.Fill>
                 </Ellipse>
-                <!--<Image Source="{Binding ProfileImage}">
-                    
-                </Image>-->
-                
+
                 <TextBlock
                     Grid.Column="1"
                     Text="{Binding CurrentUsername}"
@@ -251,7 +243,9 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image Grid.Column="0" Source="/Assets/Icons/up-left.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                        <Image Grid.Column="0" Source="/Assets/Icons/up-left.png" 
+                               VerticalAlignment="Center" 
+                               HorizontalAlignment="Center" Width="20"/>
                         <TextBlock
                             Grid.Column="1"
                             Text="..."

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
 using System;
@@ -17,6 +18,7 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary>
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable
     {
+        private readonly INavigationService _navigationService;
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
         private MediaPlayer mediaPlayer;
@@ -117,8 +119,10 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>
-        public VideoPlayerPageViewModel()
+        public VideoPlayerPageViewModel(INavigationService navigationService)
         {
+            _navigationService = navigationService;
+            
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
@@ -132,11 +136,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         private bool CanExecuteCommand()
         {
             return true;
-        }
-
-        private void DisplayMessage()
-        {
-            Debug.WriteLine("Message");
         }
 
         private async void InitializeLibVLC(InitializedEventArgs eventArgs)
@@ -215,7 +214,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void SetMediaVolume(int volumeLevel)
         {
-            Debug.WriteLine("Volume changed to: " + volumeLevel);
+            Debug.WriteLine("+ Volume level changed to: " + volumeLevel);
             mediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
         }
@@ -334,6 +333,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             ChangePlayingState();
             mediaPlayer.Stop();
             Dispose();
+            // Go back to the last page.
+            _navigationService.GoBack();
         }
 
         /// <summary>

@@ -55,7 +55,7 @@
                     <!--Stop Button-->
                     <Button x:Name="StopButton" Grid.Column="1"  HorizontalAlignment="Center" 
                                     VerticalAlignment="Center" Margin="0,0,0,0" Width="50" Height="50"
-                                    Command="{Binding StopMediaCommand}" PointerCaptureLost="StopButton_PointerCaptureLost">
+                                    Command="{Binding StopMediaCommand}">
                         <Image Source="/Assets/Icons/stop.png"></Image>
                     </Button>
                     <!--Reload Button-->
@@ -113,7 +113,6 @@
                         </Button>
                     </Grid>
 
-                    <!--<Border Grid.Row="1" Grid.RowSpan="3" Grid.Column="2" >-->
                     <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
                                  Maximum="100" Value="{Binding MediaVolumeLevel, Mode=TwoWay}" Margin="0,0,5,0"/>
 
@@ -130,19 +129,5 @@
                 </Grid>
             </Grid>
         </Grid>
-        
-        <!--Code snippet how to use the interaction behaviors-->
-        <!--<Grid Width="200" Height="200" Background="Beige">
-            <Interactivity:Interaction.Behaviors>
-                <Core:EventTriggerBehavior EventName="PointerPressed">
-                    <Core:InvokeCommandAction Command="{Binding DisplayMessageCommand}"/>
-                    <Core:ChangePropertyAction PropertyName="Background">
-                        <Core:ChangePropertyAction.Value>
-                            <SolidColorBrush Color="Red"/>
-                        </Core:ChangePropertyAction.Value>
-                    </Core:ChangePropertyAction>
-                </Core:EventTriggerBehavior>
-            </Interactivity:Interaction.Behaviors>
-        </Grid>-->
     </Grid>
 </Page>

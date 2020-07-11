@@ -1,4 +1,5 @@
-﻿using OneDrive_Cloud_Player.ViewModels;
+﻿using OneDrive_Cloud_Player.Models.GraphData;
+using OneDrive_Cloud_Player.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,13 +37,21 @@ namespace OneDrive_Cloud_Player.Views
 
             SeekBar.AddHandler(PointerPressedEvent, new PointerEventHandler(SeekBar_PointerPressed), true);
 
-            //Create a timer with interval.
+            //Create a dispatch timer with interval.
             pointerMovementDispatcherTimer = new DispatcherTimer();
             pointerMovementDispatcherTimer.Tick += PointerMovementDispatcherTimer_Tick;
-
             pointerMovementDispatcherTimer.Interval = new TimeSpan(0, 0, 2);
-
             pointerMovementDispatcherTimer.Start();
+        }
+
+        /// <summary>
+        /// Retrieves the parameter that could be send when you navigate to this page.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            var parameter = e.Parameter as CachedDriveItem;
+            base.OnNavigatedTo(e);
         }
 
         /// <summary>
@@ -65,19 +74,6 @@ namespace OneDrive_Cloud_Player.Views
             ((VideoPlayerPageViewModel)(this.DataContext)).IsSeeking = false;
         }
 
-        private void StopButton_PointerCaptureLost(object sender, PointerRoutedEventArgs e)
-        {
-            try
-            {
-                Window.Current.Close();
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-        }
-
         /// <summary>
         /// Gets called when a pointer enters the media control grid of the mediaplayer.
         /// </summary>
@@ -85,8 +81,6 @@ namespace OneDrive_Cloud_Player.Views
         {
             isPointerOverMediaControlGrid = true;
             Debug.WriteLine(" + Pointer entered control grid.");
-            //MediaControlGridVisibility = "Collapsed";
-
         }
 
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Views;
 using Microsoft.Graph;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services.Helpers;
@@ -11,12 +12,11 @@ using System.Threading;
 using System.Windows.Input;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
-    public class MainPageViewModel : ViewModelBase, IValueConverter
+    public class MainPageViewModel : ViewModelBase
     {
         public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
@@ -28,7 +28,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand GetProfileInfoCommand { get; set; }
 
         private readonly GraphHelper graph;
-
+        private readonly INavigationService _navigationService;
 
         // The list of the different drives
         private List<CachedDrive> driveList;
@@ -135,8 +135,10 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        public MainPageViewModel()
+        public MainPageViewModel(INavigationService navigationService)
         {
+            _navigationService = navigationService;
+
             DriveList = null;
             this.graph = new GraphHelper();
             //DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
@@ -146,10 +148,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             ReloadCommand = new RelayCommand(ReloadCache, CanExecuteCommand);
             LogoutCommand = new RelayCommand(Logout, CanExecuteCommand);
             ToParentFolderCommand = new RelayCommand(ToParentFolder, CanExecuteCommand);
-            //GetProfileInfoCommand = new CommandHandler(GetProfileInfo, CanExecuteMethod);
-            //GetProfileInfoCommand.Execute(null);
+
             // OnLoad runs the login and gets the shared drives
             GetUserInformation();
+
+            // Retrieve the drives so the View has them on load
+            GetDrives();
         }
 
         /// <summary>
@@ -210,7 +214,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             GraphAuthHelper auth = new GraphAuthHelper();
             await auth.SignOut();
             App.Current.CacheHelper.ResetCache();
-            //App.Current.SwitchWindows(new LoginWindow());
         }
 
         /// <summary>
@@ -224,6 +227,8 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             //Sets the DriveItemList property so it updates the UI.
             DriveList = localDriveList;
+
+            Debug.WriteLine(" + Retrieved drives.");
         }
 
         /// <summary>
@@ -287,8 +292,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
             else
             {
-                //App.Current.MainWindow.Hide();
-                //OpenItemWithVideoPlayer(SelectedExplorerItem);
+                OpenItemWithVideoPlayer(SelectedExplorerItem);
             }
             Debug.WriteLine(" + Loaded children from folder item.");
         }
@@ -298,7 +302,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void OpenItemWithVideoPlayer(CachedDriveItem SelectedExplorerItem)
         {
-            //new VideoPlayerWindow(SelectedDriveFolder.DriveId, SelectedExplorerItem.ItemId);
+            // Navigate to the VideoPlayerPage
+            _navigationService.NavigateTo("VideoPlayerPage", SelectedExplorerItem);
         }
 
         /// <summary>
@@ -325,66 +330,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        //TODO:Put converters in their own classes and namespace.
-        /// <summary>
-        /// Changes XAML Elements on runtime.
-        /// </summary>
-        /// <param name="value"></param>
-        /// <param name="targetType"></param>
-        /// <param name="parameter"></param>
-        /// <param name="culture"></param>
-        /// <returns></returns>
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            //Changes the ItemContentType icon of the items in the explorer.
-            if (parameter.Equals("ContentTypeExplorerItem"))
-            {
-                if ((bool)value)
-                {
-                    return "/Assets/Icons/folder.png";
-                }
-                else
-                {
-                    return "/Assets/Icons/MultiMediaIcon.png";
-                }
-            }
 
-            //Returns the item child when it's a folder. Otherwise return a line.
-            if (parameter.Equals("ContentChildCountExplorer"))
-            {
-                CachedDriveItem item = (CachedDriveItem)value;
-                if (item.IsFolder)
-                {
-                    return item.ChildCount;
-                }
-                return "-";
-            }
-
-            //Returns the correct size format.
-            if (parameter.Equals("ContentItemSizeExplorer"))
-            {
-                Console.WriteLine(value);
-                long size = (long)value;
-                if (size > 1000 && size < 1000000000)
-                {
-
-                    return Math.Round((size / (double)Math.Pow(1024, 2))) + " MB";
-                }
-                else if (size > 1000000000)
-                {
-                    return Decimal.Round((Decimal)(size / (double)Math.Pow(1024, 3)), 2) + " GB";
-                }
-                else
-                {
-                    return size + " Bytes";
-                }
-            }
-            return null;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return null;
-        }
     }
 }

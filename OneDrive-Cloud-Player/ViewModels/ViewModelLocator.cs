@@ -2,6 +2,8 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
+using OneDrive_Cloud_Player.Models.GraphData;
+using OneDrive_Cloud_Player.Views;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -11,12 +13,19 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary> 
     public class ViewModelLocator
     {
+        public const string FirstPageKey = "MainPage";
+        public const string SecondPageKey = "VideoPlayerPage";
+
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
         /// </summary>
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
+            var nav = new NavigationService();
+            nav.Configure(FirstPageKey, typeof(MainPage));
+            nav.Configure(SecondPageKey, typeof(VideoPlayerPage));
+
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models
@@ -27,29 +36,14 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
 
             //Register your services used here
-            SimpleIoc.Default.Register<INavigationService, NavigationService>();
+            //SimpleIoc.Default.Register<INavigationService, NavigationService>();
+            SimpleIoc.Default.Register<INavigationService>(() => nav);
             //SimpleIoc.Default.Register<StartPageViewModel>();
             SimpleIoc.Default.Register<VideoPlayerPageViewModel>();
             SimpleIoc.Default.Register<LoginPageViewModel>();
             SimpleIoc.Default.Register<MainPageViewModel>();
 
         }
-
-
-        // <summary>
-        // Gets the StartPage view model.
-        // </summary>
-        // <value>
-        // The StartPage view model.
-        // </value>
-        //public StartPageViewModel StartPageInstance
-        //{
-        //    get
-        //    {
-        //        return ServiceLocator.Current.GetInstance<StartPageViewModel>();
-        //    }
-        //}
-
 
         // <summary>
         // Gets the VideoPlayer view model.

@@ -35,7 +35,6 @@ namespace OneDrive_Cloud_Player
     /// </summary>
     sealed partial class App : Application
     {
-
         //Other classes can now call this class with the use of 'App.Current'. 
         public static new App Current => (App)Application.Current;
 
