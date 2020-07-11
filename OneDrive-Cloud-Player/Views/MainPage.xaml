@@ -34,7 +34,7 @@
 
         <Grid Grid.Column="0" Background="#1E2931">
             <Grid.RowDefinitions>
-                <RowDefinition Height="140"/>
+                <RowDefinition Height="144"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -42,7 +42,8 @@
             </Grid.RowDefinitions>
 
             <!--USER-->
-            <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0, 29.5">
+            <Grid Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                  Margin="0, 29.5">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="50*"/>
                     <ColumnDefinition Width="50*"/>
@@ -68,7 +69,7 @@
             </Grid>
 
             <!-- Logout button -->
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
@@ -76,7 +77,14 @@
                 <Grid RequestedTheme="Dark"
                       BorderBrush="#1AFFFFFF"
                       BorderThickness="0,0,0,2">
-                    <Button Style="{StaticResource ButtonRevealStyle}" Command="{Binding LogoutCommand}">
+                    <Button Style="{StaticResource ButtonRevealStyle}" 
+                            Command="{Binding LogoutCommand}"
+                            Grid.Column="0"
+                            FontSize="16"
+                            FontFamily="Arial"
+                            Foreground="White"
+                            BorderThickness="0"
+                            HorizontalAlignment="Stretch">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="35"/>
@@ -88,7 +96,6 @@
                             <TextBlock
                             Grid.Column="1"
                             Text="Logout"
-
                             FontSize="16"
                             FontFamily="Arial"
                             Foreground="White"/>
@@ -96,7 +103,7 @@
                     </Button>
                 </Grid>
             </Grid>
-
+            
             <TextBox
                 Text="Search..."
                 Grid.Row="2"
@@ -131,7 +138,8 @@
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Image Grid.Column="0" Source="/Assets/Icons/reloadDrives.png" Width="20" HorizontalAlignment="Left"/>
+                        <Image Grid.Column="0" Source="/Assets/Icons/reloadDrives.png" Width="20" 
+                               HorizontalAlignment="Left"/>
                         <TextBlock
                             Grid.Column="1"
                             Text="Reload drives"
