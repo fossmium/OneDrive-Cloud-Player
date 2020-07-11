@@ -122,7 +122,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            
+
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
@@ -209,7 +209,10 @@ namespace OneDrive_Cloud_Player.ViewModels
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
             await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
 
-            mediaPlayer.Time = startTime;
+            if (mediaPlayer != null)
+            {
+                mediaPlayer.Time = startTime;
+            }
         }
 
         private void SetMediaVolume(int volumeLevel)
@@ -284,7 +287,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
             catch (Exception e)
             {
-                Debug.WriteLine(e);
+                Debug.WriteLine("Ëxception with reloading current media: " + e);
             }
         }
 
