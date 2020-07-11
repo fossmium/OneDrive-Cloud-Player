@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity" 
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core" 
-    xmlns:local1="using:OneDrive_Cloud_Player.Services.Converters"
+    xmlns:local1="using:OneDrive_Cloud_Player.Services.Converters" xmlns:Windows10version1903="http://schemas.microsoft.com/winfx/2006/xaml/presentation?IsApiContractPresent(Windows.Foundation.UniversalApiContract, 8)"
     mc:Ignorable="d"
     DataContext="{Binding MainPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
@@ -28,13 +28,13 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="300"/>
+            <ColumnDefinition Width="280"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid Grid.Column="0" Background="#1E2931">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="140"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -73,7 +73,9 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Grid RequestedTheme="Dark">
+                <Grid RequestedTheme="Dark"
+                      BorderBrush="#1AFFFFFF"
+                      BorderThickness="0,0,0,2">
                     <Button Style="{StaticResource ButtonRevealStyle}" Command="{Binding LogoutCommand}">
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -103,7 +105,7 @@
                 Foreground="#353F46" 
                 Background="Transparent"
                 BorderBrush="#353F46"
-                BorderThickness="0, 2"
+                BorderThickness="0"
                 Padding="20, 15, 15, 15"
                 Margin="0">
             </TextBox>
@@ -176,7 +178,7 @@
 
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="100"/>
                 <RowDefinition Height="29"/>
                 <RowDefinition Height="auto" />
                 <RowDefinition Height="*"/>
@@ -186,7 +188,6 @@
                 <TextBlock
                     x:Name="DriveName"
                     Text="{Binding SelectedDriveFolder.DriveName}"
-                    
                     FontSize="34"
                     FontFamily="Arial"
                     Foreground="White"
@@ -227,9 +228,18 @@
                     FontFamily="Arial"
                     Foreground="White"/>
             </Grid>
-
+            <Popup>
+                <Rectangle x:Name="PopupRectangle" Fill="Lavender" Height="48" Width="96">
+                    <Windows10version1903:Rectangle.Shadow>
+                        <ThemeShadow />
+                    </Windows10version1903:Rectangle.Shadow>
+                </Rectangle>
+            </Popup>
             <Grid x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" 
-                  BorderBrush="#1AFFFFFF" RequestedTheme="Dark" Margin="0,0,0,10">
+                  BorderBrush="#1AFFFFFF" RequestedTheme="Dark" Margin="0,0,0,0">
+                <Windows10version1903:Grid.Shadow>
+                    <ThemeShadow />
+                </Windows10version1903:Grid.Shadow>
                 <Grid Margin="0">
                     <!--Go to parent folder-->
                     <Interactivity:Interaction.Behaviors>
