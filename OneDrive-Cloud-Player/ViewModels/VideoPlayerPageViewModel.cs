@@ -338,6 +338,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             ChangePlayingState();
             mediaPlayer.Stop();
+            TimeLineValue = 0;
             Dispose();
             // Go back to the last page.
             _navigationService.GoBack();
