@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Graph;
+using OneDrive_Cloud_Player.Models;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services.Helpers;
 using System;
@@ -306,8 +307,10 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void OpenItemWithVideoPlayer(CachedDriveItem SelectedExplorerItem)
         {
+            // Create the VideoPlayerArgumentWrapper object.
+            VideoPlayerArgumentWrapper VideoPlayerArgument = new VideoPlayerArgumentWrapper(SelectedExplorerItem, SelectedDriveId);
             // Navigate to the VideoPlayerPage
-            _navigationService.NavigateTo("VideoPlayerPage", SelectedExplorerItem);
+            _navigationService.NavigateTo("VideoPlayerPage", VideoPlayerArgument);
         }
 
         /// <summary>

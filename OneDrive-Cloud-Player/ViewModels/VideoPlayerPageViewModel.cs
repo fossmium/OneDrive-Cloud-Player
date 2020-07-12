@@ -3,12 +3,16 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
+using OneDrive_Cloud_Player.Models;
+using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Models.Interfaces;
+using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Security.Authentication.Web.Provider;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 
@@ -20,9 +24,11 @@ namespace OneDrive_Cloud_Player.ViewModels
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
         private readonly INavigationService _navigationService;
+        private readonly GraphHelper graphHelper;
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
         private MediaPlayer mediaPlayer;
+        private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -59,7 +65,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private int mediaVolumeLevel = 0;
+        private int mediaVolumeLevel;
 
         public int MediaVolumeLevel
         {
@@ -67,6 +73,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 SetMediaVolume(value);
+                mediaVolumeLevel = value;
                 RaisePropertyChanged("MediaVolumeLevel");
             }
         }
@@ -121,8 +128,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
+            Debug.WriteLine("Constructor called!");
             _navigationService = navigationService;
-
+            graphHelper = new GraphHelper();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
@@ -137,8 +145,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             return true;
         }
 
-        private async void InitializeLibVLC(InitializedEventArgs eventArgs)
+        private void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
+            Debug.WriteLine("Initializer called!");
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
@@ -155,6 +164,9 @@ namespace OneDrive_Cloud_Player.ViewModels
                     //Sets the max value of the seekbar.
                     VideoLength = mediaPlayer.Length;
 
+                    //Fixes the problem that the video starts with its own audio value instead of our own.
+                    MediaVolumeLevel = mediaVolumeLevel;
+
                     PlayPauseButtonIconSource = "../Assets/Icons/pause.png";
                 });
             };
@@ -168,15 +180,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                         });
                     };
 
-            //Subscribes to the Paused event.
-            mediaPlayer.VolumeChanged += async (sender, args) =>
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    //UpdateVolumeButtonIconSource(mediaPlayer.Volume);
-                    Debug.WriteLine("Volume changed event fired!");
-                });
-            };
             //Set the video start time.
             //mediaPlayer.Time = VideoStartTime;
             //VideoStartTime = 100;
@@ -188,25 +191,48 @@ namespace OneDrive_Cloud_Player.ViewModels
                             //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
                             if (!IsSeeking)
                             {
-                                TimeLineValue = mediaPlayer.Time;
+                                try
+                                {
+                                    TimeLineValue = mediaPlayer.Time;
+                                }
+                                catch (Exception)
+                                {
+
+                                    throw;
+                                }
+
                             }
                         });
                     };
+        }
 
-            //Play the media.
-            await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4");
+        /// <summary>
+        /// Retrieves the download url of the media file to be played.
+        /// </summary>
+        /// <param name="videoPlayerArgumentWrapper"></param>
+        /// <returns></returns>
+        private async Task<string> RetrieveDownloadURLMedia(VideoPlayerArgumentWrapper videoPlayerArgumentWrapper)
+        {
+            var driveItem = await graphHelper.GetItemInformationAsync(videoPlayerArgumentWrapper.DriveId, videoPlayerArgumentWrapper.CachedDriveItem.ItemId);
 
-            SetMediaVolume(MediaVolumeLevel);
+            //Retrieve the download URL from the drive item to be used for the video,
+            return (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
         }
 
         /// <summary>
         /// Plays the media.
         /// </summary>
-        private async Task PlayMedia(string networkLocation, long startTime = 0)
+        private async Task PlayMedia(long startTime = 0)
         {
-            MediaPlayer.Play(new Media(LibVLC, new Uri(networkLocation)));
+            string mediaDownloadURL = await RetrieveDownloadURLMedia(this.videoPlayerArgumentWrapper);
+            //this.PlayVideo(VideoURL, VideoStartTime);
+
+            MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
+
+
             //Waits for the stream to be parsed so we do not raise a nullpointer exception.
             await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
+            MediaVolumeLevel = MediaVolumeLevel;
 
             if (mediaPlayer != null)
             {
@@ -216,7 +242,8 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void SetMediaVolume(int volumeLevel)
         {
-            Debug.WriteLine("+ Volume level changed to: " + volumeLevel);
+            if (mediaPlayer is null) return; // Return when the mediaPlayer is null so it does not cause exception.
+
             mediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
         }
@@ -282,7 +309,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             try
             {
-                await PlayMedia("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4", TimeLineValue);
+                await PlayMedia(TimeLineValue);
             }
             catch (Exception e)
             {
@@ -317,6 +344,25 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
+        /// Gets the parameters that are sended with the navigation to the videoplayer page.
+        /// </summary>
+        /// <param name="parameter"></param>
+        public async void Activate(object videoPlayerArgumentWrapper)
+        {
+            // Set the field so the playmedia method can use it.
+            this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
+            await PlayMedia();
+            //Debug.WriteLine(" + Activated: " + ((VideoPlayerArgumentWrapper)parameter).CachedDriveItem.ItemId);
+        }
+
+        //TODO: More research what this does.
+        public void Deactivate(object parameter)
+        {
+            //throw new NotImplementedException();
+            //Debug.WriteLine(" + Deactivated: " + parameter.ToString());
+        }
+
+        /// <summary>
         /// Cleaning
         /// </summary>
         public void Dispose()
@@ -326,17 +372,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             mediaPlayer?.Dispose();
             LibVLC?.Dispose();
             LibVLC = null;
-        }
-
-        public void Activate(object parameter)
-        {
-            Debug.WriteLine(" + Activated: " + parameter.ToString());
-        }
-
-        public void Deactivate(object parameter)
-        {
-            //throw new NotImplementedException();
-            Debug.WriteLine(" + Deactivated: " + parameter.ToString());
         }
 
         /// <summary>
