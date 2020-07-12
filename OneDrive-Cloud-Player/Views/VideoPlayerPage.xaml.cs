@@ -143,5 +143,16 @@ namespace OneDrive_Cloud_Player.Views
         {
             throw new NotImplementedException();
         }
+
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            ApplicationView view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+            {
+                view.ExitFullScreenMode();
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
+                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+            }
+        }
     }
 }
