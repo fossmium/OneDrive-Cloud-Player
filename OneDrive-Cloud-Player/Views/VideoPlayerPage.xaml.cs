@@ -1,4 +1,5 @@
 ﻿using OneDrive_Cloud_Player.Models.GraphData;
+using OneDrive_Cloud_Player.Models.Interfaces;
 using OneDrive_Cloud_Player.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace OneDrive_Cloud_Player.Views
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class VideoPlayerPage : Page
+    public sealed partial class VideoPlayerPage
     {
         private readonly DispatcherTimer pointerMovementDispatcherTimer;
         private bool isPointerOverMediaControlGrid;
@@ -44,15 +45,6 @@ namespace OneDrive_Cloud_Player.Views
             pointerMovementDispatcherTimer.Start();
         }
 
-        /// <summary>
-        /// Retrieves the parameter that could be send when you navigate to this page.
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
-            var parameter = e.Parameter as CachedDriveItem;
-            base.OnNavigatedTo(e);
-        }
 
         /// <summary>
         /// When user clicks it needs to set the IsSeeking boolean to true.
@@ -140,6 +132,16 @@ namespace OneDrive_Cloud_Player.Views
                 }
             }
             Debug.WriteLine(" + Switched screen mode.");
+        }
+
+        public void Activate(object parameter)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Deactivate(object parameter)
+        {
+            throw new NotImplementedException();
         }
     }
 }

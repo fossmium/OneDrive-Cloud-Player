@@ -1,4 +1,4 @@
-﻿<Page
+﻿<local:ParamNavigationPage
     x:Class="OneDrive_Cloud_Player.Views.VideoPlayerPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -142,4 +142,4 @@
             </Grid>
         </Grid>
     </Grid>
-</Page>
+</local:ParamNavigationPage>

@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
+using OneDrive_Cloud_Player.Models.Interfaces;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,7 +17,7 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// <summary>
     /// Main view model
     /// </summary>
-    public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable
+    public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
         private readonly INavigationService _navigationService;
         public bool IsSeeking { get; set; }
@@ -325,6 +326,17 @@ namespace OneDrive_Cloud_Player.ViewModels
             mediaPlayer?.Dispose();
             LibVLC?.Dispose();
             LibVLC = null;
+        }
+
+        public void Activate(object parameter)
+        {
+            Debug.WriteLine(" + Activated: " + parameter.ToString());
+        }
+
+        public void Deactivate(object parameter)
+        {
+            //throw new NotImplementedException();
+            Debug.WriteLine(" + Deactivated: " + parameter.ToString());
         }
 
         /// <summary>
