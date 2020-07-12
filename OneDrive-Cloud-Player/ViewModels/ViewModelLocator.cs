@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Views;
+using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -47,6 +48,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             SimpleIoc.Default.Register<LoginPageViewModel>();
             SimpleIoc.Default.Register<MainPageViewModel>();
 
+        }
+
+        /// <summary>
+        /// Unregister and register the <see cref="MainPageViewModel"/> so the view model resets.
+        /// </summary>
+        public static void ResetMainPageViewModel()
+        {
+            SimpleIoc.Default.Unregister<MainPageViewModel>();
+            SimpleIoc.Default.Register<MainPageViewModel>();
         }
 
         // <summary>

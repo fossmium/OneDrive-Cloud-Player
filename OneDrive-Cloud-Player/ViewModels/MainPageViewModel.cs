@@ -214,6 +214,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             GraphAuthHelper auth = new GraphAuthHelper();
             await auth.SignOut();
             App.Current.CacheHelper.ResetCache();
+            // Unregister this view model so when a person logs in as a new user it has reset the view model.
+            ViewModelLocator.ResetMainPageViewModel();
+
             _navigationService.NavigateTo("LoginPage");
         }
 
