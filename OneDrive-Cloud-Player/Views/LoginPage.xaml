@@ -47,6 +47,7 @@
             FontFamily="Arial"
             Foreground="White"
             
+            IsEnabled="{Binding IsLoginButtonEnabled}"
             Command="{Binding LoginCommand}">
             <!--<Button.Style>
                 <Style TargetType="{x:Type Button}">
