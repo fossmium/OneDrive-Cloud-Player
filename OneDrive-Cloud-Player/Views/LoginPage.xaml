@@ -35,7 +35,7 @@
         <!--LOGIN BUTTON-->
         <Button
             Content="Login"
-            Name="LoginButn"
+            Name="LoginButton"
             
             Width="252"
             Height="51"
