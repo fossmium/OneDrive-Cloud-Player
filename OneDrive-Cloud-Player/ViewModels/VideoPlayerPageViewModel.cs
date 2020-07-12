@@ -27,7 +27,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Gets the commands for the initialization
         /// </summary>
         public ICommand InitializeLibVLCCommand { get; }
-        public ICommand SwitchScreenModeCommand { get; }
         public ICommand StartedDraggingThumbCommand { get; }
         public ICommand StoppedDraggingThumbCommand { get; }
         public ICommand ChangePlayingStateCommand { get; }
@@ -124,7 +123,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             _navigationService = navigationService;
 
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
-            SwitchScreenModeCommand = new RelayCommand(SwitchScreenMode, CanExecuteCommand);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
             ChangePlayingStateCommand = new RelayCommand(ChangePlayingState, CanExecuteCommand);
@@ -289,29 +287,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 Debug.WriteLine("Ëxception with reloading current media: " + e);
             }
-        }
-
-        /// <summary>
-        /// Switches the screen from windowed mode to fullscreen and reversed.
-        /// </summary>
-        private void SwitchScreenMode()
-        {
-            ApplicationView view = ApplicationView.GetForCurrentView();
-            if (view.IsFullScreenMode)
-            {
-                view.ExitFullScreenMode();
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
-                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
-            }
-            else
-            {
-                if (view.TryEnterFullScreenMode())
-                {
-                    ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
-                    // The SizeChanged event will be raised when the entry to full-screen mode is complete.
-                }
-            }
-            Debug.WriteLine(" + Switched screen mode.");
         }
 
         /// <summary>

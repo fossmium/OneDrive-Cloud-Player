@@ -131,9 +131,9 @@
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Button 
-                            x:Name="ChangeFullscreenModeButton" 
-                            Width="50" Height="50" 
-                            Command="{Binding SwitchScreenModeCommand}"
+                            x:Name="SwitchFullscreenModeButton" 
+                            Width="50" Height="50"  
+                            Click="SwitchFullscreenModeButton_Click"
                             Background="Transparent">
                             <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
                         </Button>

@@ -118,5 +118,28 @@ namespace OneDrive_Cloud_Player.Views
             }
             pointerMovementDispatcherTimer.Stop();
         }
+
+        /// <summary>
+        /// Switches the screen from windowed mode to fullscreen and vice versa.
+        /// </summary>
+        private void SwitchFullscreenModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            ApplicationView view = ApplicationView.GetForCurrentView();
+            if (view.IsFullScreenMode)
+            {
+                view.ExitFullScreenMode();
+                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
+                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+            }
+            else
+            {
+                if (view.TryEnterFullScreenMode())
+                {
+                    ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
+                    // The SizeChanged event will be raised when the entry to full-screen mode is complete.
+                }
+            }
+            Debug.WriteLine(" + Switched screen mode.");
+        }
     }
 }
