@@ -14,6 +14,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid PointerMoved="Grid_PointerMoved">
+        
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Initialized">
