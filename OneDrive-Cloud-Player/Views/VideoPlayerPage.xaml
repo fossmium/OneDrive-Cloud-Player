@@ -85,7 +85,8 @@
                     </Grid.ColumnDefinitions>
 
                     <!--SeekBar-->
-                    <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" VerticalAlignment="Center" 
+                    <Slider Grid.Column="1" x:Name="SeekBar" Maximum="{Binding VideoLength}" 
+                                    VerticalAlignment="Center" 
                                     ManipulationMode="All" 
                                     Value="{Binding TimeLineValue,Mode=TwoWay}" 
                                     HorizontalAlignment="Stretch" Height="Auto"

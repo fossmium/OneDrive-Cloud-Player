@@ -60,11 +60,9 @@
                     Grid.Column="1"
                     Text="{Binding CurrentUsername}"
                     VerticalAlignment="Center"
-                                
                     FontSize="16"
                     FontFamily="Arial"
-                    Foreground="White"
-                                
+                    Foreground="White"  
                     Opacity="0.5"/>
             </Grid>
 
@@ -143,7 +141,6 @@
                         <TextBlock
                             Grid.Column="1"
                             Text="Reload drives"
-
                             FontSize="16"
                             FontFamily="Arial"
                             Foreground="White"/>
@@ -209,13 +206,13 @@
                     <ColumnDefinition Width="85"/>
                 </Grid.ColumnDefinitions>
 
-                <Image Grid.Column="0" Source="/Assets/Icons/folder.png" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+                <Image Grid.Column="0" Source="/Assets/Icons/folder.png" 
+                       VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     Text="Name"
                     Padding="40, 0, 0, 0"
-
                     FontSize="16"
                     FontFamily="Arial"
                     Foreground="White"/>
@@ -223,7 +220,6 @@
                     Grid.Column="2"
                     VerticalAlignment="Center"
                     Text="Contents"
-
                     FontSize="16"
                     FontFamily="Arial"
                     Foreground="White"/>
@@ -231,7 +227,6 @@
                     Grid.Column="3"
                     VerticalAlignment="Center"
                     Text="Size"
-
                     FontSize="16"
                     FontFamily="Arial"
                     Foreground="White"/>
@@ -267,9 +262,7 @@
                         <TextBlock
                             Grid.Column="1"
                             Text="..."
-                
                             Padding="40, 15, 15, 10"
-
                             FontSize="16"
                             FontFamily="Arial"
                             Foreground="White"/>
@@ -283,7 +276,6 @@
                      Background="Transparent" 
                      HorizontalAlignment="Stretch"
                      RequestedTheme="Dark">
-
 
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="DoubleTapped">
@@ -318,15 +310,7 @@
 
                 </ListView.ItemContainerStyle>
 
-                <!--<ListBox.Resources>-->
-                <!--Make the listbox items transparent.-->
-                <!--<Style TargetType="{x:Type ListBoxItem}">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="Margin" Value="0" />
-                        <Setter Property="TextBlock.Foreground" Value="white"/>
-                    </Style>-->
-                <!--</ListBox.Resources>-->
-
+                <!--Template for the individual explorer items-->
                 <ListView.ItemTemplate>
                     <DataTemplate>
 

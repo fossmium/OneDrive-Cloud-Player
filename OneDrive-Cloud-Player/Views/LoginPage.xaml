@@ -8,11 +8,10 @@
     mc:Ignorable="d"
     DataContext="{Binding LoginPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-    <!--Applies the gradient background-->
-
-
+   
     <!--GRID LOGIN WINDOW-->
     <Grid>
+        <!--Applies the gradient background-->
         <Grid.Background>
             <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Color="#1E2931" Offset="0.0"/>
@@ -22,11 +21,9 @@
         <!--WELCOME TEKST-->
         <TextBlock
             Text="Welcome! Please log in"
-            
             Margin="0,-100,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            
             FontFamily="Arial"
             FontSize="30"
             Foreground="White"
@@ -36,38 +33,16 @@
         <Button
             Content="Login"
             Name="LoginButton"
-            
             Width="252"
             Height="51"
             Margin="0,100,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-
             FontSize="21"
             FontFamily="Arial"
             Foreground="White"
-            
             IsEnabled="{Binding IsLoginButtonEnabled}"
             Command="{Binding LoginCommand}">
-            <!--<Button.Style>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type Button}">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="#414E58" BorderThickness="0,0,0,2">
-                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" Value="#414E58"/>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>-->
         </Button>
     </Grid>
 </Page>
