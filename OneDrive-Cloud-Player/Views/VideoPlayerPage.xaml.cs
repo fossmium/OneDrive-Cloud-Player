@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Navigation;
 namespace OneDrive_Cloud_Player.Views
 {
     /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
+    /// The page containing the video / media player.
     /// </summary>
     public sealed partial class VideoPlayerPage
     {
@@ -31,7 +31,6 @@ namespace OneDrive_Cloud_Player.Views
             pointerMovementDispatcherTimer.Interval = new TimeSpan(0, 0, 2);
             pointerMovementDispatcherTimer.Start();
         }
-
 
         /// <summary>
         /// When user clicks it needs to set the IsSeeking boolean to true.
@@ -152,8 +151,6 @@ namespace OneDrive_Cloud_Player.Views
                 // The SizeChanged event will be raised when the exit from full-screen mode is complete.
             }
         }
-
-
 
         /// <summary>
         /// When navigated to another page this method will be executed.
