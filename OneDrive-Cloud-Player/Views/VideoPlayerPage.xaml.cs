@@ -99,34 +99,50 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Switches the screen from windowed mode to fullscreen and vice versa.
+        /// Switch to fullscreen mode and vice versa.
         /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void SwitchFullscreenModeButton_Click(object sender, RoutedEventArgs e)
         {
             SwitchFullscreenMode();
         }
 
+        /// <summary>
+        /// Switches the screen from windowed mode to fullscreen and vice versa.
+        /// </summary>
         private void SwitchFullscreenMode()
         {
             ApplicationView view = ApplicationView.GetForCurrentView();
+
             if (view.IsFullScreenMode)
             {
-                view.ExitFullScreenMode();
-                ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
-                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+                ExitFullscreenMode();
             }
             else
             {
-                if (view.TryEnterFullScreenMode())
-                {
-                    ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
-                    // The SizeChanged event will be raised when the entry to full-screen mode is complete.
-                }
+                EnterFullscreenMode();
             }
             Debug.WriteLine(" + Switched screen mode.");
         }
 
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        /// <summary>
+        /// Enter fullscreen mode.
+        /// </summary>
+        private void EnterFullscreenMode()
+        {
+            ApplicationView view = ApplicationView.GetForCurrentView();
+            if (view.TryEnterFullScreenMode())
+            {
+                ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
+                // The SizeChanged event will be raised when the entry to full-screen mode is complete.
+            }
+        }
+
+        /// <summary>
+        /// Leave fullscreen mode.
+        /// </summary>
+        private void ExitFullscreenMode()
         {
             ApplicationView view = ApplicationView.GetForCurrentView();
             if (view.IsFullScreenMode)
@@ -135,6 +151,18 @@ namespace OneDrive_Cloud_Player.Views
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
                 // The SizeChanged event will be raised when the exit from full-screen mode is complete.
             }
+        }
+
+
+
+        /// <summary>
+        /// When navigated to another page this method will be executed.
+        /// Leave fullscreen mode when that happens.
+        /// </summary>
+        /// <param name="e"></param>
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
+        {
+            ExitFullscreenMode();
         }
 
         /// <summary>
@@ -144,7 +172,6 @@ namespace OneDrive_Cloud_Player.Views
         /// <param name="keyEvent"></param>
         void CoreWindow_KeyDown(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs keyEvent)
         {
-            Debug.WriteLine("Key down");
             var viewModel = (VideoPlayerPageViewModel)DataContext;
 
             switch (keyEvent.VirtualKey)
@@ -153,7 +180,7 @@ namespace OneDrive_Cloud_Player.Views
                     SwitchFullscreenMode();
                     break;
                 case VirtualKey.Escape:
-                    SwitchFullscreenMode(); //TODO: Create dedicated method to close fullscreen or use parameter.
+                    ExitFullscreenMode();
                     break;
                 default:
                     // Pass the key event to the view model.
