@@ -126,16 +126,6 @@ namespace OneDrive_Cloud_Player.Views
             Debug.WriteLine(" + Switched screen mode.");
         }
 
-        public void Activate(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Deactivate(object parameter)
-        {
-            throw new NotImplementedException();
-        }
-
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             ApplicationView view = ApplicationView.GetForCurrentView();
@@ -154,7 +144,6 @@ namespace OneDrive_Cloud_Player.Views
         /// <param name="keyEvent"></param>
         void CoreWindow_KeyDown(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs keyEvent)
         {
-            //todo
             Debug.WriteLine("Key down");
             var viewModel = (VideoPlayerPageViewModel)DataContext;
 
@@ -167,13 +156,13 @@ namespace OneDrive_Cloud_Player.Views
                     SwitchFullscreenMode(); //TODO: Create dedicated method to close fullscreen or use parameter.
                     break;
                 default:
+                    // Pass the key event to the view model.
                     if (viewModel.KeyDownEventCommand.CanExecute(null))
                     {
                         viewModel.KeyDownEventCommand.Execute(keyEvent);
                     }
                     break;
             }
-
         }
 
         /// <summary>
