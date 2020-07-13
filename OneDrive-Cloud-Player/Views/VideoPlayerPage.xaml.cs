@@ -1,23 +1,10 @@
-﻿using OneDrive_Cloud_Player.Models.GraphData;
-using OneDrive_Cloud_Player.Models.Interfaces;
-using OneDrive_Cloud_Player.ViewModels;
+﻿using OneDrive_Cloud_Player.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Core.Preview;
-using Windows.UI.Popups;
+using Windows.System;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
@@ -116,6 +103,11 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void SwitchFullscreenModeButton_Click(object sender, RoutedEventArgs e)
         {
+            SwitchFullscreenMode();
+        }
+
+        private void SwitchFullscreenMode()
+        {
             ApplicationView view = ApplicationView.GetForCurrentView();
             if (view.IsFullScreenMode)
             {
@@ -153,6 +145,55 @@ namespace OneDrive_Cloud_Player.Views
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
                 // The SizeChanged event will be raised when the exit from full-screen mode is complete.
             }
+        }
+
+        /// <summary>
+        /// Gets called when a user presses down a key on the videoplayer page. When the key is not listed in the switch case, it calls the view model to handle the key event.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="keyEvent"></param>
+        void CoreWindow_KeyDown(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs keyEvent)
+        {
+            //todo
+            Debug.WriteLine("Key down");
+            var viewModel = (VideoPlayerPageViewModel)DataContext;
+
+            switch (keyEvent.VirtualKey)
+            {
+                case VirtualKey.F:
+                    SwitchFullscreenMode();
+                    break;
+                case VirtualKey.Escape:
+                    SwitchFullscreenMode(); //TODO: Create dedicated method to close fullscreen or use parameter.
+                    break;
+                default:
+                    if (viewModel.KeyDownEventCommand.CanExecute(null))
+                    {
+                        viewModel.KeyDownEventCommand.Execute(keyEvent);
+                    }
+                    break;
+            }
+
+        }
+
+        /// <summary>
+        /// Executes when the page unloads. For example when the user navigates to another page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ParamNavigationPage_Unloaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyDown;
+        }
+
+        /// <summary>
+        /// Executes when the page loads. For example when the user navigates to this page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void ParamNavigationPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
         }
     }
 }

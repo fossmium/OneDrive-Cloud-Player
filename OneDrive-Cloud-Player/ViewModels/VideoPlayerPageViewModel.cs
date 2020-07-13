@@ -40,6 +40,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand SeekedCommand { get; }
         public ICommand ReloadCurrentMediaCommand { get; }
         public ICommand StopMediaCommand { get; }
+        public ICommand KeyDownEventCommand { get; }
 
         private long timeLineValue;
 
@@ -138,6 +139,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             SeekedCommand = new RelayCommand(Seeked, CanExecuteCommand);
             ReloadCurrentMediaCommand = new RelayCommand(ReloadCurrentMedia, CanExecuteCommand);
             StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
+            KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
         }
 
         private bool CanExecuteCommand()
@@ -342,6 +344,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             Dispose();
             // Go back to the last page.
             _navigationService.GoBack();
+        }
+
+        /// <summary>
+        /// Gets called when a user presses a key when the videoplayer page is open.
+        /// </summary>
+        /// <param name="e"></param>
+        private void KeyDownEvent(KeyEventArgs e)
+        {
+            Debug.WriteLine(e.VirtualKey.ToString());
         }
 
         /// <summary>
