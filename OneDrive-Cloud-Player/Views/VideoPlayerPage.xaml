@@ -10,10 +10,13 @@
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media" 
     xmlns:lvs="using:LibVLCSharp.Platforms.UWP"
     mc:Ignorable="d"
+    Unloaded="ParamNavigationPage_Unloaded"
+    Loaded="ParamNavigationPage_Loaded"
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <Grid PointerMoved="Grid_PointerMoved">
+        
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>
                 <Core:EventTriggerBehavior EventName="Initialized">
