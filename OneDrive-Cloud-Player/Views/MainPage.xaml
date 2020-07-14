@@ -231,18 +231,8 @@
                     FontFamily="Arial"
                     Foreground="White"/>
             </Grid>
-            <Popup>
-                <Rectangle x:Name="PopupRectangle" Fill="Lavender" Height="48" Width="96">
-                    <Windows10version1903:Rectangle.Shadow>
-                        <ThemeShadow />
-                    </Windows10version1903:Rectangle.Shadow>
-                </Rectangle>
-            </Popup>
             <Grid x:Name="GoToParentBox" Grid.Row="2" BorderThickness="0, 0, 0, 2" 
                   BorderBrush="#1AFFFFFF" RequestedTheme="Dark" Margin="0,0,0,0">
-                <Windows10version1903:Grid.Shadow>
-                    <ThemeShadow />
-                </Windows10version1903:Grid.Shadow>
                 <Grid Margin="0">
                     <!--Go to parent folder-->
                     <Interactivity:Interaction.Behaviors>

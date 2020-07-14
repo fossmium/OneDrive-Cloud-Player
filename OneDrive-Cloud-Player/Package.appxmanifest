@@ -9,7 +9,7 @@
   <Identity
     Name="a17cc2e8-1caa-4f2c-a79c-032831294316"
     Publisher="CN=Tim"
-    Version="1.0.4.0" />
+    Version="1.0.5.0" />
 
   <mp:PhoneIdentity PhoneProductId="a17cc2e8-1caa-4f2c-a79c-032831294316" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
@@ -33,17 +33,14 @@
       EntryPoint="OneDrive_Cloud_Player.App">
       <uap:VisualElements
         DisplayName="OneDrive Cloud Player"
-        Square150x150Logo="Assets\Square150x150Logo.png"
-        Square44x44Logo="Assets\Square44x44Logo.png"
         Description="Play files directly from OneDrive with the OneDrive Cloud Player app."
-        BackgroundColor="transparent">
-        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png" ShortName="Cloud Player">
+        BackgroundColor="transparent" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Square71x71Logo="Assets\SmallTile.png" ShortName="Cloud Player" Wide310x150Logo="Assets\Wide310x150Logo.png" Square310x310Logo="Assets\LargeTile.png">
           <uap:ShowNameOnTiles>
             <uap:ShowOn Tile="square150x150Logo"/>
           </uap:ShowNameOnTiles>
         </uap:DefaultTile >
-        <uap:SplashScreen Image="Assets\SplashScreen.png"  BackgroundColor="#1E2931"/>
-        <uap:LockScreen BadgeLogo="Assets\BadgeLogo.png" Notification="badgeAndTileText"/>
+        <uap:SplashScreen BackgroundColor="#1E2931" Image="Assets\SplashScreen.png"/>
       </uap:VisualElements>
     </Application>
   </Applications>

@@ -14,7 +14,7 @@ namespace OneDrive_Cloud_Player.Views
     /// <summary>
     /// The page containing the video / media player.
     /// </summary>
-    public sealed partial class VideoPlayerPage
+    public partial class VideoPlayerPage
     {
         private readonly DispatcherTimer pointerMovementDispatcherTimer;
         private bool isPointerOverMediaControlGrid;
