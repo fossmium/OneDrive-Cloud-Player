@@ -10,8 +10,6 @@
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media" 
     xmlns:lvs="using:LibVLCSharp.Platforms.UWP"
     mc:Ignorable="d"
-    Unloaded="ParamNavigationPage_Unloaded"
-    Loaded="ParamNavigationPage_Loaded"
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
