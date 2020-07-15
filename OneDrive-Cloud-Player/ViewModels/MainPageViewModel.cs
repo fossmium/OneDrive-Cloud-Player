@@ -180,7 +180,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Reloads the cache of the drives and removes the item explorer view so the user needs to select a drive again to access explorer items.
         /// </summary>
-        /// <param name="obj"></param>
         private void ReloadCache()
         {
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
@@ -207,7 +206,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Sign the user out and clear the cache before switching to the login window
+        /// Sign the user out and clear the cache before navigating to the login page.
         /// </summary>
         /// <param name="obj"></param>
         private async void Logout()

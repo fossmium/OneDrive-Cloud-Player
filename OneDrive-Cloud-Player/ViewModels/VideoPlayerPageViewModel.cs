@@ -129,7 +129,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
-            Debug.WriteLine("Constructor called!");
             _navigationService = navigationService;
             graphHelper = new GraphHelper();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
@@ -147,9 +146,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             return true;
         }
 
+        /// <summary>
+        /// Gets called every time when navigated to this page.
+        /// </summary>
+        /// <param name="eventArgs"></param>
         private void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
-            Debug.WriteLine("Initializer called!");
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
