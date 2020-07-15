@@ -193,16 +193,11 @@ namespace OneDrive_Cloud_Player.ViewModels
                             //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
                             if (!IsSeeking)
                             {
-                                try
+                                // Sometimes the mediaPlayer is still null when you exist the videoplayer page and this still gets called.
+                                if(mediaPlayer != null)
                                 {
                                     TimeLineValue = mediaPlayer.Time;
                                 }
-                                catch (Exception)
-                                {
-
-                                    throw;
-                                }
-
                             }
                         });
                     };
