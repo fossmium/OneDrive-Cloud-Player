@@ -139,7 +139,7 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Leave fullscreen mode.
+        /// Leave fullscreen mode if currently in fullscreen mode
         /// </summary>
         private void ExitFullscreenMode()
         {
@@ -167,7 +167,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="keyEvent"></param>
-        void CoreWindow_KeyDown(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs keyEvent)
+        void VideoPlayerPage_KeyDown(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs keyEvent)
         {
             var viewModel = (VideoPlayerPageViewModel)DataContext;
 
@@ -190,23 +190,28 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Executes when the page unloads. For example when the user navigates to another page.
+        /// Executes after the user navigates to this page. This is used to add an event handler for the keydown event on this page.
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ParamNavigationPage_Unloaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Window.Current.CoreWindow.KeyDown -= CoreWindow_KeyDown;
+            Window.Current.CoreWindow.KeyDown += VideoPlayerPage_KeyDown;
+
+            base.OnNavigatedTo(e);
         }
 
         /// <summary>
-        /// Executes when the page loads. For example when the user navigates to this page.
+        /// Executes before the user navigates away from this page. This is used to remove an event handler for the keydown event on this page,
+        /// and exit out of fullscreen if the app is still in fullscreen mode.
         /// </summary>
-        /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void ParamNavigationPage_Loaded(object sender, RoutedEventArgs e)
+        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            Window.Current.CoreWindow.KeyDown += CoreWindow_KeyDown;
+            ExitFullScreenMode();
+
+            Window.Current.CoreWindow.KeyDown -= VideoPlayerPage_KeyDown;
+
+            base.OnNavigatingFrom(e);
         }
     }
 }

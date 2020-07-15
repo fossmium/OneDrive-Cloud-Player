@@ -138,7 +138,6 @@
     <Compile Include="Services\Helpers\GraphHelper.cs" />
     <Compile Include="Services\Helpers\GraphAuthHelper.cs" />
     <Compile Include="Services\Utilities\JsonHandler.cs" />
-    <Compile Include="Services\Utilities\WindowSwitcher.cs" />
     <Compile Include="ViewModels\LoginPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
     <Compile Include="ViewModels\VideoPlayerPageViewModel.cs" />
