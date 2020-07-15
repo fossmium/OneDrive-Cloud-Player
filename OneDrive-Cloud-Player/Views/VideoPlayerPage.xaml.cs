@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using Windows.System;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Input;
@@ -139,7 +140,7 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Leave fullscreen mode if currently in fullscreen mode
+        /// Leave fullscreen mode if currently in fullscreen mode.
         /// </summary>
         private void ExitFullscreenMode()
         {
@@ -153,21 +154,11 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// When navigated to another page this method will be executed.
-        /// Leave fullscreen mode when that happens.
-        /// </summary>
-        /// <param name="e"></param>
-        protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
-        {
-            ExitFullscreenMode();
-        }
-
-        /// <summary>
         /// Gets called when a user presses down a key on the videoplayer page. When the key is not listed in the switch case, it calls the view model to handle the key event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="keyEvent"></param>
-        void VideoPlayerPage_KeyDown(Windows.UI.Core.CoreWindow sender, Windows.UI.Core.KeyEventArgs keyEvent)
+        void VideoPlayerPage_KeyDown(CoreWindow sender, KeyEventArgs keyEvent)
         {
             var viewModel = (VideoPlayerPageViewModel)DataContext;
 
@@ -207,7 +198,7 @@ namespace OneDrive_Cloud_Player.Views
         /// <param name="e"></param>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
-            ExitFullScreenMode();
+            ExitFullscreenMode();
 
             Window.Current.CoreWindow.KeyDown -= VideoPlayerPage_KeyDown;
 
