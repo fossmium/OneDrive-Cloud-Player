@@ -168,9 +168,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                     //Sets the max value of the seekbar.
                     VideoLength = mediaPlayer.Length;
 
-                    //Fixes the problem that the video starts with its own audio value instead of our own.
-                    MediaVolumeLevel = mediaVolumeLevel;
-
                     PlayPauseButtonIconSource = "../Assets/Icons/pause.png";
                 });
             };
@@ -203,6 +200,12 @@ namespace OneDrive_Cloud_Player.ViewModels
                             }
                         });
                     };
+
+            // Logging LibVLC.
+            LibVLC.Log += (sender, e) =>
+            {
+                Debug.WriteLine($"[{DateTime.Now.ToString("hh:mm:ss.ff")}] [{e.Level}] {e.Module}:{e.Message}");
+            };
         }
 
         /// <summary>
@@ -224,14 +227,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         private async Task PlayMedia(long startTime = 0)
         {
             string mediaDownloadURL = await RetrieveDownloadURLMedia(this.videoPlayerArgumentWrapper);
-            //this.PlayVideo(VideoURL, VideoStartTime);
 
+            // Play the OneDrive file.
             MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
-
-
-            //Waits for the stream to be parsed so we do not raise a nullpointer exception.
-            await mediaPlayer.Media.Parse(MediaParseOptions.ParseNetwork);
-            MediaVolumeLevel = MediaVolumeLevel;
 
             if (mediaPlayer != null)
             {
