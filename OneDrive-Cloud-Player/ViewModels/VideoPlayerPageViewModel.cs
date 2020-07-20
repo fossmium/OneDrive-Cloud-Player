@@ -7,14 +7,19 @@ using OneDrive_Cloud_Player.Models;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Models.Interfaces;
 using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Services.Utilities;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Media.Audio;
 using Windows.Security.Authentication.Web.Provider;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
+using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -124,6 +129,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             set => Set(nameof(MediaPlayer), ref mediaPlayer, value);
         }
 
+        private ApplicationDataContainer localSettings { get; set; }
+
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>
@@ -139,6 +146,14 @@ namespace OneDrive_Cloud_Player.ViewModels
             ReloadCurrentMediaCommand = new RelayCommand(ReloadCurrentMedia, CanExecuteCommand);
             StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
+
+            this.localSettings = ApplicationData.Current.LocalSettings;
+
+            // Sets the MediaVolume setting to 100 when its not already set before in the setting. (This is part of an audio workaround).
+            if(localSettings.Values["MediaVolume"] is null)
+            {
+                localSettings.Values["MediaVolume"] = 100;
+            }
         }
 
         private bool CanExecuteCommand()
@@ -165,6 +180,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
+                    MediaVolumeLevel = (int)localSettings.Values["MediaVolume"];
                     //Sets the max value of the seekbar.
                     VideoLength = mediaPlayer.Length;
 
@@ -193,19 +209,13 @@ namespace OneDrive_Cloud_Player.ViewModels
                             if (!IsSeeking)
                             {
                                 // Sometimes the mediaPlayer is still null when you exist the videoplayer page and this still gets called.
-                                if(mediaPlayer != null)
+                                if (mediaPlayer != null)
                                 {
                                     TimeLineValue = mediaPlayer.Time;
                                 }
                             }
                         });
                     };
-
-            // Logging LibVLC.
-            LibVLC.Log += (sender, e) =>
-            {
-                Debug.WriteLine($"[{DateTime.Now.ToString("hh:mm:ss.ff")}] [{e.Level}] {e.Module}:{e.Message}");
-            };
         }
 
         /// <summary>
@@ -240,7 +250,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private void SetMediaVolume(int volumeLevel)
         {
             if (mediaPlayer is null) return; // Return when the mediaPlayer is null so it does not cause exception.
-
+            localSettings.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
             mediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
         }
@@ -386,6 +396,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         ~VideoPlayerPageViewModel()
         {
+            MediaVolumeLevel = 100;
             Dispose();
         }
     }

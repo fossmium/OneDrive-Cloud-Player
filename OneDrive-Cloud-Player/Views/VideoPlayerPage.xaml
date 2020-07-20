@@ -124,7 +124,7 @@
                         </Button>
                     </Grid>
 
-                    <Slider  Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
+                    <Slider Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
                                  Maximum="100" Value="{Binding MediaVolumeLevel, Mode=TwoWay}" Margin="5,0,5,0"/>
 
                     <!--Right bottom controls-->
