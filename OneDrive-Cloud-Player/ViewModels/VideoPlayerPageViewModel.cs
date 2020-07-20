@@ -197,10 +197,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                         });
                     };
 
-            //Set the video start time.
-            //mediaPlayer.Time = VideoStartTime;
-            //VideoStartTime = 100;
-
             mediaPlayer.TimeChanged += async (sender, args) =>
                     {
                         await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
