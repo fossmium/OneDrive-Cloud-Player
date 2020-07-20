@@ -13,7 +13,7 @@
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid PointerMoved="Grid_PointerMoved">
+    <Grid PointerMoved="Grid_PointerMoved" PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
         
         <lvs:VideoView MediaPlayer="{Binding MediaPlayer}">
             <Interactivity:Interaction.Behaviors>

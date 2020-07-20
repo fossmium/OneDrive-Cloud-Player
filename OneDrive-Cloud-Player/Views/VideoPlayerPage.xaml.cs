@@ -19,6 +19,7 @@ namespace OneDrive_Cloud_Player.Views
     {
         private readonly DispatcherTimer pointerMovementDispatcherTimer;
         private bool isPointerOverMediaControlGrid;
+        private bool isPointerOverVideoPlayerPage = true;
 
         public VideoPlayerPage()
         {
@@ -72,10 +73,31 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
+        /// Gets called when a pointer enters the videoplayer page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Grid_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverVideoPlayerPage = true;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer exits the videoplayer page.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void Grid_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverVideoPlayerPage = false;
+        }
+
+        /// <summary>
         /// Gets called when a pointer moves across the mediaplayer.
         /// </summary>
         private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
             if (MediaControlGrid.Visibility == Visibility.Collapsed)
             {
                 MediaControlGrid.Visibility = Visibility.Visible;
@@ -94,6 +116,12 @@ namespace OneDrive_Cloud_Player.Views
             if (!isPointerOverMediaControlGrid)
             {
                 MediaControlGrid.Visibility = Visibility.Collapsed;
+
+                // Only hide the cursor when it is over the videoplayer page.
+                if (isPointerOverVideoPlayerPage)
+                {
+                    Window.Current.CoreWindow.PointerCursor = null;
+                }
             }
             pointerMovementDispatcherTimer.Stop();
         }
