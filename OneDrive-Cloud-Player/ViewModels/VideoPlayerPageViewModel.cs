@@ -4,22 +4,16 @@ using GalaSoft.MvvmLight.Views;
 using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
 using OneDrive_Cloud_Player.Models;
-using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Models.Interfaces;
 using OneDrive_Cloud_Player.Services.Helpers;
-using OneDrive_Cloud_Player.Services.Utilities;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Input;
-using Windows.Media.Audio;
-using Windows.Security.Authentication.Web.Provider;
 using Windows.Storage;
 using Windows.UI.Core;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -28,12 +22,15 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary>
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
+        private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
         private readonly GraphHelper graphHelper;
+        private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
+        private bool InvalidOneDriveSession = false;
+        private Timer reloadIntervalTimer;
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
         private MediaPlayer mediaPlayer;
-        private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -129,8 +126,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             set => Set(nameof(MediaPlayer), ref mediaPlayer, value);
         }
 
-        private ApplicationDataContainer localSettings { get; set; }
-
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>
@@ -147,12 +142,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
 
-            this.localSettings = ApplicationData.Current.LocalSettings;
+            this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
 
             // Sets the MediaVolume setting to 100 when its not already set before in the setting. (This is part of an audio workaround).
-            if(localSettings.Values["MediaVolume"] is null)
+            if (localMediaVolumeLevelSetting.Values["MediaVolume"] is null)
             {
-                localSettings.Values["MediaVolume"] = 100;
+                localMediaVolumeLevelSetting.Values["MediaVolume"] = 100;
             }
         }
 
@@ -172,6 +167,16 @@ namespace OneDrive_Cloud_Player.ViewModels
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
+            // Initialize timers.
+            // Create a timer that fires the elapsed event when its time to retrieve and play the media from a new OneDrive download URL (2 minutes).
+            reloadIntervalTimer = new Timer(120000);
+            // Hook up the Elapsed event for the timer. 
+            reloadIntervalTimer.Elapsed += (sender, e) =>
+            {
+                InvalidOneDriveSession = true;
+            };
+            reloadIntervalTimer.Enabled = true;
+
             /*
              * Subscribing to LibVLC events.
              */
@@ -180,7 +185,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
-                    MediaVolumeLevel = (int)localSettings.Values["MediaVolume"];
+                    MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
                     //Sets the max value of the seekbar.
                     VideoLength = mediaPlayer.Length;
 
@@ -246,7 +251,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private void SetMediaVolume(int volumeLevel)
         {
             if (mediaPlayer is null) return; // Return when the mediaPlayer is null so it does not cause exception.
-            localSettings.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
+            this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
             mediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
         }
@@ -292,7 +297,16 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void Seeked()
         {
-            SetVideoTime(TimeLineValue);
+            // Check wether or not the media should be reloaded.
+            if (InvalidOneDriveSession)
+            {
+                //TODO: fix seekbar niet going instantly to the point where the user clicked. This gives the illusion that the seekbar is broken.
+                ReloadCurrentMedia();
+            }
+            else
+            {
+                SetVideoTime(TimeLineValue);
+            }
         }
 
         /// <summary>
@@ -301,6 +315,10 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="time"></param>
         private void SetVideoTime(long time)
         {
+            if (InvalidOneDriveSession)
+            {
+                Debug.WriteLine("OneDrive link expired.");
+            }
             mediaPlayer.Time = time;
         }
 
@@ -310,14 +328,10 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async void ReloadCurrentMedia()
         {
-            try
-            {
-                await PlayMedia(TimeLineValue);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("Ëxception with reloading current media: " + e);
-            }
+            await PlayMedia(TimeLineValue);
+            reloadIntervalTimer.Stop(); //In case a user reloads with the reload button. Stop the timer so we dont get multiple running.
+            InvalidOneDriveSession = false;
+            reloadIntervalTimer.Start();
         }
 
         /// <summary>
