@@ -273,7 +273,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="obj"></param>
         public async void GetChildrenFomItem()
         {
-            Debug.WriteLine("Called GetChildrenFomItem() method!");
             //Prevents exception when user clicks an empty space in the ListBox.
             if (SelectedExplorerItem is null) { return; }
 
