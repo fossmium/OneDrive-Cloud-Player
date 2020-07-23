@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 
 namespace OneDrive_Cloud_Player.ViewModels
@@ -365,9 +366,14 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Gets called when a user presses a key when the videoplayer page is open.
         /// </summary>
         /// <param name="e"></param>
-        private void KeyDownEvent(KeyEventArgs e)
+        private void KeyDownEvent(KeyEventArgs keyEvent)
         {
-            Debug.WriteLine(e.VirtualKey.ToString());
+            switch (keyEvent.VirtualKey)
+            {
+                case VirtualKey.Space:
+                    ChangePlayingState();
+                    break;
+            }
         }
 
         /// <summary>
