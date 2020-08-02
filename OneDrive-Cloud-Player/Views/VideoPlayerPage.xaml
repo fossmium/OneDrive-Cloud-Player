@@ -339,7 +339,7 @@
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
 
-        <Grid Background="#1E2931" x:Name="MediaControlGrid" MaxHeight="200"
+        <Grid x:Name="MediaControlGrid" MaxHeight="200"
               VerticalAlignment="Bottom" Visibility="{Binding MediaControlGridVisibility}"
               PointerEntered="MediaControlGrid_PointerEntered"
               PointerExited="MediaControlGrid_PointerExited">
@@ -459,11 +459,14 @@
                             Width="50" Height="50"  
                             Click="SwitchFullscreenModeButton_Click"
                             Background="Transparent">
-                            <Image Source="/Assets/Icons/Fullscreen.png" ></Image>
+                            <Image Source="/Assets/Icons/Fullscreen.png"></Image>
                         </Button>
                     </Grid>
                 </Grid>
             </Grid>
+            <Grid.Background>
+                <SolidColorBrush Color="#1E2931" Opacity="0.9"/>
+            </Grid.Background>
         </Grid>
     </Grid>
 </local:ParamNavigationPage>
