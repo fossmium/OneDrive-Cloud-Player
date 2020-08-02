@@ -48,6 +48,7 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         public App()
         {
+            Core.Initialize();
             this.InitializeComponent();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
