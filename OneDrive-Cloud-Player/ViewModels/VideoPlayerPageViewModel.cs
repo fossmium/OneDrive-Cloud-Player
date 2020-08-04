@@ -229,7 +229,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             var driveItem = await graphHelper.GetItemInformationAsync(videoPlayerArgumentWrapper.DriveId, videoPlayerArgumentWrapper.CachedDriveItem.ItemId);
 
-            //Retrieve the download URL from the drive item to be used for the video,
+            //Retrieve a temporary download URL from the drive item.
             return (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
         }
 
