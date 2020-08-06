@@ -167,6 +167,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
+            MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
 
             // Initialize timers.
             // Create a timer that fires the elapsed event when its time to retrieve and play the media from a new OneDrive download URL (2 minutes).
@@ -186,7 +187,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
-                    MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
+                    int CurrentVolume = MediaPlayer.Volume;
+                    if (CurrentVolume != (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"])
+                    {
+                        SetMediaVolume((int)this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                    }
+                    Debug.WriteLine(MediaPlayer.Volume);
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
 
@@ -251,9 +257,9 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void SetMediaVolume(int volumeLevel)
         {
-            if (mediaPlayer is null) return; // Return when the mediaPlayer is null so it does not cause exception.
+            //if (MediaPlayer is null) return; // Return when the mediaPlayer is null so it does not cause exception.
             this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
-            mediaPlayer.Volume = volumeLevel;
+            MediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
         }
 
