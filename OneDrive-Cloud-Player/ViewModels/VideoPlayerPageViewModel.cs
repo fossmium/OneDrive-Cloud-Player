@@ -182,42 +182,42 @@ namespace OneDrive_Cloud_Player.ViewModels
              * Subscribing to LibVLC events.
              */
             //Subscribes to the Playing event.
-            mediaPlayer.Playing += async (sender, args) =>
+            MediaPlayer.Playing += async (sender, args) =>
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
                     //Sets the max value of the seekbar.
-                    VideoLength = mediaPlayer.Length;
+                    VideoLength = MediaPlayer.Length;
 
                     PlayPauseButtonIconSource = "../Assets/Icons/pause.png";
                 });
             };
 
             //Subscribes to the Paused event.
-            mediaPlayer.Paused += async (sender, args) =>
-                    {
-                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                        {
-                            PlayPauseButtonIconSource = "../Assets/Icons/play_arrow.png";
-                        });
-                    };
+            MediaPlayer.Paused += async (sender, args) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    PlayPauseButtonIconSource = "../Assets/Icons/play_arrow.png";
+                });
+            };
 
-            mediaPlayer.TimeChanged += async (sender, args) =>
+            MediaPlayer.TimeChanged += async (sender, args) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
+                    if (!IsSeeking)
                     {
-                        await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                        // Sometimes the mediaPlayer is still null when you exist the videoplayer page and this still gets called.
+                        if (MediaPlayer != null)
                         {
-                            //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
-                            if (!IsSeeking)
-                            {
-                                // Sometimes the mediaPlayer is still null when you exist the videoplayer page and this still gets called.
-                                if (mediaPlayer != null)
-                                {
-                                    TimeLineValue = mediaPlayer.Time;
-                                }
-                            }
-                        });
-                    };
+                            TimeLineValue = MediaPlayer.Time;
+                        }
+                    }
+                });
+            };
         }
 
         /// <summary>
@@ -354,7 +354,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         public void StopMedia()
         {
-            ChangePlayingState();
             mediaPlayer.Stop();
             TimeLineValue = 0;
             Dispose();
