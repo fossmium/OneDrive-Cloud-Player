@@ -9,12 +9,14 @@ using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
+using Timer = System.Timers.Timer;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -167,7 +169,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
-
+            Thread.Sleep(4000);
             // Initialize timers.
             // Create a timer that fires the elapsed event when its time to retrieve and play the media from a new OneDrive download URL (2 minutes).
             reloadIntervalTimer = new Timer(120000);
