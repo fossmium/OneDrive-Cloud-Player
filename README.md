@@ -17,7 +17,7 @@
 * [Features](##features)
 * [Install](##install)
 * [Usage](##usage)
-* [Examples](##exemples)
+* [Visuals](#Visuals)
 * [Contributing](##contributing)
 * [Maintainers](##maintainers)
 
