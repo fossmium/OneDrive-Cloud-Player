@@ -210,7 +210,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                     //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
                     if (!IsSeeking)
                     {
-                        // Sometimes the mediaPlayer is still null when you exist the videoplayer page and this still gets called.
+                        // Sometimes the MediaPlayer is still null when you exist the videoplayer page and this still gets called.
                         if (MediaPlayer != null)
                         {
                             TimeLineValue = MediaPlayer.Time;
@@ -243,21 +243,21 @@ namespace OneDrive_Cloud_Player.ViewModels
             // Play the OneDrive file.
             MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
 
-            if (mediaPlayer != null)
+            if (MediaPlayer != null)
             {
-                mediaPlayer.Time = startTime;
+                MediaPlayer.Time = startTime;
             }
         }
 
         private void SetMediaVolume(int volumeLevel)
         {
-            if (mediaPlayer is null)
+            if (MediaPlayer is null)
             {
                 Debug.WriteLine("Error: Sound problem, Returning without setting volume level!");
-                return; // Return when the mediaPlayer is null so it does not cause exception.
+                return; // Return when the MediaPlayer is null so it does not cause exception.
             }
             this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
-            mediaPlayer.Volume = volumeLevel;
+            MediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
         }
 
@@ -324,7 +324,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 Debug.WriteLine("OneDrive link expired.");
             }
-            mediaPlayer.Time = time;
+            MediaPlayer.Time = time;
         }
 
         //TODO: Implement a Dialog system that shows a dialog when there is an error.
@@ -344,21 +344,21 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void ChangePlayingState()
         {
-            bool isPlaying = mediaPlayer.IsPlaying;
+            bool isPlaying = MediaPlayer.IsPlaying;
 
             if (isPlaying)
             {
-                mediaPlayer.SetPause(true);
+                MediaPlayer.SetPause(true);
             }
             else if (!isPlaying)
             {
-                mediaPlayer.SetPause(false);
+                MediaPlayer.SetPause(false);
             }
         }
 
         public void StopMedia()
         {
-            mediaPlayer.Stop();
+            MediaPlayer.Stop();
             TimeLineValue = 0;
             Dispose();
             // Go back to the last page.
@@ -415,7 +415,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         ~VideoPlayerPageViewModel()
         {
-            MediaVolumeLevel = 100;
             Dispose();
         }
     }
