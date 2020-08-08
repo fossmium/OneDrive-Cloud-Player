@@ -28,6 +28,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private readonly GraphHelper graphHelper;
         private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
         private bool InvalidOneDriveSession = false;
+        private bool InstanciatedLibVLC = false;
         private Timer reloadIntervalTimer;
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
@@ -144,12 +145,14 @@ namespace OneDrive_Cloud_Player.ViewModels
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
 
             this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Read volume level: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
 
             // Sets the MediaVolume setting to 100 when its not already set before in the setting. (This is part of an audio workaround).
             if (localMediaVolumeLevelSetting.Values["MediaVolume"] is null)
             {
                 localMediaVolumeLevelSetting.Values["MediaVolume"] = 100;
             }
+            InstanciatedLibVLC = true;
         }
 
         private bool CanExecuteCommand()
@@ -167,6 +170,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Initialized MediaPlayer");
 
             // Initialize timers.
             // Create a timer that fires the elapsed event when its time to retrieve and play the media from a new OneDrive download URL (2 minutes).
@@ -184,9 +188,11 @@ namespace OneDrive_Cloud_Player.ViewModels
             //Subscribes to the Playing event.
             MediaPlayer.Playing += async (sender, args) =>
             {
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume level");
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
 
@@ -385,6 +391,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="parameter"></param>
         public async void Activate(object videoPlayerArgumentWrapper)
         {
+            while (!InstanciatedLibVLC) ;
             // Set the field so the playmedia method can use it.
             this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
             await PlayMedia();
