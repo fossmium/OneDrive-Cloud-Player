@@ -251,7 +251,11 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void SetMediaVolume(int volumeLevel)
         {
-            if (mediaPlayer is null) return; // Return when the mediaPlayer is null so it does not cause exception.
+            if (mediaPlayer is null)
+            {
+                Debug.WriteLine("Error: Sound problem, Returning without setting volume level!");
+                return; // Return when the mediaPlayer is null so it does not cause exception.
+            }
             this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
             mediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonIconSource(volumeLevel);
