@@ -189,7 +189,8 @@ namespace OneDrive_Cloud_Player.ViewModels
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
-                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in our property: " + MediaVolumeLevel);
                     Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
