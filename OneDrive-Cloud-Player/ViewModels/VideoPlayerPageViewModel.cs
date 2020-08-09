@@ -9,14 +9,12 @@ using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
-using Timer = System.Timers.Timer;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -194,7 +192,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
-
                     Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume level");
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
@@ -227,10 +224,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                     }
                 });
             };
-            MediaPlayer.Buffering += async (sender, args) =>
-            {
-
-            };
         }
 
         /// <summary>
@@ -260,7 +253,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 MediaPlayer.Time = startTime;
             }
-            MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
         }
 
         private void SetMediaVolume(int volumeLevel)
@@ -399,7 +391,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="parameter"></param>
         public async void Activate(object videoPlayerArgumentWrapper)
         {
-            //while (!InstanciatedLibVLC) ;
+            while (!InstanciatedLibVLC) ;
             // Set the field so the playmedia method can use it.
             this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
             await PlayMedia();
