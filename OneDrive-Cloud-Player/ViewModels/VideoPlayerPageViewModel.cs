@@ -152,6 +152,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 localMediaVolumeLevelSetting.Values["MediaVolume"] = 100;
             }
+            InstanciatedLibVLC = true;
         }
 
         private bool CanExecuteCommand()
@@ -165,15 +166,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="eventArgs"></param>
         private void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Initializing LibVLC");
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
-
-            MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume level to: " + MediaVolumeLevel);
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume level: " + MediaPlayer.Volume);
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Initialized MediaPlayer");
 
             // Initialize timers.
             // Create a timer that fires the elapsed event when its time to retrieve and play the media from a new OneDrive download URL (2 minutes).
@@ -194,6 +191,8 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
+                    MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume level");
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
 
@@ -225,8 +224,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                     }
                 });
             };
-
-            InstanciatedLibVLC = true;
         }
 
         /// <summary>
@@ -394,19 +391,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="parameter"></param>
         public async void Activate(object videoPlayerArgumentWrapper)
         {
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate called");
-            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                await Task.Run(() =>
-                {
-                    while (!InstanciatedLibVLC) ;
-                });
-            });
+            while (!InstanciatedLibVLC) ;
             // Set the field so the playmedia method can use it.
             this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
             await PlayMedia();
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate completed");
+            //Debug.WriteLine(" + Activated: " + ((VideoPlayerArgumentWrapper)parameter).CachedDriveItem.ItemId);
         }
 
         //TODO: More research what this does.
