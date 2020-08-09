@@ -395,9 +395,13 @@ namespace OneDrive_Cloud_Player.ViewModels
         public async void Activate(object videoPlayerArgumentWrapper)
         {
             Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate called");
-            await Task.Run(() =>
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                while (!InstanciatedLibVLC) ;
+                await Task.Run(() =>
+                {
+                    while (!InstanciatedLibVLC) ;
+                });
             });
             // Set the field so the playmedia method can use it.
             this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
