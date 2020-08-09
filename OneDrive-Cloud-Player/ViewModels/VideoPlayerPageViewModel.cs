@@ -161,8 +161,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Gets called every time when navigated to this page.
         /// </summary>
         /// <param name="eventArgs"></param>
-        private void InitializeLibVLC(InitializedEventArgs eventArgs)
+        private async void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": InitializeLibVLC called");
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
@@ -184,9 +185,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             //Subscribes to the Playing event.
             MediaPlayer.Playing += async (sender, args) =>
             {
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
                     MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
 
@@ -218,6 +222,8 @@ namespace OneDrive_Cloud_Player.ViewModels
                     }
                 });
             };
+
+            await PlayMedia();
         }
 
         /// <summary>
@@ -383,12 +389,12 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Gets the parameters that are sended with the navigation to the videoplayer page.
         /// </summary>
         /// <param name="parameter"></param>
-        public async void Activate(object videoPlayerArgumentWrapper)
+        public void Activate(object videoPlayerArgumentWrapper)
         {
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate called");
             // Set the field so the playmedia method can use it.
             this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
-            await PlayMedia();
-            //Debug.WriteLine(" + Activated: " + ((VideoPlayerArgumentWrapper)parameter).CachedDriveItem.ItemId);
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate completed");
         }
 
         //TODO: More research what this does.
