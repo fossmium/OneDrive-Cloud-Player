@@ -248,7 +248,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             string mediaDownloadURL = await RetrieveDownloadURLMedia(this.videoPlayerArgumentWrapper);
 
             // Play the OneDrive file.
-            MediaPlayer.Play(new Media(LibVLC, new Uri("http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4")));
+            MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
 
             if (MediaPlayer != null)
             {
