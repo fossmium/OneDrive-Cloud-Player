@@ -22,6 +22,7 @@
 
 ## Features
 * Support for many formats.
+* Access folders that are shared with you.
 * Caching.
 
 
