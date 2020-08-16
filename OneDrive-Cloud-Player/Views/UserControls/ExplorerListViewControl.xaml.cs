@@ -1,4 +1,4 @@
-﻿
+
 using CommonServiceLocator;
 using GalaSoft.MvvmLight;
 using Microsoft.Graph;
@@ -29,21 +29,21 @@ namespace OneDrive_Cloud_Player.Views.UserControls
     public sealed partial class ExplorerListViewControl : UserControl, INotifyPropertyChanged
     {
         public enum ViewType
-		{
-            Grid = 1000, 
+        {
+            Grid = 1000,
             List = 2000
-		}
+        }
 
         /// <summary>
         /// Codebehind property that can be set from the xaml code
         /// </summary>
         public List<CachedDriveItem> CurrentExplorerItems
         {
-            get 
-            { 
-                return (List<CachedDriveItem>)GetValue(ExplorerItemsDependency); 
+            get
+            {
+                return (List<CachedDriveItem>)GetValue(ExplorerItemsDependency);
             }
-            set 
+            set
             {
                 SetValueDependency(ExplorerItemsDependency, value);
             }
@@ -54,18 +54,18 @@ namespace OneDrive_Cloud_Player.Views.UserControls
         /// </summary>
         public CachedDriveItem CurrentSelectedExplorerItem
         {
-            get 
-            { 
-                return (CachedDriveItem)GetValue(SelectedExplorerItemDependency); 
+            get
+            {
+                return (CachedDriveItem)GetValue(SelectedExplorerItemDependency);
             }
-            set 
+            set
             {
                 SetValueDependency(SelectedExplorerItemDependency, value);
             }
         }
 
         public ViewType ControlViewType
-		{
+        {
             get
             {
                 return (ViewType)GetValue(ControlViewTypeDependency);
@@ -115,7 +115,7 @@ namespace OneDrive_Cloud_Player.Views.UserControls
         /// <param name="e"></param>
 		private void ExplorerListBox_MouseDown(object sender, DoubleTappedRoutedEventArgs e)
         {
-            UserControlClicked?.Invoke(this, e);         
+            UserControlClicked?.Invoke(this, e);
         }
 
         /// <summary>
@@ -125,34 +125,34 @@ namespace OneDrive_Cloud_Player.Views.UserControls
 		private void SetValueDependency(DependencyProperty property, object value, [CallerMemberName] String p = null)
         {
             SetValue(property, value);
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
-		}
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(p));
+        }
 
         /// <summary>
         /// Handles the viewtype changed event, this function also fires the on the first load, as mvvm is slow and needs time to load its dependency values :)
         /// </summary>
         private void ViewTypeChanged()
-		{
+        {
             Console.WriteLine("MainPage display type: " + ControlViewType);
 
-			switch (ControlViewType)
-			{
-				case ViewType.Grid:
+            switch (ControlViewType)
+            {
+                case ViewType.Grid:
                     //enable the gridview
                     EnableGridView();
 
                     //disable the listview (even if this was never enabled)
                     DisableListView();
                     break;
-				case ViewType.List:
+                case ViewType.List:
                     //enable the listview
                     EnableListView();
 
                     //disable the gridview (even if this was never enabled)
                     DisableGridView();
                     break;
-			}			
-		}
+            }
+        }
 
         private void EnableListView()
         {
@@ -171,14 +171,14 @@ namespace OneDrive_Cloud_Player.Views.UserControls
         }
 
         private void DisableListView()
-		{
+        {
             ExplorerListBox.Visibility = Visibility.Collapsed;
             ExplorerListBox.ClearValue(SelectedExplorerItemDependency); //reset possible bindings
             ExplorerListBox.ClearValue(ExplorerItemsDependency); //reset possible bindings
         }
 
         private void EnableGridView()
-		{
+        {
             ExplorerGridBox.Visibility = Visibility.Visible;
 
             //create a selectedItem binding for the listbox
@@ -194,10 +194,10 @@ namespace OneDrive_Cloud_Player.Views.UserControls
         }
 
         private void DisableGridView()
-		{
+        {
             ExplorerGridBox.Visibility = Visibility.Collapsed;
             ExplorerGridBox.ClearValue(SelectedExplorerItemDependency); //reset possible bindings
             ExplorerGridBox.ClearValue(ExplorerItemsDependency); //reset possible bindings
         }
-	}
+    }
 }
