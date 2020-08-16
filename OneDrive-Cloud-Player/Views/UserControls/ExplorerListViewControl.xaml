@@ -17,9 +17,10 @@
     </UserControl.Resources>
 
     <Grid>
-        <ListView Grid.Row="3" x:Name="ExplorerListBox" 
-                     ItemsSource="{Binding CurrentExplorerItems}"
-                     SelectedItem="{Binding CurrentSelectedExplorerItem, Mode=TwoWay}" 
+		<!--ItemsSource="{Binding CurrentExplorerItems}"
+                     SelectedItem="{Binding CurrentSelectedExplorerItem, Mode=TwoWay}"-->
+		<ListView Grid.Row="3" x:Name="ExplorerListBox" 
+                     Visibility="Collapsed"
                      Background="Transparent" 
                      HorizontalAlignment="Stretch"
                      RequestedTheme="Dark"
@@ -76,5 +77,63 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+
+		<GridView Grid.Row="3" x:Name="ExplorerGridBox" 
+                     Visibility="Collapsed"
+                     Background="Transparent" 
+                     HorizontalAlignment="Stretch"
+                     RequestedTheme="Dark"
+                     DoubleTapped="ExplorerListBox_MouseDown">
+			<GridView.ItemContainerStyle>
+				<Style TargetType="ListViewItem">
+					<Setter Property="Background" Value="Transparent"/>
+					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+					<Setter Property="FontSize" Value="16"/>
+					<Setter Property="FontFamily" Value="Arial"/>
+					<Setter Property="Foreground" Value="white"/>
+					<Setter Property="Padding" Value="0"/>
+					<!--<Setter Property="HorizontalAlignment" Value="Stretch"/>-->
+					<!--<Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                    <Border Background="{TemplateBinding Background}">
+                                        <ContentPresenter HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>-->
+					<!--<Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#414E58"/>
+                            </Trigger>
+                        </Style.Triggers>-->
+				</Style>
+
+			</GridView.ItemContainerStyle>
+
+			<!--Template for the individual explorer items-->
+			<GridView.ItemTemplate>
+				<DataTemplate>
+
+					<StackPanel x:Name="FolderStackPanel" Height="51">
+						<Border BorderThickness="0, 0, 0, 2" BorderBrush="#1AFFFFFF">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="50"/>
+									<ColumnDefinition Width="*"/>
+									<ColumnDefinition Width="100"/>
+									<ColumnDefinition Width="85"/>
+								</Grid.ColumnDefinitions>
+
+								<Image Grid.Column="0" Source="{Binding Path=IsFolder, Converter={StaticResource converter}, ConverterParameter='ContentTypeExplorerItem'}" VerticalAlignment="Center" HorizontalAlignment="Center" Width="20"/>
+								<TextBlock Grid.Column="1" x:Name="ItemName" Text="{Binding Name}" Padding="40, 15, 15, 15" />
+								<TextBlock Grid.Column="2" Text="{Binding Converter={StaticResource converter}, ConverterParameter='ContentChildCountExplorer'}" VerticalAlignment="Center"/>
+								<TextBlock Grid.Column="3" Text="{Binding Size, Converter={StaticResource converter}, ConverterParameter='ContentItemSizeExplorer'}" VerticalAlignment="Center"/>
+							</Grid>
+						</Border>
+					</StackPanel>
+				</DataTemplate>
+			</GridView.ItemTemplate>
+		</GridView>
     </Grid>
 </UserControl>
