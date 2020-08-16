@@ -18,8 +18,8 @@
 
     <Grid>
         <ListView Grid.Row="3" x:Name="ExplorerListBox" 
-                     ItemsSource="{Binding ExplorerItemsList}"
-                     SelectedItem="{Binding SelectedExplorerItem, Mode=TwoWay}" 
+                     ItemsSource="{Binding CurrentExplorerItems}"
+                     SelectedItem="{Binding CurrentSelectedExplorerItem, Mode=TwoWay}" 
                      Background="Transparent" 
                      HorizontalAlignment="Stretch"
                      RequestedTheme="Dark"

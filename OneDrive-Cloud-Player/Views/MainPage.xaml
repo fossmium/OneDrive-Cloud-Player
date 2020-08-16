@@ -262,7 +262,8 @@
             </Grid>
             <UserControls:ExplorerListViewControl 
                 Grid.Row="3"
-                ExplorerItemsList="{Binding ExplorerItemsList}">
+                CurrentExplorerItems="{Binding ExplorerItemsList}"
+				CurrentSelectedExplorerItem="{Binding SelectedExplorerItem, Mode=TwoWay}">
                 <Interactivity:Interaction.Behaviors>
                     <Core:EventTriggerBehavior EventName="UserControlClicked">
                         <Core:InvokeCommandAction Command="{Binding GetChildrenFomItemCommand}"/>
