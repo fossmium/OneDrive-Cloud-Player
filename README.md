@@ -25,6 +25,13 @@
 * Access folders that are shared with you.
 * Caching.
 
+## Known issues
+
+We could use some help on the issues listed here.
+
+* [[#7](https://github.com/GrandDynamo/OneDrive-Cloud-Player/issues/7)] Audio playing while muted and vice versa. (*It's a LibVLC problem according to the maintainer of LibVLCSharp.*)
+
+
 
 [comment]: # (## Install)
 
