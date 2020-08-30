@@ -17,6 +17,7 @@
 **Content**
 
 * [Features](#features)
+* [Known issues](#known-issues)
 * [Visuals](#visuals)
 * [Contributors](#contributors)
 
