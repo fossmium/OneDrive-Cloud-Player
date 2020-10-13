@@ -208,14 +208,12 @@ namespace OneDrive_Cloud_Player.Services
                     driveToAdd.DriveName = "Your Drive";
                     driveToAdd.DriveId = graphDrive.ParentReference.DriveId;
                     driveToAdd.IsSharedFolder = false;
-                    driveToAdd.OwnerName = CurrentUsername;
                 }
                 else
                 {
                     driveToAdd.DriveName = graphDrive.Name;
                     driveToAdd.DriveId = graphDrive.RemoteItem.ParentReference.DriveId;
                     driveToAdd.IsSharedFolder = true;
-                    driveToAdd.OwnerName = graphDrive.RemoteItem.Shared.SharedBy.User.DisplayName;
                 }
                 newlyCachedDrives.Add(driveToAdd);
             }
