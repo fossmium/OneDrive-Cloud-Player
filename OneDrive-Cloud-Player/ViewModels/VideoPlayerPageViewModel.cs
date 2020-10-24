@@ -313,21 +313,22 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Seek backwards in the media.
+        /// Seek backwards in the media by given miliseconds.
         /// </summary>
-        public void SeekBackward()
+        /// <param name="ms"></param>
+        public void SeekBackward(long ms)
         {
-            SetVideoTime(MediaPlayer.Time -= 10000);
+            SetVideoTime(MediaPlayer.Time - ms);
         }
 
         /// <summary>
-        /// Seek foreward in the media.
+        /// Seek foreward in the media by given miliseconds.
         /// </summary>
-        public void SeekForeward()
+        /// <param name="ms"></param>
+        public void SeekForeward(long ms)
         {
-            SetVideoTime(MediaPlayer.Time += 10000);
+            SetVideoTime(MediaPlayer.Time + ms);
         }
-
 
         /// <summary>
         /// Sets the time of the media with the given time.
@@ -394,10 +395,16 @@ namespace OneDrive_Cloud_Player.ViewModels
                     ChangePlayingState();
                     break;
                 case VirtualKey.Left:
-                    SeekBackward();
+                    SeekBackward(5000);
                     break;
                 case VirtualKey.Right:
-                    SeekForeward();
+                    SeekForeward(5000);
+                    break;
+                case VirtualKey.J:
+                    SeekBackward(10000);
+                    break;
+                case VirtualKey.L:
+                    SeekForeward(10000);
                     break;
             }
         }
