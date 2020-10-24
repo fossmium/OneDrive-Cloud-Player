@@ -309,17 +309,25 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void Seeked()
         {
-            // Check wether or not the media should be reloaded.
-            if (InvalidOneDriveSession)
-            {
-                //TODO: fix seekbar niet going instantly to the point where the user clicked. This gives the illusion that the seekbar is broken.
-                ReloadCurrentMedia();
-            }
-            else
-            {
-                SetVideoTime(TimeLineValue);
-            }
+            SetVideoTime(TimeLineValue);
         }
+
+        /// <summary>
+        /// Seek backwards in the media.
+        /// </summary>
+        public void SeekBackward()
+        {
+            SetVideoTime(MediaPlayer.Time -= 10000);
+        }
+
+        /// <summary>
+        /// Seek foreward in the media.
+        /// </summary>
+        public void SeekForeward()
+        {
+            SetVideoTime(MediaPlayer.Time += 10000);
+        }
+
 
         /// <summary>
         /// Sets the time of the media with the given time.
@@ -329,7 +337,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             if (InvalidOneDriveSession)
             {
-                Debug.WriteLine("OneDrive link expired.");
+                Debug.WriteLine(" + OneDrive link expired.");
+                Debug.WriteLine("   + Reloading media.");
+                ReloadCurrentMedia();
             }
             MediaPlayer.Time = time;
         }
@@ -382,6 +392,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 case VirtualKey.Space:
                     ChangePlayingState();
+                    break;
+                case VirtualKey.Left:
+                    SeekBackward();
+                    break;
+                case VirtualKey.Right:
+                    SeekForeward();
                     break;
             }
         }
