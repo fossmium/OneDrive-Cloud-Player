@@ -44,6 +44,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand ReloadCurrentMediaCommand { get; }
         public ICommand StopMediaCommand { get; }
         public ICommand KeyDownEventCommand { get; }
+        public ICommand SeekBackwardCommand { get; }
+        public ICommand SeekForewardCommand { get; }
 
         private long timeLineValue;
 
@@ -82,9 +84,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private Uri volumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_low.png");
+        private string volumeButtonIconSource = "\xE992";
 
-        public Uri VolumeButtonIconSource
+        public string VolumeButtonIconSource
         {
             get { return volumeButtonIconSource; }
             set
@@ -94,15 +96,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private string playPauseButtonImageSource = "../Assets/Icons/play_arrow.png";
+        private string playPauseButtonFontIcon = "\xE768";
 
-        public string PlayPauseButtonIconSource
+        public string PlayPauseButtonFontIcon
         {
-            get { return playPauseButtonImageSource; }
+            get { return playPauseButtonFontIcon; }
             set
             {
-                playPauseButtonImageSource = value;
-                RaisePropertyChanged("PlayPauseButtonIconSource");
+                playPauseButtonFontIcon = value;
+                RaisePropertyChanged("PlayPauseButtonFontIcon");
             }
         }
 
@@ -142,6 +144,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             ReloadCurrentMediaCommand = new RelayCommand(ReloadCurrentMedia, CanExecuteCommand);
             StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
+            SeekBackwardCommand = new RelayCommand<double>(SeekBackward);
+            SeekForewardCommand = new RelayCommand<double>(SeekForeward);
 
             this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
 
@@ -164,8 +168,12 @@ namespace OneDrive_Cloud_Player.ViewModels
         private async void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
             Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": InitializeLibVLC called");
-            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
+            // Reset properties.
+            VideoLength = 0;
+            PlayPauseButtonFontIcon = "\xE768";
+
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
@@ -195,7 +203,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                     //Sets the max value of the seekbar.
                     VideoLength = MediaPlayer.Length;
 
-                    PlayPauseButtonIconSource = "../Assets/Icons/pause.png";
+                    PlayPauseButtonFontIcon = "\xE769";
                 });
             };
 
@@ -204,7 +212,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
-                    PlayPauseButtonIconSource = "../Assets/Icons/play_arrow.png";
+                    PlayPauseButtonFontIcon = "\xE768";
                 });
             };
 
@@ -274,17 +282,17 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void UpdateVolumeButtonIconSource(int volumeLevel)
         {
-            if (volumeLevel <= 33 && !VolumeButtonIconSource.Equals(new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_low.png")))
+            if (volumeLevel <= 33 && !VolumeButtonIconSource.Equals("\xE992"))
             {
-                VolumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_low.png");
+                VolumeButtonIconSource = "\xE992";
             }
-            else if (volumeLevel > 33 && volumeLevel <= 66 && !VolumeButtonIconSource.Equals(new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_medium.png")))
+            else if (volumeLevel > 33 && volumeLevel <= 66 && !VolumeButtonIconSource.Equals("\xE994"))
             {
-                VolumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_medium.png");
+                VolumeButtonIconSource = "\xE994";
             }
-            else if (volumeLevel > 66 && !VolumeButtonIconSource.Equals(new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_high.png")))
+            else if (volumeLevel > 66 && !VolumeButtonIconSource.Equals("\xE995"))
             {
-                VolumeButtonIconSource = new Uri("ms-appx:///Assets/Icons/VolumeLevels/volume_high.png");
+                VolumeButtonIconSource = "\xE995";
             }
         }
 
@@ -316,7 +324,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Seek backwards in the media by given miliseconds.
         /// </summary>
         /// <param name="ms"></param>
-        public void SeekBackward(long ms)
+        public void SeekBackward(double ms)
         {
             SetVideoTime(MediaPlayer.Time - ms);
         }
@@ -325,7 +333,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Seek foreward in the media by given miliseconds.
         /// </summary>
         /// <param name="ms"></param>
-        public void SeekForeward(long ms)
+        public void SeekForeward(double ms)
         {
             SetVideoTime(MediaPlayer.Time + ms);
         }
@@ -334,7 +342,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// Sets the time of the media with the given time.
         /// </summary>
         /// <param name="time"></param>
-        private void SetVideoTime(long time)
+        private void SetVideoTime(double time)
         {
             if (InvalidOneDriveSession)
             {
@@ -342,7 +350,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Debug.WriteLine("   + Reloading media.");
                 ReloadCurrentMedia();
             }
-            MediaPlayer.Time = time;
+            MediaPlayer.Time = Convert.ToInt64(time);
         }
 
         //TODO: Implement a Dialog system that shows a dialog when there is an error.

@@ -1,32 +1,16 @@
-﻿using Microsoft.Identity.Client;
+﻿using LibVLCSharp.Shared;
+using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
-using System.Windows;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.ApplicationModel.Core;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Core;
-using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using LibVLCSharp.Shared;
-using Windows.UI.Popups;
-using Windows.Media.SpeechSynthesis;
-using OneDrive_Cloud_Player.Services.Utilities;
 
 namespace OneDrive_Cloud_Player
 {

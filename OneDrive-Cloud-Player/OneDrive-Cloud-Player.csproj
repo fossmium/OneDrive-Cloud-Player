@@ -136,6 +136,7 @@
     <Compile Include="Models\VideoPlayerArgumentWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Converters\MainPageExplorerConverter.cs" />
+    <Compile Include="Services\Converters\MediaTimeConverter.cs" />
     <Compile Include="Services\Helpers\CacheHelper.cs" />
     <Compile Include="Services\Helpers\GraphHelper.cs" />
     <Compile Include="Services\Helpers\GraphAuthHelper.cs" />
