@@ -17,20 +17,32 @@
 **Content**
 
 * [Features](#features)
-* [Known issues](#known-issues)
+* [Keyboard shortcuts](#Keyboard-shortcuts)
 * [Visuals](#visuals)
+* [Known issues](#known-issues)
 * [Contributors](#contributors)
 
 ## Features
-* Support for many formats.
+* Stream media directly from OneDrive.
+* Support for many mediaformats.
 * Access folders that are shared with you.
-* Caching.
+* Caching to make browsing through directories instant.
+
+## Keyboard shortcuts
+### Video Player
+| Keyboard shortcut | Function  |
+| :--   | :-: |
+| Left/Right arrow on the seek bar | Seek backward/forward 5 seconds.  |
+| j | Seek backward 10 seconds in player.  |
+| l | Seek forward 10 seconds in player.  |
+| Spacebar | Play/Pause when the seek bar is selected. <br/>Activate a button if a button has focus. |
+| f | Activate full screen. If full screen mode is enabled, <br>activate F again or press escape to exit full screen mode.  |
 
 ## Known issues
 
 We could use some help on the issues listed here.
 
-* [[#7](https://github.com/GrandDynamo/OneDrive-Cloud-Player/issues/7)] Audio playing while muted and vice versa. (*It's a LibVLC problem according to the maintainer of LibVLCSharp.*)
+* [[#7](https://github.com/GrandDynamo/OneDrive-Cloud-Player/issues/7)] Audio playing while muted and vice versa.
 
 
 
@@ -53,9 +65,9 @@ We could use some help on the issues listed here.
 ## Contributors
 	
 
-| [<img alt="Tim Gels" src="https://avatars3.githubusercontent.com/u/43609220?s=460&u=301043a4d183eae1d1ea4b9c55ae8b7149e2efc2&v=4" width="100">](https://github.com/GrandDynamo) | [<img alt="Johannes Kauffmann" src="https://avatars3.githubusercontent.com/u/19662702?s=460&u=e1399f283badce5f1ac3b2356faff73bf5b9d4a0&v=4" width="100">](https://github.com/JohannesKauffmann) |  [<img alt="Ruben Kuilder" src="https://avatars0.githubusercontent.com/u/32129187?s=460&u=5d786fb65081d7404697e9ec124f71a3211b4b29&v=4" width="100">](https://github.com/RubenKuilder)|
-|:--------------------------------------------------:|:--------------------------------------------------:|:--------------------------------------------------:|
-| [Tim Gels](https://github.com/GrandDynamo) |  [Johannes Kauffmann](https://github.com/JohannesKauffmann) |[Ruben Kuilder](https://github.com/RubenKuilder) |
-| Maintainer                                               |                      Maintainer               | Initial Contributor             |
+| [<img alt="Tim Gels" src="https://avatars3.githubusercontent.com/u/43609220?s=460&u=301043a4d183eae1d1ea4b9c55ae8b7149e2efc2&v=4" width="100">](https://github.com/GrandDynamo) | [<img alt="Johannes Kauffmann" src="https://avatars3.githubusercontent.com/u/19662702?s=460&u=e1399f283badce5f1ac3b2356faff73bf5b9d4a0&v=4" width="100">](https://github.com/JohannesKauffmann) |
+|:--------------------------------------------------:|:--------------------------------------------------:|
+| [Tim Gels](https://github.com/GrandDynamo) |  [Johannes Kauffmann](https://github.com/JohannesKauffmann) |
+| Maintainer                                               |                      Maintainer               |
 
 ---
