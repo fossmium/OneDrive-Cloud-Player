@@ -282,15 +282,19 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void UpdateVolumeButtonIconSource(int volumeLevel)
         {
-            if (volumeLevel <= 33 && !VolumeButtonIconSource.Equals("\xE992"))
+            if (volumeLevel <= 25 && !VolumeButtonIconSource.Equals("\xE992"))
             {
                 VolumeButtonIconSource = "\xE992";
             }
-            else if (volumeLevel > 33 && volumeLevel <= 66 && !VolumeButtonIconSource.Equals("\xE994"))
+            else if (volumeLevel > 25 && volumeLevel <= 50 && !VolumeButtonIconSource.Equals("\xE993"))
+            {
+                VolumeButtonIconSource = "\xE993";
+            }
+            else if (volumeLevel > 50 && volumeLevel <= 75 && !VolumeButtonIconSource.Equals("\xE994"))
             {
                 VolumeButtonIconSource = "\xE994";
             }
-            else if (volumeLevel > 66 && !VolumeButtonIconSource.Equals("\xE995"))
+            else if (volumeLevel > 75 && !VolumeButtonIconSource.Equals("\xE995"))
             {
                 VolumeButtonIconSource = "\xE995";
             }
