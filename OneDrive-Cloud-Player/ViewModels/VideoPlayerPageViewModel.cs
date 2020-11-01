@@ -309,16 +309,25 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void Seeked()
         {
-            // Check wether or not the media should be reloaded.
-            if (InvalidOneDriveSession)
-            {
-                //TODO: fix seekbar niet going instantly to the point where the user clicked. This gives the illusion that the seekbar is broken.
-                ReloadCurrentMedia();
-            }
-            else
-            {
-                SetVideoTime(TimeLineValue);
-            }
+            SetVideoTime(TimeLineValue);
+        }
+
+        /// <summary>
+        /// Seek backwards in the media by given miliseconds.
+        /// </summary>
+        /// <param name="ms"></param>
+        public void SeekBackward(long ms)
+        {
+            SetVideoTime(MediaPlayer.Time - ms);
+        }
+
+        /// <summary>
+        /// Seek foreward in the media by given miliseconds.
+        /// </summary>
+        /// <param name="ms"></param>
+        public void SeekForeward(long ms)
+        {
+            SetVideoTime(MediaPlayer.Time + ms);
         }
 
         /// <summary>
@@ -329,7 +338,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             if (InvalidOneDriveSession)
             {
-                Debug.WriteLine("OneDrive link expired.");
+                Debug.WriteLine(" + OneDrive link expired.");
+                Debug.WriteLine("   + Reloading media.");
+                ReloadCurrentMedia();
             }
             MediaPlayer.Time = time;
         }
@@ -382,6 +393,18 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 case VirtualKey.Space:
                     ChangePlayingState();
+                    break;
+                case VirtualKey.Left:
+                    SeekBackward(5000);
+                    break;
+                case VirtualKey.Right:
+                    SeekForeward(5000);
+                    break;
+                case VirtualKey.J:
+                    SeekBackward(10000);
+                    break;
+                case VirtualKey.L:
+                    SeekForeward(10000);
                     break;
             }
         }
