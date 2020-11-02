@@ -276,7 +276,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             UpdateVolumeButtonFontIcon(volumeLevel);
         }
 
-        //TODO: Better alternative than this ugly code.
+        //TODO: Better alternative than this.
         /// <summary>
         /// Updates the icon of the volume button to a icon that fits by the volume level.
         /// </summary>
