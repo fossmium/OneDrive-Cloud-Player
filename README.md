@@ -62,7 +62,7 @@ We could use some help on the issues listed here.
 
 [comment]: # (## Contributing)
 
-## Contributors
+## Maintainers
 	
 
 | [<img alt="Tim Gels" src="https://avatars3.githubusercontent.com/u/43609220?s=460&u=301043a4d183eae1d1ea4b9c55ae8b7149e2efc2&v=4" width="100">](https://github.com/GrandDynamo) | [<img alt="Johannes Kauffmann" src="https://avatars3.githubusercontent.com/u/19662702?s=460&u=e1399f283badce5f1ac3b2356faff73bf5b9d4a0&v=4" width="100">](https://github.com/JohannesKauffmann) |
