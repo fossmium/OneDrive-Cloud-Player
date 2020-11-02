@@ -84,15 +84,15 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private string volumeButtonIconSource = "\xE992";
+        private string volumeButtonFontIcon = "\xE992";
 
-        public string VolumeButtonIconSource
+        public string VolumeButtonFontIcon
         {
-            get { return volumeButtonIconSource; }
+            get { return volumeButtonFontIcon; }
             set
             {
-                volumeButtonIconSource = value;
-                RaisePropertyChanged("VolumeButtonIconSource");
+                volumeButtonFontIcon = value;
+                RaisePropertyChanged("VolumeButtonFontIcon");
             }
         }
 
@@ -273,30 +273,30 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
             this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
             MediaPlayer.Volume = volumeLevel;
-            UpdateVolumeButtonIconSource(volumeLevel);
+            UpdateVolumeButtonFontIcon(volumeLevel);
         }
 
         //TODO: Better alternative than this ugly code.
         /// <summary>
         /// Updates the icon of the volume button to a icon that fits by the volume level.
         /// </summary>
-        private void UpdateVolumeButtonIconSource(int volumeLevel)
+        private void UpdateVolumeButtonFontIcon(int volumeLevel)
         {
-            if (volumeLevel <= 25 && !VolumeButtonIconSource.Equals("\xE992"))
+            if (volumeLevel <= 25 && !VolumeButtonFontIcon.Equals("\xE992"))
             {
-                VolumeButtonIconSource = "\xE992";
+                VolumeButtonFontIcon = "\xE992";
             }
-            else if (volumeLevel > 25 && volumeLevel <= 50 && !VolumeButtonIconSource.Equals("\xE993"))
+            else if (volumeLevel > 25 && volumeLevel <= 50 && !VolumeButtonFontIcon.Equals("\xE993"))
             {
-                VolumeButtonIconSource = "\xE993";
+                VolumeButtonFontIcon = "\xE993";
             }
-            else if (volumeLevel > 50 && volumeLevel <= 75 && !VolumeButtonIconSource.Equals("\xE994"))
+            else if (volumeLevel > 50 && volumeLevel <= 75 && !VolumeButtonFontIcon.Equals("\xE994"))
             {
-                VolumeButtonIconSource = "\xE994";
+                VolumeButtonFontIcon = "\xE994";
             }
-            else if (volumeLevel > 75 && !VolumeButtonIconSource.Equals("\xE995"))
+            else if (volumeLevel > 75 && !VolumeButtonFontIcon.Equals("\xE995"))
             {
-                VolumeButtonIconSource = "\xE995";
+                VolumeButtonFontIcon = "\xE995";
             }
         }
 

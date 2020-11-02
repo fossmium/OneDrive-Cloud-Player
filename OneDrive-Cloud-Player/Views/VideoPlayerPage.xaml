@@ -496,7 +496,7 @@
                         </Grid.ColumnDefinitions>
                         <Button Background="Transparent" Width="50" 
                                 Height="50" Grid.ColumnSpan="2">
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding VolumeButtonIconSource}"/>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding VolumeButtonFontIcon}"/>
                         </Button>
                     </Grid>
 
