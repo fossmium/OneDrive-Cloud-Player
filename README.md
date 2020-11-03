@@ -38,6 +38,17 @@
 | Spacebar | Play/Pause when the seek bar is selected. <br/>Activate a button if a button has focus. |
 | f | Activate full screen. If full screen mode is enabled, <br>activate F again or press escape to exit full screen mode.  |
 
+## Visuals
+#### Login
+![afbeelding](https://user-images.githubusercontent.com/43609220/89719689-45271880-d9cb-11ea-85b9-cb815a7d8b0a.png)
+
+#### Explorer
+![afbeelding](https://user-images.githubusercontent.com/43609220/89719745-deeec580-d9cb-11ea-9b1a-b60ab61b2914.png)
+
+#### Videoplayer
+![afbeelding](https://user-images.githubusercontent.com/43609220/89719678-26c11d00-d9cb-11ea-896c-cb78a61276d3.png)
+
+
 ## Known issues
 
 We could use some help on the issues listed here.
@@ -49,16 +60,6 @@ We could use some help on the issues listed here.
 [comment]: # (## Install)
 
 [comment]: # (## Usage)
-
-## Visuals
-#### Login
-![afbeelding](https://user-images.githubusercontent.com/43609220/89719689-45271880-d9cb-11ea-85b9-cb815a7d8b0a.png)
-
-#### Explorer
-![afbeelding](https://user-images.githubusercontent.com/43609220/89719745-deeec580-d9cb-11ea-9b1a-b60ab61b2914.png)
-
-#### Videoplayer
-![afbeelding](https://user-images.githubusercontent.com/43609220/89719678-26c11d00-d9cb-11ea-896c-cb78a61276d3.png)
 
 [comment]: # (## Contributing)
 
