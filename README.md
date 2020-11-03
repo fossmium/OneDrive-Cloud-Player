@@ -17,10 +17,10 @@
 **Content**
 
 * [Features](#features)
-* [Keyboard shortcuts](#Keyboard-shortcuts)
+* [Keyboard shortcuts](#keyboard-shortcuts)
 * [Visuals](#visuals)
 * [Known issues](#known-issues)
-* [Contributors](#contributors)
+* [Maintainers](#maintainers)
 
 ## Features
 * Stream media directly from OneDrive.
