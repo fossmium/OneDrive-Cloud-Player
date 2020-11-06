@@ -20,7 +20,7 @@ namespace OneDrive_Cloud_Player.Services.Utilities
                 StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
                 StorageFile sampleFile = await storageFolder.GetFileAsync(filePath);
                 string fileContent = await FileIO.ReadTextAsync(sampleFile);
-                Debug.WriteLine(" + Retrieved JSON from a file.");
+                Debug.WriteLine(" + Retrieved cache JSON from a file.");
                 return fileContent;
             }
             catch (FileNotFoundException)
@@ -40,7 +40,7 @@ namespace OneDrive_Cloud_Player.Services.Utilities
             // Write json to a file
             StorageFile file = await ApplicationData.Current.LocalFolder.CreateFileAsync(fileName, CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(file, JsonToWrite);
-            Debug.WriteLine(" + Written JSON to a file.");
+            Debug.WriteLine(" + Written cache JSON to a file.");
         }
     }
 }

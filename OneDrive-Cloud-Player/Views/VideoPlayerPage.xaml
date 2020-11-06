@@ -8,12 +8,14 @@
     xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
     xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
     xmlns:Media="using:Microsoft.Xaml.Interactions.Media" 
-    xmlns:lvs="using:LibVLCSharp.Platforms.UWP"
+    xmlns:lvs="using:LibVLCSharp.Platforms.UWP" 
+    xmlns:local1="using:OneDrive_Cloud_Player.Services.Converters"
     mc:Ignorable="d"
     DataContext="{Binding VideoPlayerPageInstance, Source={StaticResource Locator}}"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
     <local:ParamNavigationPage.Resources>
+        <local1:MediaTimeConverter x:Key="MediaTimeConverter"/>
         <Style x:Key="FancySliderControlTemplate" TargetType="Slider">
             <Setter Property="Template">
                 <Setter.Value>
@@ -112,26 +114,26 @@
                                     <VisualState x:Name="PointerOver">
                                         <Storyboard>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalTrackRect" Storyboard.TargetProperty="Fill">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPointerOver}" />
-                                </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPointerOver}" />
-                                </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Background">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackgroundPressed}" />
-                                </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Background">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackgroundPointerOver}" />
-                                </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SliderContainer" Storyboard.TargetProperty="Background">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderContainerBackgroundPointerOver}" />
-                                </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackValueFillPointerOver}" />
-                                </ObjectAnimationUsingKeyFrames>
-                                <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
-                                    <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackValueFillPointerOver}" />
-                                </ObjectAnimationUsingKeyFrames>
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalTrackRect" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackgroundPressed}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalThumb" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderThumbBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SliderContainer" Storyboard.TargetProperty="Background">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderContainerBackgroundPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackValueFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
+                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalDecreaseRect" Storyboard.TargetProperty="Fill">
+                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{ThemeResource SliderTrackValueFillPointerOver}" />
+                                            </ObjectAnimationUsingKeyFrames>
                                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="HorizontalThumb" Storyboard.TargetProperty="Opacity">
                                                 <DiscreteObjectKeyFrame KeyTime="0" Value="1" />
                                             </ObjectAnimationUsingKeyFrames>
@@ -236,7 +238,7 @@
                             HorizontalAlignment="Right"
                             FocusVisualMargin="-14,-6,-14,-6"
                             AutomationProperties.AccessibilityView="Raw"
-                               />
+                                           />
                                     <!--BorderBrush="{TemplateBinding Foreground}-->
                                 </Grid>
                                 <Grid x:Name="VerticalTemplate" MinWidth="44" Visibility="Collapsed">
@@ -299,10 +301,9 @@
         </Style>
     </local:ParamNavigationPage.Resources>
     <Grid PointerMoved="Grid_PointerMoved" PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
-        <Grid >
+        <Grid>
             <VisualStateManager.VisualStateGroups>
                 <VisualStateGroup x:Name="CommonStates">
-
                     <VisualStateGroup.Transitions>
 
                         <!--Take one half second to transition to the PointerOver state.-->
@@ -312,8 +313,7 @@
 
                     <VisualState x:Name="Normal" />
 
-                    <!--Change the SolidColorBrush, ButtonBrush, to red when the
-            Pointer is over the button.-->
+                    <!--Change the SolidColorBrush, ButtonBrush, to red when the Pointer is over the button.-->
                     <VisualState x:Name="PointerOver">
                         <Storyboard>
                             <ColorAnimation Storyboard.TargetName="ButtonBrush" 
@@ -331,39 +331,88 @@
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
 
-        <Grid x:Name="MediaControlGrid" MaxHeight="200"
+        <Grid x:Name="MediaControlGrid"
               VerticalAlignment="Bottom" Visibility="{Binding MediaControlGridVisibility}"
               PointerEntered="MediaControlGrid_PointerEntered"
               PointerExited="MediaControlGrid_PointerExited">
 
-            <Grid  x:Name="LowerHeightControls">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Margin="0,0,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
+
+                <!--SeekBar-->
+                <Slider x:Name="SeekBar"
+                        Margin="10,0,10,0"
+                        Padding="0,5,0,-11"
+                        Grid.Column="1"
+                        Style="{StaticResource FancySliderControlTemplate}" 
+                        ThumbToolTipValueConverter="{StaticResource MediaTimeConverter}"
+                        Maximum="{Binding VideoLength}" 
+                        ManipulationMode="All" 
+                        Value="{Binding TimeLineValue,Mode=TwoWay}" 
+                        HorizontalAlignment="Stretch" 
+                        PointerPressed="SeekBar_PointerPressed"
+                        PointerCaptureLost="SeekBar_PointerCaptureLost">
+
+                    <Interactivity:Interaction.Behaviors>
+                        <Core:EventTriggerBehavior EventName="ManipulationCompleted">
+                            <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
+                        </Core:EventTriggerBehavior>
+                        <Core:EventTriggerBehavior EventName="ManipulationStarted">
+                            <Core:InvokeCommandAction Command="{Binding StartedDraggingThumbCommand}"/>
+                        </Core:EventTriggerBehavior>
+                        <Core:EventTriggerBehavior EventName="PointerCaptureLost">
+                            <Core:InvokeCommandAction Command="{Binding SeekedCommand}"/>
+                        </Core:EventTriggerBehavior>
+                    </Interactivity:Interaction.Behaviors>
+                </Slider>
+            </Grid>
+
+            <Grid Grid.Row="1" Margin="0,2,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="70"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock 
+                        Grid.Column="0"
+                        TextLineBounds="TrimToCapHeight"
+                        Text="{Binding TimeLineValue, Converter={StaticResource MediaTimeConverter}}"
+                        HorizontalAlignment="Center"/>
+                
+                <!--Right media length-->
+                <TextBlock
+                        Grid.Column="2"
+                        TextLineBounds="TrimToCapHeight"
+                        Text="{Binding VideoLength, Converter={StaticResource MediaTimeConverter}}"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"/>
+            </Grid>
+
+            <!--Bottom controls-->
+            <Grid Grid.Row="2" Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="6*"/>
+                    <ColumnDefinition Width="3*"/>
+                </Grid.ColumnDefinitions>
                 <!--Left bottom controls-->
-                <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0" >
+                <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <!--Play/Pause Button-->
-                    <Button 
-                        Grid.Column="0" HorizontalAlignment="Left" 
-                        VerticalAlignment="Center" Margin="0,0,0,0" 
-                        Width="50" Height="50" 
-                        Command="{Binding ChangePlayingStateCommand}"
-                        Background="Transparent">
-                        <Image Source="{Binding PlayPauseButtonIconSource}"/>
-                    </Button>
                     <!--Stop Button-->
                     <Button
                         x:Name="StopButton" Grid.Column="1"
@@ -371,7 +420,7 @@
                         Margin="0,0,0,0" Width="50" Height="50"
                         Command="{Binding StopMediaCommand}"
                         Background="Transparent">
-                        <Image Source="/Assets/Icons/stop.png"></Image>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB97;"/>
                     </Button>
                     <!--Reload Button-->
                     <Button 
@@ -380,43 +429,59 @@
                         Margin="0,0,0,0" Width="50" Height="50" 
                         Command="{Binding ReloadCurrentMediaCommand}"
                         Background="Transparent">
-                        <Image Source="../Assets/Icons/Reload.png"></Image>
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"/>
                     </Button>
                 </Grid>
-
-                <!--Middle bottom controls-->
-                <Grid Grid.Column="1" Grid.Row="3">
+                <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100*" />
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-
-                    <!--SeekBar-->
-                    <Slider Grid.Column="1" x:Name="SeekBar" 
-                            Style="{StaticResource FancySliderControlTemplate}" 
-                            Maximum="{Binding VideoLength}" 
-                                    VerticalAlignment="Bottom" 
-                                    ManipulationMode="All" 
-                                    Value="{Binding TimeLineValue,Mode=TwoWay}" 
-                                    HorizontalAlignment="Stretch" 
-                                    PointerPressed="SeekBar_PointerPressed"
-                                    PointerCaptureLost="SeekBar_PointerCaptureLost">
-
-                        <Interactivity:Interaction.Behaviors>
-                            <Core:EventTriggerBehavior EventName="ManipulationCompleted">
-                                <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
-                            </Core:EventTriggerBehavior>
-                            <Core:EventTriggerBehavior EventName="ManipulationStarted">
-                                <Core:InvokeCommandAction Command="{Binding StartedDraggingThumbCommand}"/>
-                            </Core:EventTriggerBehavior>
-                            <Core:EventTriggerBehavior EventName="PointerCaptureLost">
-                                <Core:InvokeCommandAction Command="{Binding SeekedCommand}"/>
-                            </Core:EventTriggerBehavior>
-                        </Interactivity:Interaction.Behaviors>
-                    </Slider>
+                    
+                    <!--Skip back button-->
+                    <Button 
+                        Grid.Column="1" HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" Margin="0,0,0,0" 
+                        Width="50" Height="50" 
+                        Command="{Binding SeekBackwardCommand}"
+                        Background="Transparent">
+                        <Button.CommandParameter>
+                            <x:Double>10000</x:Double>
+                        </Button.CommandParameter>
+                        <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3C;"/>
+                    </Button>
+                    
+                    <!--Play/Pause Button-->
+                    <Button 
+                        Grid.Column="2" HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" Margin="0,0,0,0" 
+                        Width="50" Height="50" 
+                        Command="{Binding ChangePlayingStateCommand}"
+                        Background="Transparent">
+                        <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding PlayPauseButtonFontIcon}"/>
+                    </Button>
+                    
+                    <!--Skip foreward button-->
+                    <Button 
+                        Grid.Column="3" HorizontalAlignment="Center" 
+                        VerticalAlignment="Center" Margin="0,0,0,0" 
+                        Width="50" Height="50" 
+                        Command="{Binding SeekForewardCommand}"
+                        Background="Transparent">
+                        <Button.CommandParameter>
+                            <x:Double>30000</x:Double>
+                        </Button.CommandParameter>
+                        <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
+                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3D;"/>
+                    </Button>
                 </Grid>
-
-                <!--Volume Slider-->
-                <Grid Grid.Column="2" Grid.Row="3">
+                <!--Bottom right controls-->
+                <Grid Grid.Column="2" HorizontalAlignment="Right">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50"/>
                         <ColumnDefinition Width="75"/>
@@ -429,12 +494,9 @@
                             <ColumnDefinition Width="2*"/>
                             <ColumnDefinition Width="23*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Background="Transparent" Width="50" Height="50" Grid.ColumnSpan="2">
-                            <Image>
-                                <Image.Source>
-                                    <BitmapImage UriSource="{Binding VolumeButtonIconSource}"/>
-                                </Image.Source>
-                            </Image>
+                        <Button Background="Transparent" Width="50" 
+                                Height="50" Grid.ColumnSpan="2">
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding VolumeButtonFontIcon}"/>
                         </Button>
                     </Grid>
 
@@ -451,7 +513,7 @@
                             Width="50" Height="50"  
                             Click="SwitchFullscreenModeButton_Click"
                             Background="Transparent">
-                            <Image Source="/Assets/Icons/Fullscreen.png"></Image>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;"/>
                         </Button>
                     </Grid>
                 </Grid>
