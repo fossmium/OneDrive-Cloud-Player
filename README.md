@@ -50,11 +50,9 @@
 
 
 
-## Known issues
+## Contributing
 
-We could use some help on the issues listed here.
-
-* [[#7](https://github.com/GrandDynamo/OneDrive-Cloud-Player/issues/7)] Audio playing while muted and vice versa.
+If you'd like to contribute, feel free to help with the currently open [issues](https://github.com/GrandDynamo/OneDrive-Cloud-Player/issues), submit bug reports or suggest new features. [Pull requests](https://github.com/GrandDynamo/OneDrive-Cloud-Player/pulls) are appreciated as well.
 
 
 
