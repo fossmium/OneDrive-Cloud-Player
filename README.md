@@ -46,7 +46,8 @@
 ![afbeelding](https://user-images.githubusercontent.com/43609220/89719745-deeec580-d9cb-11ea-9b1a-b60ab61b2914.png)
 
 #### Videoplayer
-![afbeelding](https://user-images.githubusercontent.com/43609220/89719678-26c11d00-d9cb-11ea-896c-cb78a61276d3.png)
+![afbeelding](https://user-images.githubusercontent.com/43609220/98442845-9dbf9c00-2107-11eb-896d-eef800a06689.png)
+
 
 
 ## Known issues
