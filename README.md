@@ -19,7 +19,7 @@
 * [Features](#features)
 * [Keyboard shortcuts](#keyboard-shortcuts)
 * [Visuals](#visuals)
-* [Known issues](#known-issues)
+* [Contributing](#contributing)
 * [Maintainers](#maintainers)
 
 ## Features
