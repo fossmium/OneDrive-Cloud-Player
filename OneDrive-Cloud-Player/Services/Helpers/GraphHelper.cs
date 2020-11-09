@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace OneDrive_Cloud_Player.Services.Helpers
 {
     /// <summary>
-    /// Used to create calls and retrieve information from the graph api.
+    /// Used to create calls and retrieve information from the Graph API.
     /// Try to save this data and use this class as little as possible for speed purposes.
     /// </summary>
     class GraphHelper
@@ -23,21 +23,39 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         public GraphHelper()
         {
             Auth = new GraphAuthHelper();
+            InitializeGraphHelperAsync();
         }
 
         /// <summary>
-        ///    Create the graph client with including acquiring an access token used to call the microsoft graph api.
+        /// Create the Graph client and acquire an access token used to call the Graph API.
         /// </summary>
-        private async Task CreateGraphClientAsync()
+        private async void InitializeGraphHelperAsync()
         {
-            //Acquire accesstoken.
+            GraphClient = new GraphServiceClient(await GetNewAuthenticationHeaderAsync());
+        }
+
+        /// <summary>
+        /// Update the authentication header of the GraphServiceClient with a new access token.
+        /// </summary>
+        private async Task RefreshAccesTokenAsync()
+        {
+            GraphClient.AuthenticationProvider = await GetNewAuthenticationHeaderAsync();
+        }
+
+        /// <summary>
+        /// Retrieve a new access token and construct an AuthenticationHeaderValue based upon it.
+        /// </summary>
+        /// <returns></returns>
+        private async Task<IAuthenticationProvider> GetNewAuthenticationHeaderAsync()
+        {
+            // Acquire accesstoken.
             string AccessToken = await Auth.GetAccessToken();
 
-            GraphClient = new GraphServiceClient(new DelegateAuthenticationProvider((requestMessage) =>
+            return new DelegateAuthenticationProvider((requestMessage) =>
             {
                 requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
                 return Task.FromResult(0);
-            }));
+            });
         }
 
         /// <summary>
@@ -47,9 +65,9 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<Drive> GetDriveInformationAsync(string DriveId)
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
-            //Return the name of the drive of type string.
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
+            // Return the name of the drive of type string.
             return await GraphClient.Me.Drives[DriveId].Request().GetAsync();
 
         }
@@ -60,9 +78,9 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<User> GetOneDriveUserInformationAsync()
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
-            //Return the user information in type Microsoft.Graph.User.
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
+            // Return the user information in type Microsoft.Graph.User.
             return await GraphClient.Me.Request().GetAsync();
         }
 
@@ -74,9 +92,9 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<IDriveItemChildrenCollectionPage> GetChildrenOfItemAsync(string DriveId, string ItemId)
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
-            //Return the children of the item on the given drive.
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
+            // Return the children of the item on the given drive.
             try
             {
                 return await GraphClient.Me.Drives[DriveId].Items[ItemId].Children.Request().GetAsync();
@@ -85,7 +103,6 @@ namespace OneDrive_Cloud_Player.Services.Helpers
             {
                 return null;
             }
-
         }
 
         /// <summary>
@@ -94,8 +111,8 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<DriveItem> GetUserRootDrive()
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
 
             return await GraphClient.Me.Drive.Root.Request().GetAsync();
         }
@@ -106,9 +123,9 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<IDriveSharedWithMeCollectionPage> GetSharedDrivesAsync()
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
-            //Return shared items.
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
+            // Return shared items.
             return await GraphClient.Me.Drive.SharedWithMe().Request().GetAsync();
         }
 
@@ -118,9 +135,9 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<Stream> GetOneDriveOwnerPhotoAsync()
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
-            //Return photo of the owner in binary data.
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
+            // Return photo of the owner in binary data.
             return await GraphClient.Me.Photo.Content.Request().GetAsync();
         }
 
@@ -132,9 +149,9 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         /// <returns></returns>
         public async Task<DriveItem> GetItemInformationAsync(string DriveId, string ItemId)
         {
-            //Create a new GraphServiceClient.
-            await CreateGraphClientAsync();
-            //Return information about an item that resides in the given drive id.
+            // Refresh the access token.
+            await RefreshAccesTokenAsync();
+            // Return information about an item that resides in the given drive id.
             return await GraphClient.Me.Drives[DriveId].Items[ItemId].Request().GetAsync();
         }
     }
