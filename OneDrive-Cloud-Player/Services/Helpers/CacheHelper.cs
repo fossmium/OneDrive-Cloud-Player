@@ -25,7 +25,7 @@ namespace OneDrive_Cloud_Player.Services
         public CacheHelper()
         {
             Cache = new List<OneDriveCache>();
-            Graph = new GraphHelper();
+            Graph = GraphHelper.Instance();
         }
 
         /// <summary>

@@ -141,7 +141,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             _navigationService = navigationService;
 
             DriveList = null;
-            this.graph = new GraphHelper();
+            this.graph = GraphHelper.Instance();
             //DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
             GetDrivesCommand = new RelayCommand(GetDrives, CanExecuteCommand);
             GetChildrenFomItemCommand = new RelayCommand(GetChildrenFomItem, CanExecuteCommand);

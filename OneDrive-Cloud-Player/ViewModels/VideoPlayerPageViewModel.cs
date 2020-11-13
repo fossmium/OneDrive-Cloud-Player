@@ -135,7 +135,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            graphHelper = new GraphHelper();
+            graphHelper = GraphHelper.Instance();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
