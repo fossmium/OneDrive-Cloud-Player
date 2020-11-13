@@ -1,4 +1,5 @@
 ﻿using Microsoft.Graph;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -15,7 +16,22 @@ namespace OneDrive_Cloud_Player.Services.Helpers
 
         private GraphAuthHelper Auth { get; set; }
 
-        public GraphHelper()
+        private static GraphHelper _instance = null;
+        private static readonly object _instanceLock = new object();
+
+        public static GraphHelper Instance()
+        {
+            lock (_instanceLock)
+            {
+                if (_instance is null)
+                {
+                    _instance = new GraphHelper();
+                }
+            }
+            return _instance;
+        }
+
+        private GraphHelper()
         {
             Auth = new GraphAuthHelper();
             InitializeGraphHelperAsync().Wait();
