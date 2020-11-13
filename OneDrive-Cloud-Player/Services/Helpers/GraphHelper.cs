@@ -1,11 +1,6 @@
 ﻿using Microsoft.Graph;
-using OneDrive_Cloud_Player.Services.Helpers;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http.Headers;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace OneDrive_Cloud_Player.Services.Helpers
@@ -23,13 +18,13 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         public GraphHelper()
         {
             Auth = new GraphAuthHelper();
-            InitializeGraphHelperAsync();
+            InitializeGraphHelperAsync().Wait();
         }
 
         /// <summary>
         /// Create the Graph client and acquire an access token used to call the Graph API.
         /// </summary>
-        private async void InitializeGraphHelperAsync()
+        private async Task InitializeGraphHelperAsync()
         {
             GraphClient = new GraphServiceClient(await GetNewAuthenticationHeaderAsync());
         }
@@ -85,7 +80,7 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         }
 
         /// <summary>
-        /// Get the children that are inside a drive item. Rreturns null upon Graph ServiceException
+        /// Get the children that are inside a drive item. Returns null upon Graph ServiceException
         /// </summary>
         /// <param name="ItemId"></param>
         /// <param name="DriveId"></param>
