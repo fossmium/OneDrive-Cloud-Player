@@ -19,6 +19,11 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         private static GraphHelper _instance = null;
         private static readonly object _instanceLock = new object();
 
+        /// <summary>
+        /// Returns the GraphHelper instance. Creates a new instance if it doesn't exist already.
+        /// This method is thread-safe.
+        /// </summary>
+        /// <returns>GraphHelper instance</returns>
         public static GraphHelper Instance()
         {
             lock (_instanceLock)
