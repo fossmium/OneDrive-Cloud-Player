@@ -192,7 +192,6 @@ namespace OneDrive_Cloud_Player.Services
             }
 
             // Convert the Graph format
-            string CurrentUsername = (await Graph.GetOneDriveUserInformationAsync()).DisplayName;
             List<CachedDrive> newlyCachedDrives = new List<CachedDrive>();
             foreach (DriveItem graphDrive in localDriveList)
             {
