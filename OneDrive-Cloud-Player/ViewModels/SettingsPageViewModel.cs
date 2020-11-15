@@ -58,7 +58,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Background = new SolidColorBrush(Color.FromArgb(255, 30, 41, 49)),
             };
             whatsNewDialog.Content += "* Added a settings page";
-            whatsNewDialog.Content += "\n* Refactored code";
 
             await whatsNewDialog.ShowAsync();
         }
