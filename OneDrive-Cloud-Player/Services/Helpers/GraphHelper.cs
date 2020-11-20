@@ -39,34 +39,35 @@ namespace OneDrive_Cloud_Player.Services.Helpers
         private GraphHelper()
         {
             Auth = new GraphAuthHelper();
-            InitializeGraphHelperAsync().Wait();
+            InitializeGraphHelperAsync();
         }
 
         /// <summary>
-        /// Create the Graph client and acquire an access token used to call the Graph API.
+        /// Create the Graph client.
         /// </summary>
-        private async Task InitializeGraphHelperAsync()
+        private void InitializeGraphHelperAsync()
         {
-            GraphClient = new GraphServiceClient(await GetNewAuthenticationHeaderAsync());
+            // Set the access token to null to prevent crashing in case the msalcache.dat doesn't exist yet.
+            GraphClient = new GraphServiceClient(GetNewAuthenticationHeaderAsync(null));
         }
 
         /// <summary>
-        /// Update the authentication header of the GraphServiceClient with a new access token.
+        /// Retreive a new access token and update the authentication header of the GraphServiceClient.
         /// </summary>
         private async Task RefreshAccesTokenAsync()
         {
-            GraphClient.AuthenticationProvider = await GetNewAuthenticationHeaderAsync();
+            // Acquire accesstoken.
+            string AccessToken = await Auth.GetAccessToken();
+            GraphClient.AuthenticationProvider = GetNewAuthenticationHeaderAsync(AccessToken);
         }
 
         /// <summary>
-        /// Retrieve a new access token and construct an AuthenticationHeaderValue based upon it.
+        /// Return a new AuthenticationHeaderValue based upon the specified access token.
         /// </summary>
+        /// <param name="AccessToken">Access token to use with the new AuthenticationHeader</param>
         /// <returns></returns>
-        private async Task<IAuthenticationProvider> GetNewAuthenticationHeaderAsync()
+        private IAuthenticationProvider GetNewAuthenticationHeaderAsync(string AccessToken)
         {
-            // Acquire accesstoken.
-            string AccessToken = await Auth.GetAccessToken();
-
             return new DelegateAuthenticationProvider((requestMessage) =>
             {
                 requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", AccessToken);
