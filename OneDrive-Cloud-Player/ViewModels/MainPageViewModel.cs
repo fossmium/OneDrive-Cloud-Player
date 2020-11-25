@@ -27,6 +27,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand LogoutCommand { get; set; }
         public ICommand ToParentFolderCommand { get; set; }
         public ICommand GetProfileInfoCommand { get; set; }
+        public ICommand NavigateToSettingsPageCommand { get; set; }
 
         private readonly GraphHelper graph;
         private readonly INavigationService _navigationService;
@@ -149,6 +150,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             ReloadCommand = new RelayCommand(ReloadCache, CanExecuteCommand);
             LogoutCommand = new RelayCommand(Logout, CanExecuteCommand);
             ToParentFolderCommand = new RelayCommand(ToParentFolder, CanExecuteCommand);
+            NavigateToSettingsPageCommand = new RelayCommand(NavigateToSettingsPage, CanExecuteCommand);
 
             // OnLoad runs the login and gets the shared drives
             GetUserInformation();
@@ -335,6 +337,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-
+        private void NavigateToSettingsPage()
+        {
+            _navigationService.NavigateTo("SettingsPage");
+        }
     }
 }

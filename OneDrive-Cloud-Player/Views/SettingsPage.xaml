@@ -96,9 +96,13 @@
                 </Grid>
             </Grid>
         </Grid>
-        
+
+        <!--Applies the gradient background-->
         <Grid.Background>
-            <SolidColorBrush Color="#1E2931" Opacity="0.9"/>
+            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Color="#1E2931" Offset="0.0"/>
+                <GradientStop Color="#384D5A" Offset="1.0"/>
+            </LinearGradientBrush>
         </Grid.Background>
     </Grid>
 </Page>
