@@ -26,7 +26,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
         private readonly GraphHelper graphHelper;
-        private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
+        private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
         private Timer reloadIntervalTimer;
         public bool IsSeeking { get; set; }
@@ -46,6 +46,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand KeyDownEventCommand { get; }
         public ICommand SeekBackwardCommand { get; }
         public ICommand SeekForewardCommand { get; }
+        public ICommand PlayPreviousVideoCommand { get; }
+        public ICommand PlayNextVideoCommand { get; }
 
         private long timeLineValue;
 
@@ -146,6 +148,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
             SeekBackwardCommand = new RelayCommand<double>(SeekBackward);
             SeekForewardCommand = new RelayCommand<double>(SeekForeward);
+            PlayPreviousVideoCommand = new RelayCommand(PlayPreviousVideo, CanExecuteCommand);
+            PlayNextVideoCommand = new RelayCommand(PlayNextVideo, CanExecuteCommand);
 
             this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
 
@@ -174,6 +178,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             PlayPauseButtonFontIcon = "\xE768";
 
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
@@ -238,11 +243,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Retrieves the download url of the media file to be played.
         /// </summary>
-        /// <param name="videoPlayerArgumentWrapper"></param>
+        /// <param name="MediaWrapper"></param>
         /// <returns></returns>
-        private async Task<string> RetrieveDownloadURLMedia(VideoPlayerArgumentWrapper videoPlayerArgumentWrapper)
+        private async Task<string> RetrieveDownloadURLMedia(MediaWrapper mediaWrapper)
         {
-            var driveItem = await graphHelper.GetItemInformationAsync(videoPlayerArgumentWrapper.DriveId, videoPlayerArgumentWrapper.CachedDriveItem.ItemId);
+            var driveItem = await graphHelper.GetItemInformationAsync(mediaWrapper.DriveId, mediaWrapper.CachedDriveItem.ItemId);
 
             //Retrieve a temporary download URL from the drive item.
             return (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
@@ -253,22 +258,25 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async Task PlayMedia(long startTime = 0)
         {
-            string mediaDownloadURL = await RetrieveDownloadURLMedia(this.videoPlayerArgumentWrapper);
+            string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
 
             // Play the OneDrive file.
             MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
 
-            if (MediaPlayer != null)
+            if (MediaPlayer is null)
             {
-                MediaPlayer.Time = startTime;
+                Debug.WriteLine("Error: Could not set start time.");
+                return;
             }
+
+            MediaPlayer.Time = startTime;
         }
 
         private void SetMediaVolume(int volumeLevel)
         {
             if (MediaPlayer is null)
             {
-                Debug.WriteLine("Error: Sound problem, Returning without setting volume level!");
+                Debug.WriteLine("Error: Could not set the volume.");
                 return; // Return when the MediaPlayer is null so it does not cause exception.
             }
             this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
@@ -422,15 +430,57 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
+        /// Play the previous video in the list.
+        /// </summary>
+        private async void PlayPreviousVideo()
+        {
+            int index = App.Current.CachedDriveItems.IndexOf(MediaWrapper.CachedDriveItem);
+
+            if(index < 0)
+            {
+                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
+            }
+
+            if ((index - 1) < 0)
+            {
+                return;
+            }
+
+            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[index - 1];
+
+            await PlayMedia();
+        }
+
+        /// <summary>
+        /// Play the next video in the list.
+        /// </summary>
+        private async void PlayNextVideo()
+        {
+            int index = App.Current.CachedDriveItems.IndexOf(MediaWrapper.CachedDriveItem);
+
+            if (index < 0)
+            {
+                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
+            }
+
+            if ((index + 1) > App.Current.CachedDriveItems.Count)
+            {
+                return;
+            }
+
+            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[index + 1];
+
+            await PlayMedia();
+        }
+
+        /// <summary>
         /// Gets the parameters that are sended with the navigation to the videoplayer page.
         /// </summary>
         /// <param name="parameter"></param>
-        public void Activate(object videoPlayerArgumentWrapper)
+        public void Activate(object mediaWrapper)
         {
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate called");
             // Set the field so the playmedia method can use it.
-            this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate completed");
+            MediaWrapper = (MediaWrapper)mediaWrapper;
         }
 
         //TODO: More research what this does.

@@ -183,7 +183,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private void ReloadCache()
         {
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            Console.WriteLine(" + Reloading drives.");
+            Debug.WriteLine(" + Reloading drives.");
             IsReloadButtonEnabled = false;
             new Thread(async () =>
             {
@@ -252,7 +252,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             //Sets the item id of the selectedItem variable.
             string itemId = SelectedDriveFolder.Id;
 
-            //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, itemId);
             List<CachedDriveItem> driveItems = await App.Current.CacheHelper.GetCachedChildrenFromDrive(SelectedDriveId, itemId);
 
             if (driveItems is null)
@@ -285,13 +284,14 @@ namespace OneDrive_Cloud_Player.ViewModels
                 ParentItem = SelectedExplorerItem;
 
                 string ItemId = SelectedExplorerItem.ItemId;
-                //IDriveItemChildrenCollectionPage driveItemsCollection = await graph.GetChildrenOfItemAsync(SelectedDriveId, ItemId);
+
                 List<CachedDriveItem> driveItems = await App.Current.CacheHelper.GetCachedChildrenFromItem(SelectedDriveFolder, ItemId);
 
                 Debug.WriteLine(" + Loaded folder.");
 
                 //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
                 ExplorerItemsList = driveItems;
+                App.Current.CachedDriveItems = driveItems;
             }
             else
             {
@@ -305,10 +305,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void OpenItemWithVideoPlayer(CachedDriveItem SelectedExplorerItem)
         {
-            // Create the VideoPlayerArgumentWrapper object.
-            VideoPlayerArgumentWrapper VideoPlayerArgument = new VideoPlayerArgumentWrapper(SelectedExplorerItem, SelectedDriveId);
+            MediaWrapper MediaWrapper = new MediaWrapper(SelectedExplorerItem, SelectedDriveId);
             // Navigate to the VideoPlayerPage
-            _navigationService.NavigateTo("VideoPlayerPage", VideoPlayerArgument);
+            _navigationService.NavigateTo("VideoPlayerPage", MediaWrapper);
         }
 
         /// <summary>
@@ -334,7 +333,5 @@ namespace OneDrive_Cloud_Player.ViewModels
                 ParentItem = App.Current.CacheHelper.GetParentItemByParentItemId(SelectedDriveFolder, ParentItem.ParentItemId);
             }
         }
-
-
     }
 }

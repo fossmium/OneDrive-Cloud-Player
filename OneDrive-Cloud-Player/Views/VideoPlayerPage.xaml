@@ -331,26 +331,57 @@
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
 
-        <Grid x:Name="MediaControlGrid"
+
+        <Grid x:Name="OnScreenControls">
+            
+            <!--Play previous media-->
+            <Button VerticalAlignment="Center" 
+                HorizontalAlignment="Left"
+                Height="100"
+                Width="35"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0.5"
+                PointerEntered="PreviousMediaButton_PointerEntered"
+                PointerExited="PreviousMediaButton_PointerExited"
+                Command="{Binding PlayPreviousVideoCommand}">
+                <FontIcon FontSize="30" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE76B;"/>
+            </Button>
+
+            <!--Play next media-->
+            <Button VerticalAlignment="Center"
+                HorizontalAlignment="Right"
+                Height="100"
+                Width="35"
+                Padding="0"
+                Background="Transparent"
+                BorderThickness="0.5"
+                PointerEntered="NextMediaButton_PointerEntered"
+                PointerExited="NextMediaButton_PointerExited"
+                Command="{Binding PlayNextVideoCommand}">
+                <FontIcon FontSize="25" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE76C;"/>
+            </Button>
+
+            <Grid x:Name="MediaControlGrid"
               VerticalAlignment="Bottom" Visibility="{Binding MediaControlGridVisibility}"
               PointerEntered="MediaControlGrid_PointerEntered"
               PointerExited="MediaControlGrid_PointerExited">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Margin="0,0,0,0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="0" Margin="0,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-                <!--SeekBar-->
-                <Slider x:Name="SeekBar"
+                    <!--SeekBar-->
+                    <Slider x:Name="SeekBar"
                         Margin="10,0,10,0"
                         Padding="0,5,0,-11"
                         Grid.Column="1"
@@ -363,164 +394,163 @@
                         PointerPressed="SeekBar_PointerPressed"
                         PointerCaptureLost="SeekBar_PointerCaptureLost">
 
-                    <Interactivity:Interaction.Behaviors>
-                        <Core:EventTriggerBehavior EventName="ManipulationCompleted">
-                            <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
-                        </Core:EventTriggerBehavior>
-                        <Core:EventTriggerBehavior EventName="ManipulationStarted">
-                            <Core:InvokeCommandAction Command="{Binding StartedDraggingThumbCommand}"/>
-                        </Core:EventTriggerBehavior>
-                        <Core:EventTriggerBehavior EventName="PointerCaptureLost">
-                            <Core:InvokeCommandAction Command="{Binding SeekedCommand}"/>
-                        </Core:EventTriggerBehavior>
-                    </Interactivity:Interaction.Behaviors>
-                </Slider>
-            </Grid>
+                        <Interactivity:Interaction.Behaviors>
+                            <Core:EventTriggerBehavior EventName="ManipulationCompleted">
+                                <Core:InvokeCommandAction Command="{Binding StoppedDraggingThumbCommand}"/>
+                            </Core:EventTriggerBehavior>
+                            <Core:EventTriggerBehavior EventName="ManipulationStarted">
+                                <Core:InvokeCommandAction Command="{Binding StartedDraggingThumbCommand}"/>
+                            </Core:EventTriggerBehavior>
+                            <Core:EventTriggerBehavior EventName="PointerCaptureLost">
+                                <Core:InvokeCommandAction Command="{Binding SeekedCommand}"/>
+                            </Core:EventTriggerBehavior>
+                        </Interactivity:Interaction.Behaviors>
+                    </Slider>
+                </Grid>
 
-            <Grid Grid.Row="1" Margin="0,2,0,5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="70"/>
-                </Grid.ColumnDefinitions>
+                <Grid Grid.Row="1" Margin="0,2,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="70"/>
+                    </Grid.ColumnDefinitions>
 
-                <TextBlock 
+                    <TextBlock 
                         Grid.Column="0"
                         TextLineBounds="TrimToCapHeight"
                         Text="{Binding TimeLineValue, Converter={StaticResource MediaTimeConverter}}"
                         HorizontalAlignment="Center"/>
-                
-                <!--Right media length-->
-                <TextBlock
+
+                    <!--Right media length-->
+                    <TextBlock
                         Grid.Column="2"
                         TextLineBounds="TrimToCapHeight"
                         Text="{Binding VideoLength, Converter={StaticResource MediaTimeConverter}}"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"/>
-            </Grid>
+                </Grid>
 
-            <!--Bottom controls-->
-            <Grid Grid.Row="2" Margin="0,0,0,5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="6*"/>
-                    <ColumnDefinition Width="3*"/>
-                </Grid.ColumnDefinitions>
-                <!--Left bottom controls-->
-                <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0">
+                <!--Bottom controls-->
+                <Grid Grid.Row="2" Margin="0,0,0,5">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="3*"/>
+                        <ColumnDefinition Width="6*"/>
+                        <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
-                    <!--Stop Button-->
-                    <Button
+                    <!--Left bottom controls-->
+                    <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <!--Stop Button-->
+                        <Button
                         x:Name="StopButton" Grid.Column="1"
                         HorizontalAlignment="Center" VerticalAlignment="Center" 
                         Margin="0,0,0,0" Width="50" Height="50"
                         Command="{Binding StopMediaCommand}"
                         Background="Transparent">
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB97;"/>
-                    </Button>
-                    <!--Reload Button-->
-                    <Button 
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB97;"/>
+                        </Button>
+                        <!--Reload Button-->
+                        <Button 
                         Grid.Column="2" x:Name="ReloadButton" 
                         HorizontalAlignment="Right" VerticalAlignment="Center" 
                         Margin="0,0,0,0" Width="50" Height="50" 
                         Command="{Binding ReloadCurrentMediaCommand}"
                         Background="Transparent">
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"/>
-                    </Button>
-                </Grid>
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    
-                    <!--Skip back button-->
-                    <Button 
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"/>
+                        </Button>
+                    </Grid>
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!--Skip back button-->
+                        <Button 
                         Grid.Column="1" HorizontalAlignment="Center" 
                         VerticalAlignment="Center" Margin="0,0,0,0" 
                         Width="50" Height="50" 
                         Command="{Binding SeekBackwardCommand}"
                         Background="Transparent">
-                        <Button.CommandParameter>
-                            <x:Double>10000</x:Double>
-                        </Button.CommandParameter>
-                        <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3C;"/>
-                    </Button>
-                    
-                    <!--Play/Pause Button-->
-                    <Button 
+                            <Button.CommandParameter>
+                                <x:Double>10000</x:Double>
+                            </Button.CommandParameter>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3C;"/>
+                        </Button>
+
+                        <!--Play/Pause Button-->
+                        <Button 
                         Grid.Column="2" HorizontalAlignment="Center" 
                         VerticalAlignment="Center" Margin="0,0,0,0" 
                         Width="50" Height="50" 
                         Command="{Binding ChangePlayingStateCommand}"
                         Background="Transparent">
-                        <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding PlayPauseButtonFontIcon}"/>
-                    </Button>
-                    
-                    <!--Skip foreward button-->
-                    <Button 
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding PlayPauseButtonFontIcon}"/>
+                        </Button>
+
+                        <!--Skip foreward button-->
+                        <Button 
                         Grid.Column="3" HorizontalAlignment="Center" 
                         VerticalAlignment="Center" Margin="0,0,0,0" 
                         Width="50" Height="50" 
                         Command="{Binding SeekForewardCommand}"
                         Background="Transparent">
-                        <Button.CommandParameter>
-                            <x:Double>30000</x:Double>
-                        </Button.CommandParameter>
-                        <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
-                        <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3D;"/>
-                    </Button>
-                </Grid>
-                <!--Bottom right controls-->
-                <Grid Grid.Column="2" HorizontalAlignment="Right">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="75"/>
-                        <ColumnDefinition Width="50"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!--Volume Icon-->
-                    <Grid  Grid.Column="0" Margin="0,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="23*"/>
-                        </Grid.ColumnDefinitions>
-                        <Button Background="Transparent" Width="50" 
-                                Height="50" Grid.ColumnSpan="2">
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding VolumeButtonFontIcon}"/>
+                            <Button.CommandParameter>
+                                <x:Double>30000</x:Double>
+                            </Button.CommandParameter>
+                            <!--<Image Source="{Binding PlayPauseButtonIconSource}"/>-->
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3D;"/>
                         </Button>
                     </Grid>
+                    <!--Bottom right controls-->
+                    <Grid Grid.Column="2" HorizontalAlignment="Right">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="75"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
 
-                    <Slider Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
+                        <!--Volume Icon-->
+                        <Grid  Grid.Column="0" Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="23*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Background="Transparent" Width="50" 
+                                Height="50" Grid.ColumnSpan="2">
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding VolumeButtonFontIcon}"/>
+                            </Button>
+                        </Grid>
+
+                        <Slider Visibility="Visible" VerticalAlignment="Center" Grid.Column="1" Width="Auto" 
                                  Maximum="100" Value="{Binding MediaVolumeLevel, Mode=TwoWay}" Margin="5,0,5,0"/>
 
-                    <!--Right bottom controls-->
-                    <Grid Grid.Column="2" Margin="0,0,0,0">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <Button 
+                        <!--Right bottom controls-->
+                        <Grid Grid.Column="2" Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Button 
                             x:Name="SwitchFullscreenModeButton" 
                             Width="50" Height="50"  
                             Click="SwitchFullscreenModeButton_Click"
                             Background="Transparent">
-                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;"/>
-                        </Button>
+                                <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE740;"/>
+                            </Button>
+                        </Grid>
                     </Grid>
                 </Grid>
+                <Grid.Background>
+                    <SolidColorBrush Color="#1E2931" Opacity="0.9"/>
+                </Grid.Background>
             </Grid>
-            <Grid.Background>
-                <SolidColorBrush Color="#1E2931" Opacity="0.9"/>
-            </Grid.Background>
         </Grid>
     </Grid>
 </local:ParamNavigationPage>

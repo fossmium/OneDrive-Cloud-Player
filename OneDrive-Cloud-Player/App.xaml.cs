@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
 using Microsoft.Identity.Client;
+using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
@@ -25,6 +26,7 @@ namespace OneDrive_Cloud_Player
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
+        public List<CachedDriveItem> CachedDriveItems { get; set;}
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
