@@ -107,7 +107,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         // Gets the SettingsPage view model.
         // </summary>
         // <value>
-        // The StartPage view model.
+        // The SettingsPage view model.
         // </value>
         public SettingsPageViewModel SettingsPageInstance
         {
