@@ -285,23 +285,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async Task PlayMedia(long startTime = 0)
         {
-            if ((MediaListIndex - 1) < 0)
-            {
-                VisibilityPreviousMediaBtn = Visibility.Collapsed;
-            }
-            else
-            {
-                VisibilityPreviousMediaBtn = Visibility.Visible;
-            }
-
-            if ((MediaListIndex + 1) >= App.Current.CachedDriveItems.Count)
-            {
-                VisibilityNextMediaBtn = Visibility.Collapsed;
-            }
-            else
-            {
-                VisibilityNextMediaBtn = Visibility.Visible;
-            }
+            CheckPreviousNextMediaInList();
 
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
 
@@ -454,23 +438,39 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="e"></param>
         private void KeyDownEvent(KeyEventArgs keyEvent)
         {
-            switch (keyEvent.VirtualKey)
+            CoreVirtualKeyStates shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+            if (!shift.HasFlag(CoreVirtualKeyStates.Down))
+                switch (keyEvent.VirtualKey)
+                {
+                    case VirtualKey.Space:
+                        ChangePlayingState();
+                        break;
+                    case VirtualKey.Left:
+                        SeekBackward(5000);
+                        break;
+                    case VirtualKey.Right:
+                        SeekForeward(5000);
+                        break;
+                    case VirtualKey.J:
+                        SeekBackward(10000);
+                        break;
+                    case VirtualKey.L:
+                        SeekForeward(10000);
+                        break;
+                }
+
+            if (shift.HasFlag(CoreVirtualKeyStates.Down))
             {
-                case VirtualKey.Space:
-                    ChangePlayingState();
-                    break;
-                case VirtualKey.Left:
-                    SeekBackward(5000);
-                    break;
-                case VirtualKey.Right:
-                    SeekForeward(5000);
-                    break;
-                case VirtualKey.J:
-                    SeekBackward(10000);
-                    break;
-                case VirtualKey.L:
-                    SeekForeward(10000);
-                    break;
+                switch (keyEvent.VirtualKey)
+                {
+                    case VirtualKey.N:
+                        PlayNextVideo();
+                        break;
+                    case VirtualKey.P:
+                        PlayPreviousVideo();
+                        break;
+                }
             }
         }
 
@@ -500,6 +500,30 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[++MediaListIndex];
             await PlayMedia();
+        }
+
+        /// <summary>
+        /// Checks if there is an upcoming or a previous media file available and change the visibility status of the previous / next buttons accordingly.
+        /// </summary>
+        private void CheckPreviousNextMediaInList()
+        {
+            if ((MediaListIndex - 1) < 0)
+            {
+                VisibilityPreviousMediaBtn = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityPreviousMediaBtn = Visibility.Visible;
+            }
+
+            if ((MediaListIndex + 1) >= App.Current.CachedDriveItems.Count)
+            {
+                VisibilityNextMediaBtn = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityNextMediaBtn = Visibility.Visible;
+            }
         }
 
         /// <summary>
