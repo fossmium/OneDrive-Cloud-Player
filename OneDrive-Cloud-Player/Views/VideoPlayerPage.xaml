@@ -344,6 +344,7 @@
                 BorderThickness="0.5"
                 PointerEntered="PreviousMediaButton_PointerEntered"
                 PointerExited="PreviousMediaButton_PointerExited"
+                Visibility="{Binding VisibilityPreviousMediaBtn}"
                 Command="{Binding PlayPreviousVideoCommand}">
                 <FontIcon FontSize="30" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE76B;"/>
             </Button>
@@ -358,6 +359,7 @@
                 BorderThickness="0.5"
                 PointerEntered="NextMediaButton_PointerEntered"
                 PointerExited="NextMediaButton_PointerExited"
+                Visibility="{Binding VisibilityNextMediaBtn}"
                 Command="{Binding PlayNextVideoCommand}">
                 <FontIcon FontSize="25" FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE76C;"/>
             </Button>

@@ -15,6 +15,7 @@ using System.Windows.Input;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -29,9 +30,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
         private Timer reloadIntervalTimer;
+        private MediaPlayer mediaPlayer;
+        private int MediaListIndex;
+
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
-        private MediaPlayer mediaPlayer;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -119,6 +122,30 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 mediaControlGridVisibility = value;
                 RaisePropertyChanged("MediaControlGridVisibility");
+            }
+        }
+
+        private Visibility visibilityPreviousMediaBtn;
+
+        public Visibility VisibilityPreviousMediaBtn
+        {
+            get { return visibilityPreviousMediaBtn; }
+            set
+            {
+                visibilityPreviousMediaBtn = value;
+                RaisePropertyChanged("VisibilityPreviousMediaBtn");
+            }
+        }
+
+        private Visibility visibilityNextMediaBtn;
+
+        public Visibility VisibilityNextMediaBtn
+        {
+            get { return visibilityNextMediaBtn; }
+            set
+            {
+                visibilityNextMediaBtn = value;
+                RaisePropertyChanged("VisibilityNextMediaBtn");
             }
         }
 
@@ -258,6 +285,24 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async Task PlayMedia(long startTime = 0)
         {
+            if ((MediaListIndex - 1) < 0)
+            {
+                VisibilityPreviousMediaBtn = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityPreviousMediaBtn = Visibility.Visible;
+            }
+
+            if ((MediaListIndex + 1) >= App.Current.CachedDriveItems.Count)
+            {
+                VisibilityNextMediaBtn = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityNextMediaBtn = Visibility.Visible;
+            }
+
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
 
             // Play the OneDrive file.
@@ -434,20 +479,12 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async void PlayPreviousVideo()
         {
-            int index = App.Current.CachedDriveItems.IndexOf(MediaWrapper.CachedDriveItem);
-
-            if(index < 0)
-            {
-                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
-            }
-
-            if ((index - 1) < 0)
+            if ((MediaListIndex - 1) < 0)
             {
                 return;
             }
 
-            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[index - 1];
-
+            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[--MediaListIndex];
             await PlayMedia();
         }
 
@@ -456,20 +493,12 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async void PlayNextVideo()
         {
-            int index = App.Current.CachedDriveItems.IndexOf(MediaWrapper.CachedDriveItem);
-
-            if (index < 0)
-            {
-                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
-            }
-
-            if ((index + 1) > App.Current.CachedDriveItems.Count)
+            if ((MediaListIndex + 1) >= App.Current.CachedDriveItems.Count)
             {
                 return;
             }
 
-            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[index + 1];
-
+            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[++MediaListIndex];
             await PlayMedia();
         }
 
@@ -481,6 +510,12 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             // Set the field so the playmedia method can use it.
             MediaWrapper = (MediaWrapper)mediaWrapper;
+            MediaListIndex = App.Current.CachedDriveItems.IndexOf(MediaWrapper.CachedDriveItem);
+
+            if (MediaListIndex < 0)
+            {
+                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
+            }
         }
 
         //TODO: More research what this does.
