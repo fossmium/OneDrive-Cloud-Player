@@ -209,7 +209,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
                     PlayPauseButtonFontIcon = "\xE769";
 
-                    //Disable or disable default subtitle based on user setting.
+                    //Enable or disable default subtitle based on user setting.
                     if (!(bool)localMediaVolumeLevelSetting.Values["ShowDefaultSubtitles"])
                     {
                         MediaPlayer.SetSpu(-1);
