@@ -3,27 +3,51 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using OneDrive_Cloud_Player.Services.Utilities;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows.Input;
 using Windows.ApplicationModel;
+using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
-    public class SettingsPageViewModel : ViewModelBase
+    public class SettingsPageViewModel : ViewModelBase, INotifyPropertyChanged
     {
         public ICommand NavigateToMainPageCommand { get; set; }
         public ICommand DisplayWhatsNewDialogCommand { get; set; }
         public string AppVersion { get; }
         public string PackageDisplayName { get; }
 
+        private readonly ApplicationDataContainer settings;
+
+        private bool showDefaultSubtitles;
+
+        public bool ShowDefaultSubtitles
+        {
+            get
+            { return showDefaultSubtitles; }
+            set
+            {
+                settings.Values["ShowDefaultSubtitles"] = value;
+                showDefaultSubtitles = value;
+                RaisePropertyChanged("ShowDefaultSubtitles");
+            }
+        }
+
+
         private readonly INavigationService _navigationService;
 
 
         public SettingsPageViewModel(INavigationService navigationService)
         {
+            settings = ApplicationData.Current.LocalSettings;
+
+            //Initialize settings
+            ShowDefaultSubtitles = (bool)settings.Values["ShowDefaultSubtitles"];
+
             Package package = Package.Current;
             PackageId packageId = package.Id;
             PackageVersion version = packageId.Version;

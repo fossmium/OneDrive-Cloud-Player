@@ -59,7 +59,7 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0" Text="Display default subtitle stream"/>
-                        <ToggleSwitch Grid.Row="1"/>
+                        <ToggleSwitch Grid.Row="1" IsOn="{Binding ShowDefaultSubtitles, Mode=TwoWay}"/>
                     </Grid>
                 </Grid>
 

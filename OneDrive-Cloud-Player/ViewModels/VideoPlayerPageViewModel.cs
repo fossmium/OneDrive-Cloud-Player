@@ -172,9 +172,13 @@ namespace OneDrive_Cloud_Player.ViewModels
             // Reset properties.
             VideoLength = 0;
             PlayPauseButtonFontIcon = "\xE768";
-
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            LibVLC = new LibVLC(eventArgs.SwapChainOptions);
+
+            string[] options = eventArgs.SwapChainOptions;
+            Array.Resize(ref options, options.Length + 1);
+            options[options.Length - 1] = "";
+            LibVLC = new LibVLC(options);
+
             MediaPlayer = new MediaPlayer(LibVLC);
 
             // Initialize timers.
@@ -204,6 +208,12 @@ namespace OneDrive_Cloud_Player.ViewModels
                     VideoLength = MediaPlayer.Length;
 
                     PlayPauseButtonFontIcon = "\xE769";
+
+                    //Disable or disable default subtitle based on user setting.
+                    if (!(bool)localMediaVolumeLevelSetting.Values["ShowDefaultSubtitles"])
+                    {
+                        MediaPlayer.SetSpu(-1);
+                    }
                 });
             };
 
