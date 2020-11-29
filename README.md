@@ -37,6 +37,8 @@
 | l | Seek forward 10 seconds in player.  |
 | Spacebar | Play/Pause when the seek bar is selected. <br/>Activate a button if a button has focus. |
 | f | Activate full screen. If full screen mode is enabled, <br>activate F again or press escape to exit full screen mode.  |
+| Shift+N | Play the next video. |
+| Shift+P | Play the previous video. |
 
 ## Visuals
 #### Login
