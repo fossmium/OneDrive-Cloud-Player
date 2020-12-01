@@ -137,5 +137,27 @@ namespace OneDrive_Cloud_Player.Services.Helpers
             //Return information about an item that resides in the given drive id.
             return await GraphClient.Me.Drives[DriveId].Items[ItemId].Request().GetAsync();
         }
+
+        /// <summary>
+        /// Given a query, search through an entire OneDrive.
+        /// The DriveId is optional, without it the user's own drive is searched.
+        /// </summary>
+        /// <param name="Query">The query to search for.</param>
+        /// <param name="DriveId">Id of the drive to search. If empty, the user's own drive is searched.</param>
+        /// <returns></returns>
+        public async Task<IDriveItemSearchCollectionPage> SearchThroughOneDrive(string Query, string DriveId = null)
+        {
+            await CreateGraphClientAsync();
+            List<QueryOption> searchOptions = new List<QueryOption>()
+            {
+                new QueryOption("select", "name,id,webUrl") //TODO: add more options?
+            };
+            if (DriveId is null)
+            {
+                return await GraphClient.Me.Drive.Root.Search(Query).Request(searchOptions).GetAsync();
+            }
+            return await GraphClient.Me.Drives[DriveId].Root.Search(Query).Request(searchOptions).GetAsync();
+        }
+
     }
 }
