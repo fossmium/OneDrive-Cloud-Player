@@ -174,11 +174,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             PlayPauseButtonFontIcon = "\xE768";
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
-            string[] options = eventArgs.SwapChainOptions;
-            Array.Resize(ref options, options.Length + 1);
-            options[options.Length - 1] = "";
-            LibVLC = new LibVLC(options);
-
+            LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
             // Initialize timers.
