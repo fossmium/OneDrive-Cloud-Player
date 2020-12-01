@@ -26,6 +26,11 @@ namespace OneDrive_Cloud_Player
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
+
+        /// <summary>
+        /// This list is used to hold a cached copy of the current drive list.
+        /// The VideoViewmodel and the MainViewmodel communicate the current media list this way.
+        /// </summary>
         public List<CachedDriveItem> CachedDriveItems { get; set;}
 
         /// <summary>

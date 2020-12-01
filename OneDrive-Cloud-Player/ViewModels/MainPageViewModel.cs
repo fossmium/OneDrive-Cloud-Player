@@ -194,8 +194,9 @@ namespace OneDrive_Cloud_Player.ViewModels
                 {
                     DriveList = App.Current.CacheHelper.CurrentUserCache.Drives;
                     IsReloadButtonEnabled = true;
-                    // reset the current item list so we don't get an exception
+                    // Reset the current and cached list so we don't get an exception.
                     ExplorerItemsList = null;
+                    App.Current.CachedDriveItems = null;
                 });
             }).Start();
         }
@@ -262,8 +263,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
             Debug.WriteLine(" + Loaded children from selected Drive.");
 
-            //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
+            // Update both the UI and the cached items with the new list.
             ExplorerItemsList = driveItems;
+            App.Current.CachedDriveItems = driveItems;
         }
 
         /// <summary>
@@ -289,7 +291,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
                 Debug.WriteLine(" + Loaded folder.");
 
-                //Sets the ExplorerItemsList with the items that are inside the folder. This also updates the UI.
+                // Update both the UI and the cached items with the new list.
                 ExplorerItemsList = driveItems;
                 App.Current.CachedDriveItems = driveItems;
             }
@@ -321,7 +323,10 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             string id = ParentItem.ParentItemId;
             List<CachedDriveItem> ParentItemList = App.Current.CacheHelper.GetDriveOrItemsWithParentId(SelectedDriveFolder, id);
+
+            // Update both the UI and the cached items with the new list.
             ExplorerItemsList = ParentItemList;
+            App.Current.CachedDriveItems = ParentItemList;
 
             if (App.Current.CacheHelper.IsParentChildOfDrive(SelectedDriveFolder, id))
             {
