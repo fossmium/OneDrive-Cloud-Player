@@ -71,11 +71,6 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid Grid.Row="0">
                         <TextBlock FontSize="25" Margin="0,30,0,10">
@@ -100,12 +95,7 @@
                         </HyperlinkButton>
                     </Grid>
                     <Grid Grid.Row="4">
-                        <HyperlinkButton>
-                            <TextBlock Text="Disclaimer" />
-                        </HyperlinkButton>
-                    </Grid>
-                    <Grid Grid.Row="5">
-                        <HyperlinkButton>
+                        <HyperlinkButton NavigateUri="https://github.com/GrandDynamo/OneDrive-Cloud-Player/blob/master/LICENSE">
                             <TextBlock Text="License" />
                         </HyperlinkButton>
                     </Grid>
