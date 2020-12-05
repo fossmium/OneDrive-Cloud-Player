@@ -29,6 +29,11 @@ namespace OneDrive_Cloud_Player
         public ApplicationDataContainer UserSettings { get; private set; }
 
         /// <summary>
+        /// The current version of the application data structure.
+        /// </summary>
+        private const int appDataVersion = 1;
+
+        /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
@@ -47,24 +52,45 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         private void LoadUserSettings()
         {
-            // Load the saved settings from disk
+            // Load the saved settings from disk and check the version.
             UserSettings = ApplicationData.Current.LocalSettings;
+            if (ApplicationData.Current.Version < appDataVersion)
+            {
+                ApplicationData.Current.SetVersionAsync(appDataVersion, UpdateAppDataFormat).AsTask().Wait();
+            }
+        }
 
-            // Create a dictionary with the required default settings
-            Dictionary<string, object> defaultSettings = new Dictionary<string, object>
+        /// <summary>
+        /// Update the application data format. Afterwards, the version will be incremented.
+        /// </summary>
+        /// <param name="request">Different upgrade paths are enabled by checking the current
+        /// and desired properties of this parameter.</param>
+        private void UpdateAppDataFormat(SetVersionRequest request)
+        {
+            // Create a dictionary with the required settings and their default values.
+            Dictionary<string, object> requiredSettings = new Dictionary<string, object>
             {
                 { "MediaVolume", 100 },
                 { "ShowDefaultSubtitles", true }
             };
 
-            // Check if the settings on disk contain all the required entries.
-            // If not, add them with a default value.
-            // TODO: instead of looping through the default list, loop through list from disk to remove obsolete settings
-            foreach (string key in defaultSettings.Keys)
+            // Verify disk settings against default settings.
+            foreach (string key in requiredSettings.Keys)
             {
-                if (UserSettings.Values[key] is null)
+                if (!UserSettings.Values.ContainsKey(key))
                 {
-                    UserSettings.Values[key] = defaultSettings.GetValueOrDefault(key);
+                    // Required setting not found on disk, so add it.
+                    UserSettings.Values[key] = requiredSettings.GetValueOrDefault(key);
+                }
+            }
+
+            // Check disk settings for unneeded entries.
+            foreach (string diskEntry in UserSettings.Values.Keys)
+            {
+                if (!requiredSettings.ContainsKey(diskEntry))
+                {
+                    // Disk settings contain more info than needed.
+                    UserSettings.Values.Remove(diskEntry);
                 }
             }
         }
