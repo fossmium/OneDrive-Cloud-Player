@@ -23,7 +23,6 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary>
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
-        private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
         private readonly GraphHelper graphHelper;
         private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
@@ -146,14 +145,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
             SeekBackwardCommand = new RelayCommand<double>(SeekBackward);
             SeekForewardCommand = new RelayCommand<double>(SeekForeward);
-
-            this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
-
-            // Sets the MediaVolume setting to 100 when its not already set before in the setting. (This is part of an audio workaround).
-            if (localMediaVolumeLevelSetting.Values["MediaVolume"] is null)
-            {
-                localMediaVolumeLevelSetting.Values["MediaVolume"] = 100;
-            }
         }
 
         private bool CanExecuteCommand()
@@ -196,8 +187,8 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
                 await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
                 {
-                    MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
-                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                    MediaVolumeLevel = (int) App.Current.UserSettings.Values["MediaVolume"];
+                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + App.Current.UserSettings.Values["MediaVolume"]);
                     Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in our property: " + MediaVolumeLevel);
                     Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
                     //Sets the max value of the seekbar.
@@ -206,7 +197,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                     PlayPauseButtonFontIcon = "\xE769";
 
                     //Enable or disable default subtitle based on user setting.
-                    if (!(bool)localMediaVolumeLevelSetting.Values["ShowDefaultSubtitles"])
+                    if (!(bool) App.Current.UserSettings.Values["ShowDefaultSubtitles"])
                     {
                         MediaPlayer.SetSpu(-1);
                     }
@@ -277,7 +268,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Debug.WriteLine("Error: Sound problem, Returning without setting volume level!");
                 return; // Return when the MediaPlayer is null so it does not cause exception.
             }
-            this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
+            App.Current.UserSettings.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
             MediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonFontIcon(volumeLevel);
         }

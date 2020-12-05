@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -25,6 +26,7 @@ namespace OneDrive_Cloud_Player
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
+        public ApplicationDataContainer UserSettings { get; private set; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -34,9 +36,37 @@ namespace OneDrive_Cloud_Player
         {
             Core.Initialize();
             this.InitializeComponent();
+            this.LoadUserSettings();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
             this.CacheHelper = new CacheHelper();
+        }
+
+        /// <summary>
+        /// Load the user settings from disk and check if they contain all the required entries.
+        /// </summary>
+        private void LoadUserSettings()
+        {
+            // Load the saved settings from disk
+            UserSettings = ApplicationData.Current.LocalSettings;
+
+            // Create a dictionary with the required default settings
+            Dictionary<string, object> defaultSettings = new Dictionary<string, object>
+            {
+                { "MediaVolume", 100 },
+                { "ShowDefaultSubtitles", true }
+            };
+
+            // Check if the settings on disk contain all the required entries.
+            // If not, add them with a default value.
+            // TODO: instead of looping through the default list, loop through list from disk to remove obsolete settings
+            foreach (string key in defaultSettings.Keys)
+            {
+                if (UserSettings.Values[key] is null)
+                {
+                    UserSettings.Values[key] = defaultSettings.GetValueOrDefault(key);
+                }
+            }
         }
 
         /// <summary>
