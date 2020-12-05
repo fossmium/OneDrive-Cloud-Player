@@ -196,7 +196,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                     IsReloadButtonEnabled = true;
                     // Reset the current and cached list so we don't get an exception.
                     ExplorerItemsList = null;
-                    App.Current.CachedDriveItems = null;
+                    App.Current.MediaItemList = null;
                 });
             }).Start();
         }
@@ -265,7 +265,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             // Update both the UI and the cached items with the new list.
             ExplorerItemsList = driveItems;
-            App.Current.CachedDriveItems = driveItems;
+            App.Current.MediaItemList = driveItems;
         }
 
         /// <summary>
@@ -293,7 +293,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
                 // Update both the UI and the cached items with the new list.
                 ExplorerItemsList = driveItems;
-                App.Current.CachedDriveItems = driveItems;
+                App.Current.MediaItemList = driveItems;
             }
             else
             {
@@ -326,7 +326,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             // Update both the UI and the cached items with the new list.
             ExplorerItemsList = ParentItemList;
-            App.Current.CachedDriveItems = ParentItemList;
+            App.Current.MediaItemList = ParentItemList;
 
             if (App.Current.CacheHelper.IsParentChildOfDrive(SelectedDriveFolder, id))
             {

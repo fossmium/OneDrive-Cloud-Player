@@ -27,11 +27,19 @@ namespace OneDrive_Cloud_Player
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
 
+        private List<CachedDriveItem> mediaItemList;
         /// <summary>
-        /// This list is used to hold a cached copy of the current drive list.
-        /// The VideoViewmodel and the MainViewmodel communicate the current media list this way.
+        /// This list holds a copy of the current item list with only playable media files.
+        /// The VideoPlayerPageViewmodel and the MainPageViewmodel communicate the current media list this way.
         /// </summary>
-        public List<CachedDriveItem> CachedDriveItems { get; set;}
+        public List<CachedDriveItem> MediaItemList
+        {
+            get { return mediaItemList; }
+            set {
+                // Filter the list for playable media.
+                mediaItemList = App.Current.CacheHelper.FilterPlayableMedia(value);
+            }
+        }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code

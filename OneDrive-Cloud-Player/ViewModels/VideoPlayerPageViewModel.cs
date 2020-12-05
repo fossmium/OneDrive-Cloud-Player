@@ -484,7 +484,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 return;
             }
 
-            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[--MediaListIndex];
+            MediaWrapper.CachedDriveItem = App.Current.MediaItemList[--MediaListIndex];
             await PlayMedia();
         }
 
@@ -493,12 +493,12 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async void PlayNextVideo()
         {
-            if ((MediaListIndex + 1) >= App.Current.CachedDriveItems.Count)
+            if ((MediaListIndex + 1) >= App.Current.MediaItemList.Count)
             {
                 return;
             }
 
-            MediaWrapper.CachedDriveItem = App.Current.CachedDriveItems[++MediaListIndex];
+            MediaWrapper.CachedDriveItem = App.Current.MediaItemList[++MediaListIndex];
             await PlayMedia();
         }
 
@@ -516,7 +516,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 VisibilityPreviousMediaBtn = Visibility.Visible;
             }
 
-            if ((MediaListIndex + 1) >= App.Current.CachedDriveItems.Count)
+            if ((MediaListIndex + 1) >= App.Current.MediaItemList.Count)
             {
                 VisibilityNextMediaBtn = Visibility.Collapsed;
             }
@@ -534,7 +534,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             // Set the field so the playmedia method can use it.
             MediaWrapper = (MediaWrapper)mediaWrapper;
-            MediaListIndex = App.Current.CachedDriveItems.IndexOf(MediaWrapper.CachedDriveItem);
+            MediaListIndex = App.Current.MediaItemList.IndexOf(MediaWrapper.CachedDriveItem);
 
             if (MediaListIndex < 0)
             {
