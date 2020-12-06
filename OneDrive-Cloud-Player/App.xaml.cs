@@ -31,6 +31,12 @@ namespace OneDrive_Cloud_Player
         /// <summary>
         /// The current version of the application data structure.
         /// </summary>
+        /// <remarks>
+        /// If the structure of the application data changes (which is currently determined by the
+        /// requiredSettings dictionary in <see cref="App.UpdateAppDataFormat(SetVersionRequest)"/>),
+        /// this number should be incremented at the very same time (meaning compile-time). If not,
+        /// the application data could enter an inconsistent state.
+        /// </remarks>
         private const int appDataVersion = 1;
 
         /// <summary>
