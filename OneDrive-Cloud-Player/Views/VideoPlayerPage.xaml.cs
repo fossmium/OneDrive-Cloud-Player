@@ -58,7 +58,6 @@ namespace OneDrive_Cloud_Player.Views
         private void MediaControlGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             isPointerOverMediaControlGrid = true;
-            Debug.WriteLine(" + Pointer entered control grid.");
         }
 
         /// <summary>
@@ -67,7 +66,6 @@ namespace OneDrive_Cloud_Player.Views
         private void MediaControlGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             isPointerOverMediaControlGrid = false;
-            Debug.WriteLine(" + Pointer exited control grid.");
         }
 
         /// <summary>
