@@ -331,9 +331,17 @@
             </Interactivity:Interaction.Behaviors>
         </lvs:VideoView>
 
+        <!--Filename of playing media-->
+        <Grid VerticalAlignment="Top">
+            <TextBlock Text="{Binding FileName, Mode=OneWay}"
+                    HorizontalAlignment="Center"
+                    FontSize="40"
+                    x:Name="FileNameOverlay"
+                       Visibility="{Binding FileNameOverlayVisiblity}">
+            </TextBlock>
+        </Grid>
 
         <Grid x:Name="OnScreenControls">
-            
             <!--Play previous media-->
             <Button VerticalAlignment="Center" 
                 HorizontalAlignment="Left"

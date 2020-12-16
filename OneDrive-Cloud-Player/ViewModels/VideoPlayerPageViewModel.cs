@@ -9,6 +9,7 @@ using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
@@ -32,6 +33,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private Timer reloadIntervalTimer;
         private MediaPlayer mediaPlayer;
         private int MediaListIndex;
+        private readonly Timer fileNameOverlayTimer;
 
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
@@ -101,6 +103,30 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private string fileName;
+
+        public string FileName
+        {
+            get { return fileName; }
+            private set
+            {
+                fileName = value;
+                RaisePropertyChanged("FileName");
+            }
+        }
+
+        private Visibility fileNameOverlayVisiblity;
+
+        public Visibility FileNameOverlayVisiblity
+        {
+            get { return fileNameOverlayVisiblity; }
+            set
+            {
+                fileNameOverlayVisiblity = value;
+                RaisePropertyChanged("FileNameOverlayVisiblity");
+            }
+        }
+
         private string playPauseButtonFontIcon = "\xE768";
 
         public string PlayPauseButtonFontIcon
@@ -163,6 +189,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
+            fileNameOverlayTimer = new Timer();
             _navigationService = navigationService;
             graphHelper = GraphHelper.Instance();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
@@ -283,12 +310,29 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Plays the media.
         /// </summary>
+        /// <param name="startTime"></param>
+        /// <returns></returns>
         private async Task PlayMedia(long startTime = 0)
         {
             CheckPreviousNextMediaInList();
 
-            string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
+            FileName = Path.GetFileNameWithoutExtension(MediaWrapper.CachedDriveItem.Name);
 
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+            
+            FileNameOverlayVisiblity = Visibility.Visible;
+
+            fileNameOverlayTimer.Interval = 5000;
+            fileNameOverlayTimer.Start();
+            fileNameOverlayTimer.Elapsed += async (sender, e) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                 {
+                     FileNameOverlayVisiblity = Visibility.Collapsed;
+                 });
+            };
+
+            string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
             // Play the OneDrive file.
             MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
 
