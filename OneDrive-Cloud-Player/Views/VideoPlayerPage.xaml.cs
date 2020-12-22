@@ -96,7 +96,6 @@ namespace OneDrive_Cloud_Player.Views
         private void PreviousMediaButton_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             isPointerOverMediaControl = true;
-            Debug.WriteLine(" + Pointer entered the previous media button.");
         }
 
         /// <summary>
@@ -107,7 +106,6 @@ namespace OneDrive_Cloud_Player.Views
         private void PreviousMediaButton_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             isPointerOverMediaControl = false;
-            Debug.WriteLine(" + Pointer exited the previous media button.");
         }
 
         /// <summary>
@@ -118,7 +116,6 @@ namespace OneDrive_Cloud_Player.Views
         private void NextMediaButton_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             isPointerOverMediaControl = true;
-            Debug.WriteLine(" + Pointer entered the next media button.");
         }
 
         /// <summary>
@@ -129,7 +126,6 @@ namespace OneDrive_Cloud_Player.Views
         private void NextMediaButton_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             isPointerOverMediaControl = false;
-            Debug.WriteLine(" + Pointer exited the next media button.");
         }
 
         /// <summary>
