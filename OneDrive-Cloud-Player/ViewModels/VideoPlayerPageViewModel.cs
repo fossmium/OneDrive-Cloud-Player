@@ -149,7 +149,8 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
 
-            // Sets the MediaVolume setting to 100 when its not already set before in the setting. (This is part of an audio workaround).
+            // Sets the MediaVolume setting to 100 when its not already set
+            // before in the setting. (This is part of an audio workaround).
             if (localMediaVolumeLevelSetting.Values["MediaVolume"] is null)
             {
                 localMediaVolumeLevelSetting.Values["MediaVolume"] = 100;
@@ -167,8 +168,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="eventArgs"></param>
         private async void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": InitializeLibVLC called");
-
             // Reset properties.
             VideoLength = 0;
             PlayPauseButtonFontIcon = "\xE768";
@@ -178,7 +177,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             MediaPlayer = new MediaPlayer(LibVLC);
 
             // Initialize timers.
-            // Create a timer that fires the elapsed event when its time to retrieve and play the media from a new OneDrive download URL (2 minutes).
+            // Create a timer that fires the elapsed event when its time to retrieve
+            // and play the media from a new OneDrive download URL (2 minutes).
             reloadIntervalTimer = new Timer(120000);
             // Hook up the Elapsed event for the timer. 
             reloadIntervalTimer.Elapsed += (sender, e) =>
@@ -220,10 +220,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
                 {
-                    //Updates the value of the seekbar on TimeChanged event when the user is not seeking.
+                    // Updates the value of the seekbar on TimeChanged event
+                    // when the user is not seeking.
                     if (!IsSeeking)
                     {
-                        // Sometimes the MediaPlayer is still null when you exist the videoplayer page and this still gets called.
+                        // Sometimes the MediaPlayer is already null upon
+                        // navigating away and this still gets called.
                         if (MediaPlayer != null)
                         {
                             TimeLineValue = MediaPlayer.Time;
@@ -422,22 +424,23 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Gets the parameters that are sended with the navigation to the videoplayer page.
+        /// Called upon navigating to the videoplayer page and is used for
+        /// passing arguments from the main page to the video player page.
         /// </summary>
         /// <param name="parameter"></param>
         public void Activate(object videoPlayerArgumentWrapper)
         {
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate called");
             // Set the field so the playmedia method can use it.
             this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
-            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Activate completed");
         }
 
-        //TODO: More research what this does.
+        /// <summary>
+        /// Called upon navigating away from the view associated with this viewmodel.
+        /// </summary>
+        /// <param name="parameter"></param>
         public void Deactivate(object parameter)
         {
-            //throw new NotImplementedException();
-            //Debug.WriteLine(" + Deactivated: " + parameter.ToString());
+
         }
 
         /// <summary>
