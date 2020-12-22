@@ -26,13 +26,13 @@ namespace OneDrive_Cloud_Player.ViewModels
     {
         private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
-        private readonly GraphHelper graphHelper;
+        private readonly GraphHelper graphHelper = GraphHelper.Instance();
+        private readonly Timer fileNameOverlayTimer = new Timer();
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
         private Timer reloadIntervalTimer;
         private MediaPlayer mediaPlayer;
         private int MediaListIndex;
-        private readonly Timer fileNameOverlayTimer;
 
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
@@ -188,9 +188,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
-            fileNameOverlayTimer = new Timer();
             _navigationService = navigationService;
-            graphHelper = GraphHelper.Instance();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
@@ -307,7 +305,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Plays the media.
+        /// Plays the media and starts a timer to temporarily show the filename
+        /// of the file being played.
         /// </summary>
         /// <param name="startTime"></param>
         /// <returns></returns>
@@ -318,7 +317,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             FileName = MediaWrapper.CachedDriveItem.Name;
 
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            
+
             FileNameOverlayVisiblity = Visibility.Visible;
 
             fileNameOverlayTimer.Interval = 5000;
@@ -326,9 +325,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             fileNameOverlayTimer.Elapsed += async (sender, e) =>
             {
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                 {
-                     FileNameOverlayVisiblity = Visibility.Collapsed;
-                 });
+                {
+                    FileNameOverlayVisiblity = Visibility.Collapsed;
+                });
             };
 
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
@@ -546,7 +545,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Checks if there is an upcoming or a previous media file available and change the visibility status of the previous / next buttons accordingly.
+        /// Checks if there is an upcoming or a previous media file available and
+        /// change the visibility status of the previous / next buttons accordingly.
         /// </summary>
         private void CheckPreviousNextMediaInList()
         {
