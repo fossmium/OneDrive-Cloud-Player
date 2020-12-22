@@ -9,7 +9,6 @@ using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.IO;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
@@ -316,7 +315,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             CheckPreviousNextMediaInList();
 
-            FileName = Path.GetFileNameWithoutExtension(MediaWrapper.CachedDriveItem.Name);
+            FileName = MediaWrapper.CachedDriveItem.Name;
 
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             
