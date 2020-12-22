@@ -147,7 +147,6 @@ namespace OneDrive_Cloud_Player.Views
             {
                 EnterFullscreenMode();
             }
-            Debug.WriteLine(" + Switched screen mode.");
         }
 
         /// <summary>
