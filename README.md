@@ -20,6 +20,7 @@
 * [Keyboard shortcuts](#keyboard-shortcuts)
 * [Visuals](#visuals)
 * [Contributing](#contributing)
+* [License](#License)
 * [Maintainers](#maintainers)
 
 ## Features
@@ -62,6 +63,11 @@ If you'd like to contribute, feel free to help with the currently open [issues](
 [comment]: # (## Usage)
 
 [comment]: # (## Contributing)
+
+
+## License
+OneDrive Cloud Player is released under the [GPL v2.0](https://tldrlegal.com/license/gnu-general-public-license-v2) only.
+
 
 ## Maintainers
 	

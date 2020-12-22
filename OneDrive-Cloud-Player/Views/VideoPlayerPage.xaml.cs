@@ -57,8 +57,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControl = true;
-            Debug.WriteLine(" + Pointer entered control grid.");
+            isPointerOverMediaControlGrid = true;
         }
 
         /// <summary>
@@ -66,8 +65,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControl = false;
-            Debug.WriteLine(" + Pointer exited control grid.");
+            isPointerOverMediaControlGrid = false;
         }
 
         /// <summary>
@@ -193,7 +191,6 @@ namespace OneDrive_Cloud_Player.Views
             {
                 EnterFullscreenMode();
             }
-            Debug.WriteLine(" + Switched screen mode.");
         }
 
         /// <summary>
