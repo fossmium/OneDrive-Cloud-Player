@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
@@ -27,10 +28,16 @@ namespace OneDrive_Cloud_Player.ViewModels
         private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
         private readonly GraphHelper graphHelper = GraphHelper.Instance();
-        private readonly Timer fileNameOverlayTimer = new Timer();
+        /// <summary>
+        /// Fires every two minutes to indicate the OneDrive download URL has expired.
+        /// </summary>
+        private readonly Timer reloadIntervalTimer = new Timer(120000);
+        /// <summary>
+        /// Single-shot timer to hide the filename shortly after playing a video.
+        /// </summary>
+        private readonly Timer fileNameOverlayTimer = new Timer(5000);
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
-        private Timer reloadIntervalTimer;
         private MediaPlayer mediaPlayer;
         private int MediaListIndex;
 
@@ -227,70 +234,76 @@ namespace OneDrive_Cloud_Player.ViewModels
             VideoLength = 0;
             PlayPauseButtonFontIcon = "\xE768";
 
-            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-
+            // Create LibVLC instance and subscribe to events.
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
-            // Initialize timers.
-            // Create a timer that fires the elapsed event when its time to retrieve
-            // and play the media from a new OneDrive download URL (2 minutes).
-            reloadIntervalTimer = new Timer(120000);
-            // Hook up the Elapsed event for the timer. 
-            reloadIntervalTimer.Elapsed += (sender, e) =>
-            {
-                InvalidOneDriveSession = true;
-            };
-            reloadIntervalTimer.Enabled = true;
+            MediaPlayer.Playing += MediaPlayer_Playing;
+            MediaPlayer.Paused += MediaPlayer_Paused;
+            MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
 
-            /*
-             * Subscribing to LibVLC events.
-             */
-            //Subscribes to the Playing event.
-            MediaPlayer.Playing += async (sender, args) =>
-            {
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
-                await dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
-                {
-                    MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
-                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
-                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in our property: " + MediaVolumeLevel);
-                    Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
-                    //Sets the max value of the seekbar.
-                    VideoLength = MediaPlayer.Length;
+            // Subscribe to the timer events and start the reloadInterval timer.
+            fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
+            reloadIntervalTimer.Elapsed += ReloadIntervalTimer_Elapsed;
+            reloadIntervalTimer.Start();
 
-                    PlayPauseButtonFontIcon = "\xE769";
-                });
-            };
-
-            //Subscribes to the Paused event.
-            MediaPlayer.Paused += async (sender, args) =>
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    PlayPauseButtonFontIcon = "\xE768";
-                });
-            };
-
-            MediaPlayer.TimeChanged += async (sender, args) =>
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    // Updates the value of the seekbar on TimeChanged event
-                    // when the user is not seeking.
-                    if (!IsSeeking)
-                    {
-                        // Sometimes the MediaPlayer is already null upon
-                        // navigating away and this still gets called.
-                        if (MediaPlayer != null)
-                        {
-                            TimeLineValue = MediaPlayer.Time;
-                        }
-                    }
-                });
-            };
-
+            // Finally, play the media.
             await PlayMedia();
+        }
+
+        private async void MediaPlayer_Playing(object sender, EventArgs e)
+        {
+            Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in our property: " + MediaVolumeLevel);
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
+                //Sets the max value of the seekbar.
+                VideoLength = MediaPlayer.Length;
+
+                PlayPauseButtonFontIcon = "\xE769";
+            });
+        }
+
+        private async void MediaPlayer_Paused(object sender, EventArgs e)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                PlayPauseButtonFontIcon = "\xE768";
+            });
+        }
+
+        private async void MediaPlayer_TimeChanged(object sender, EventArgs e)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                // Updates the value of the seekbar on TimeChanged event
+                // when the user is not seeking.
+                if (!IsSeeking)
+                {
+                    // Sometimes the MediaPlayer is already null upon
+                    // navigating away and this still gets called.
+                    if (MediaPlayer != null)
+                    {
+                        TimeLineValue = MediaPlayer.Time;
+                    }
+                }
+            });
+        }
+
+        private void ReloadIntervalTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            InvalidOneDriveSession = true;
+        }
+
+        private async void FileNameOverlayTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                FileNameOverlayVisiblity = Visibility.Collapsed;
+            });
         }
 
         /// <summary>
@@ -318,19 +331,10 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             FileName = MediaWrapper.CachedDriveItem.Name;
 
-            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-
             FileNameOverlayVisiblity = Visibility.Visible;
 
-            fileNameOverlayTimer.Interval = 5000;
+            fileNameOverlayTimer.AutoReset = false;
             fileNameOverlayTimer.Start();
-            fileNameOverlayTimer.Elapsed += async (sender, e) =>
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
-                {
-                    FileNameOverlayVisiblity = Visibility.Collapsed;
-                });
-            };
 
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
             // Play the OneDrive file.
@@ -602,6 +606,14 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public void Dispose()
         {
+            // Unsubscribe from event handlers.
+            MediaPlayer.Playing -= MediaPlayer_Playing;
+            MediaPlayer.Paused -= MediaPlayer_Paused;
+            MediaPlayer.TimeChanged -= MediaPlayer_TimeChanged;
+            reloadIntervalTimer.Elapsed -= ReloadIntervalTimer_Elapsed;
+            fileNameOverlayTimer.Elapsed -= FileNameOverlayTimer_Elapsed;
+
+            // Dispose of the LibVLC instance and the mediaplayer.
             var mediaPlayer = MediaPlayer;
             MediaPlayer = null;
             mediaPlayer?.Dispose();
