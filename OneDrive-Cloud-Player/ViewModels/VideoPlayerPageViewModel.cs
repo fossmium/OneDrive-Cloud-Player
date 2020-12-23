@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
-using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
@@ -254,7 +253,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         private async void MediaPlayer_Playing(object sender, EventArgs e)
         {
             Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
                 Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
@@ -269,7 +268,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private async void MediaPlayer_Paused(object sender, EventArgs e)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 PlayPauseButtonFontIcon = "\xE768";
             });
@@ -277,7 +276,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private async void MediaPlayer_TimeChanged(object sender, EventArgs e)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 // Updates the value of the seekbar on TimeChanged event
                 // when the user is not seeking.
@@ -300,7 +299,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private async void FileNameOverlayTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 FileNameOverlayVisiblity = Visibility.Collapsed;
             });
@@ -338,7 +337,10 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
             // Play the OneDrive file.
-            MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
+            using (Media media = new Media(LibVLC, new Uri(mediaDownloadURL)))
+            {
+                MediaPlayer.Play(media);
+            }
 
             if (MediaPlayer is null)
             {

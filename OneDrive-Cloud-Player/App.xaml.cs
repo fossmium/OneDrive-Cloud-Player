@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -22,7 +24,7 @@ namespace OneDrive_Cloud_Player
     {
         //Other classes can now call this class with the use of 'App.Current'. 
         public static new App Current => (App)Application.Current;
-
+        public CoreDispatcher UIDispatcher { get; private set; }
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
@@ -111,6 +113,8 @@ namespace OneDrive_Cloud_Player
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            UIDispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
         }
 
         /// <summary>
