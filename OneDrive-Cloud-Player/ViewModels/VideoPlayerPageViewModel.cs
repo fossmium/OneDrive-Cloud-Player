@@ -15,6 +15,7 @@ using System.Windows.Input;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
+using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -25,13 +26,16 @@ namespace OneDrive_Cloud_Player.ViewModels
     {
         private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
-        private readonly GraphHelper graphHelper;
-        private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
+        private readonly GraphHelper graphHelper = GraphHelper.Instance();
+        private readonly Timer fileNameOverlayTimer = new Timer();
+        private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
         private Timer reloadIntervalTimer;
+        private MediaPlayer mediaPlayer;
+        private int MediaListIndex;
+
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
-        private MediaPlayer mediaPlayer;
 
         /// <summary>
         /// Gets the commands for the initialization
@@ -46,6 +50,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand KeyDownEventCommand { get; }
         public ICommand SeekBackwardCommand { get; }
         public ICommand SeekForewardCommand { get; }
+        public ICommand PlayPreviousVideoCommand { get; }
+        public ICommand PlayNextVideoCommand { get; }
 
         private long timeLineValue;
 
@@ -96,6 +102,30 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private string fileName;
+
+        public string FileName
+        {
+            get { return fileName; }
+            private set
+            {
+                fileName = value;
+                RaisePropertyChanged("FileName");
+            }
+        }
+
+        private Visibility fileNameOverlayVisiblity;
+
+        public Visibility FileNameOverlayVisiblity
+        {
+            get { return fileNameOverlayVisiblity; }
+            set
+            {
+                fileNameOverlayVisiblity = value;
+                RaisePropertyChanged("FileNameOverlayVisiblity");
+            }
+        }
+
         private string playPauseButtonFontIcon = "\xE768";
 
         public string PlayPauseButtonFontIcon
@@ -120,6 +150,30 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private Visibility visibilityPreviousMediaBtn;
+
+        public Visibility VisibilityPreviousMediaBtn
+        {
+            get { return visibilityPreviousMediaBtn; }
+            set
+            {
+                visibilityPreviousMediaBtn = value;
+                RaisePropertyChanged("VisibilityPreviousMediaBtn");
+            }
+        }
+
+        private Visibility visibilityNextMediaBtn;
+
+        public Visibility VisibilityNextMediaBtn
+        {
+            get { return visibilityNextMediaBtn; }
+            set
+            {
+                visibilityNextMediaBtn = value;
+                RaisePropertyChanged("VisibilityNextMediaBtn");
+            }
+        }
+
         /// <summary>
         /// Gets the media player
         /// </summary>
@@ -135,7 +189,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            graphHelper = GraphHelper.Instance();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
@@ -146,6 +199,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
             SeekBackwardCommand = new RelayCommand<double>(SeekBackward);
             SeekForewardCommand = new RelayCommand<double>(SeekForeward);
+            PlayPreviousVideoCommand = new RelayCommand(PlayPreviousVideo, CanExecuteCommand);
+            PlayNextVideoCommand = new RelayCommand(PlayNextVideo, CanExecuteCommand);
 
             this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
 
@@ -173,6 +228,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             PlayPauseButtonFontIcon = "\xE768";
 
             CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
@@ -240,37 +296,60 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Retrieves the download url of the media file to be played.
         /// </summary>
-        /// <param name="videoPlayerArgumentWrapper"></param>
+        /// <param name="MediaWrapper"></param>
         /// <returns></returns>
-        private async Task<string> RetrieveDownloadURLMedia(VideoPlayerArgumentWrapper videoPlayerArgumentWrapper)
+        private async Task<string> RetrieveDownloadURLMedia(MediaWrapper mediaWrapper)
         {
-            var driveItem = await graphHelper.GetItemInformationAsync(videoPlayerArgumentWrapper.DriveId, videoPlayerArgumentWrapper.CachedDriveItem.ItemId);
+            var driveItem = await graphHelper.GetItemInformationAsync(mediaWrapper.DriveId, mediaWrapper.CachedDriveItem.ItemId);
 
             //Retrieve a temporary download URL from the drive item.
             return (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
         }
 
         /// <summary>
-        /// Plays the media.
+        /// Plays the media and starts a timer to temporarily show the filename
+        /// of the file being played.
         /// </summary>
+        /// <param name="startTime"></param>
+        /// <returns></returns>
         private async Task PlayMedia(long startTime = 0)
         {
-            string mediaDownloadURL = await RetrieveDownloadURLMedia(this.videoPlayerArgumentWrapper);
+            CheckPreviousNextMediaInList();
 
+            FileName = MediaWrapper.CachedDriveItem.Name;
+
+            CoreDispatcher dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
+            FileNameOverlayVisiblity = Visibility.Visible;
+
+            fileNameOverlayTimer.Interval = 5000;
+            fileNameOverlayTimer.Start();
+            fileNameOverlayTimer.Elapsed += async (sender, e) =>
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+                {
+                    FileNameOverlayVisiblity = Visibility.Collapsed;
+                });
+            };
+
+            string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
             // Play the OneDrive file.
             MediaPlayer.Play(new Media(LibVLC, new Uri(mediaDownloadURL)));
 
-            if (MediaPlayer != null)
+            if (MediaPlayer is null)
             {
-                MediaPlayer.Time = startTime;
+                Debug.WriteLine("Error: Could not set start time.");
+                return;
             }
+
+            MediaPlayer.Time = startTime;
         }
 
         private void SetMediaVolume(int volumeLevel)
         {
             if (MediaPlayer is null)
             {
-                Debug.WriteLine("Error: Sound problem, Returning without setting volume level!");
+                Debug.WriteLine("Error: Could not set the volume.");
                 return; // Return when the MediaPlayer is null so it does not cause exception.
             }
             this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
@@ -403,23 +482,92 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="e"></param>
         private void KeyDownEvent(KeyEventArgs keyEvent)
         {
-            switch (keyEvent.VirtualKey)
+            CoreVirtualKeyStates shift = Window.Current.CoreWindow.GetKeyState(VirtualKey.Shift);
+
+            if (!shift.HasFlag(CoreVirtualKeyStates.Down))
+                switch (keyEvent.VirtualKey)
+                {
+                    case VirtualKey.Space:
+                        ChangePlayingState();
+                        break;
+                    case VirtualKey.Left:
+                        SeekBackward(5000);
+                        break;
+                    case VirtualKey.Right:
+                        SeekForeward(5000);
+                        break;
+                    case VirtualKey.J:
+                        SeekBackward(10000);
+                        break;
+                    case VirtualKey.L:
+                        SeekForeward(10000);
+                        break;
+                }
+
+            if (shift.HasFlag(CoreVirtualKeyStates.Down))
             {
-                case VirtualKey.Space:
-                    ChangePlayingState();
-                    break;
-                case VirtualKey.Left:
-                    SeekBackward(5000);
-                    break;
-                case VirtualKey.Right:
-                    SeekForeward(5000);
-                    break;
-                case VirtualKey.J:
-                    SeekBackward(10000);
-                    break;
-                case VirtualKey.L:
-                    SeekForeward(10000);
-                    break;
+                switch (keyEvent.VirtualKey)
+                {
+                    case VirtualKey.N:
+                        PlayNextVideo();
+                        break;
+                    case VirtualKey.P:
+                        PlayPreviousVideo();
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Play the previous video in the list.
+        /// </summary>
+        private async void PlayPreviousVideo()
+        {
+            if ((MediaListIndex - 1) < 0)
+            {
+                return;
+            }
+
+            MediaWrapper.CachedDriveItem = App.Current.MediaItemList[--MediaListIndex];
+            await PlayMedia();
+        }
+
+        /// <summary>
+        /// Play the next video in the list.
+        /// </summary>
+        private async void PlayNextVideo()
+        {
+            if ((MediaListIndex + 1) >= App.Current.MediaItemList.Count)
+            {
+                return;
+            }
+
+            MediaWrapper.CachedDriveItem = App.Current.MediaItemList[++MediaListIndex];
+            await PlayMedia();
+        }
+
+        /// <summary>
+        /// Checks if there is an upcoming or a previous media file available and
+        /// change the visibility status of the previous / next buttons accordingly.
+        /// </summary>
+        private void CheckPreviousNextMediaInList()
+        {
+            if ((MediaListIndex - 1) < 0)
+            {
+                VisibilityPreviousMediaBtn = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityPreviousMediaBtn = Visibility.Visible;
+            }
+
+            if ((MediaListIndex + 1) >= App.Current.MediaItemList.Count)
+            {
+                VisibilityNextMediaBtn = Visibility.Collapsed;
+            }
+            else
+            {
+                VisibilityNextMediaBtn = Visibility.Visible;
             }
         }
 
@@ -428,10 +576,16 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// passing arguments from the main page to the video player page.
         /// </summary>
         /// <param name="parameter"></param>
-        public void Activate(object videoPlayerArgumentWrapper)
+        public void Activate(object mediaWrapper)
         {
             // Set the field so the playmedia method can use it.
-            this.videoPlayerArgumentWrapper = (VideoPlayerArgumentWrapper)videoPlayerArgumentWrapper;
+            MediaWrapper = (MediaWrapper)mediaWrapper;
+            MediaListIndex = App.Current.MediaItemList.IndexOf(MediaWrapper.CachedDriveItem);
+
+            if (MediaListIndex < 0)
+            {
+                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
+            }
         }
 
         /// <summary>

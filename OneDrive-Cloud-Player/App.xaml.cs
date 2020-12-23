@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
 using Microsoft.Identity.Client;
+using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
@@ -25,6 +26,20 @@ namespace OneDrive_Cloud_Player
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
+
+        private List<CachedDriveItem> mediaItemList;
+        /// <summary>
+        /// This list holds a copy of the current item list with only playable media files.
+        /// The VideoPlayerPageViewmodel and the MainPageViewmodel communicate the current media list this way.
+        /// </summary>
+        public List<CachedDriveItem> MediaItemList
+        {
+            get { return mediaItemList; }
+            set {
+                // Filter the list for playable media.
+                mediaItemList = App.Current.CacheHelper.FilterPlayableMedia(value);
+            }
+        }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code

@@ -16,7 +16,7 @@ namespace OneDrive_Cloud_Player.Views
     public partial class VideoPlayerPage
     {
         private readonly DispatcherTimer pointerMovementDispatcherTimer;
-        private bool isPointerOverMediaControlGrid;
+        private bool isPointerOverMediaControl;
         private bool isPointerOverVideoPlayerPage = true;
 
         public VideoPlayerPage()
@@ -57,7 +57,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControlGrid = true;
+            isPointerOverMediaControl = true;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControlGrid = false;
+            isPointerOverMediaControl = true;
         }
 
         /// <summary>
@@ -89,14 +89,54 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
+        /// Gets called when a pointer enters the previous media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PreviousMediaButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = true;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer exits the previous media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PreviousMediaButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = false;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer enters the next media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NextMediaButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = true;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer exits the next media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NextMediaButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = false;
+        }
+
+        /// <summary>
         /// Gets called when a pointer moves across the mediaplayer.
         /// </summary>
         private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
-            if (MediaControlGrid.Visibility == Visibility.Collapsed)
+            if (OnScreenControls.Visibility == Visibility.Collapsed)
             {
-                MediaControlGrid.Visibility = Visibility.Visible;
+                OnScreenControls.Visibility = Visibility.Visible;
             }
             pointerMovementDispatcherTimer.Start();
         }
@@ -109,9 +149,9 @@ namespace OneDrive_Cloud_Player.Views
         /// <param name="e"></param>
         private void PointerMovementDispatcherTimer_Tick(object sender, object e)
         {
-            if (!isPointerOverMediaControlGrid)
+            if (!isPointerOverMediaControl)
             {
-                MediaControlGrid.Visibility = Visibility.Collapsed;
+                OnScreenControls.Visibility = Visibility.Collapsed;
 
                 // Only hide the cursor when it is over the videoplayer page.
                 if (isPointerOverVideoPlayerPage)
@@ -158,7 +198,6 @@ namespace OneDrive_Cloud_Player.Views
             if (view.TryEnterFullScreenMode())
             {
                 ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
-                // The SizeChanged event will be raised when the entry to full-screen mode is complete.
             }
         }
 

@@ -132,7 +132,7 @@
     <Compile Include="Models\GraphData\CachedDriveItem.cs" />
     <Compile Include="Models\GraphData\OneDriveCache.cs" />
     <Compile Include="Models\Interfaces\INavigable.cs" />
-    <Compile Include="Models\VideoPlayerArgumentWrapper.cs" />
+    <Compile Include="Models\MediaWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Converters\MainPageExplorerConverter.cs" />
     <Compile Include="Services\Converters\MediaTimeConverter.cs" />

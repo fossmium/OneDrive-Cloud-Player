@@ -440,34 +440,43 @@ namespace OneDrive_Cloud_Player.Services
             }
         }
 
+        /// <summary>
+        /// Convert a GraphItem retreived from the MS Graph API to a CachedDriveItem. This means filtering out
+        /// items which are not folder or file with the correct mimetype.
+        /// </summary>
+        /// <param name="GraphItem">The MS Graph item to convert</param>
+        /// <returns>A CachedDriveItem in case the item is a correct file or a folder, null otherwise.</returns>
         public CachedDriveItem ConvertGraphItem(DriveItem GraphItem)
         {
-            // Check which items to convert: either folders, or files with the correct mimetype (either contains audio or video).
-            if (GraphItem.Folder != null || (GraphItem.File != null && (GraphItem.File.MimeType.Contains("video") || GraphItem.File.MimeType.Contains("audio"))))
+            // Check if the item to convert is either a folder or file.
+            if (GraphItem.Folder is null && GraphItem.File is null)
             {
-                CachedDriveItem ConvertedItem = new CachedDriveItem
-                {
-                    ItemId = GraphItem.Id,
-                    IsFolder = GraphItem.Folder != null,
-                    Name = GraphItem.Name,
-                    Size = GraphItem.Size ?? 0
-                };
-                if (ConvertedItem.IsFolder)
-                {
-                    ConvertedItem.ChildCount = GraphItem.Folder.ChildCount;
-                }
-                else
-                {
-                    // GraphItem.File won't be null since we checked that beforehand
-                    ConvertedItem.MimeType = GraphItem.File.MimeType;
-                }
-                return ConvertedItem;
+                return null;
+            }
+
+            // Check that files have the correct mimetype (either contains audio or video).
+            if (GraphItem.File != null && !(GraphItem.File.MimeType.Contains("video") || GraphItem.File.MimeType.Contains("audio")))
+            {
+                return null;
+            }
+
+            CachedDriveItem ConvertedItem = new CachedDriveItem
+            {
+                ItemId = GraphItem.Id,
+                IsFolder = GraphItem.Folder != null,
+                Name = GraphItem.Name,
+                Size = GraphItem.Size ?? 0
+            };
+            if (ConvertedItem.IsFolder)
+            {
+                ConvertedItem.ChildCount = GraphItem.Folder.ChildCount;
             }
             else
             {
-                // Don't return items which are not folders or cannot be played by libVLC.
-                return null;
+                // GraphItem.File won't be null since we checked that beforehand
+                ConvertedItem.MimeType = GraphItem.File.MimeType;
             }
+            return ConvertedItem;
         }
 
         public List<CachedDriveItem> GetDriveOrItemsWithParentId(CachedDrive SelectedDriveFolder, string ParentId)
@@ -544,6 +553,31 @@ namespace OneDrive_Cloud_Player.Services
                     return null;
                 }
             }
+        }
+
+        /// <summary>
+        /// Filter a list of drive items for playable media.
+        /// </summary>
+        /// <param name="unfilteredList">The list to filter</param>
+        /// <returns>A list of CachedDriveItems with only playable files, an empty list in case
+        /// the input contains unplayable files or null in case the input is null.</returns>
+        public List<CachedDriveItem> FilterPlayableMedia(List<CachedDriveItem> unfilteredList)
+        {
+            if (unfilteredList is null)
+            {
+                return null;
+            }
+
+            List<CachedDriveItem> filteredList = new List<CachedDriveItem>();
+            foreach(CachedDriveItem currentItem in unfilteredList)
+            {
+                // Item is playable if not a folder but file
+                if (!currentItem.IsFolder)
+                {
+                    filteredList.Add(currentItem);
+                }
+            }
+            return filteredList;
         }
 
     }
