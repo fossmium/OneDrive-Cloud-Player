@@ -46,7 +46,7 @@
 ![afbeelding](https://user-images.githubusercontent.com/43609220/89719689-45271880-d9cb-11ea-85b9-cb815a7d8b0a.png)
 
 #### Explorer
-![afbeelding](https://user-images.githubusercontent.com/43609220/89719745-deeec580-d9cb-11ea-9b1a-b60ab61b2914.png)
+![Screenshot 2020-12-24 230742](https://user-images.githubusercontent.com/43609220/103107387-03c39c80-463e-11eb-840d-858022774890.png)
 
 #### Videoplayer
 ![Screenshot 2020-11-29 142952](https://user-images.githubusercontent.com/43609220/100543339-d9094280-324f-11eb-9962-eb46b5d2664e.jpeg)
