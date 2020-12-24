@@ -330,7 +330,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             CheckPreviousNextMediaInList();
 
             // If the starttime is not 0, a reload is performed, so the filename is
-            // already set and should stay hidden. The fileNameOverlayTimer shoud
+            // already set and should stay hidden. The fileNameOverlayTimer should
             // also not be reset.
             if (startTime == 0)
             {
