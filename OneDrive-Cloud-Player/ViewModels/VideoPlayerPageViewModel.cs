@@ -28,9 +28,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         private readonly INavigationService _navigationService;
         private readonly GraphHelper graphHelper = GraphHelper.Instance();
         /// <summary>
-        /// Fires every two minutes to indicate the OneDrive download URL has expired.
+        /// Fires every time the OneDrive download URL has expired (two minutes).
         /// </summary>
-        private readonly Timer reloadIntervalTimer = new Timer(2 * 60 * 1000);
+        private readonly Timer reloadIntervalTimer = new Timer();
         /// <summary>
         /// Single-shot timer to hide the filename shortly after playing a video.
         /// </summary>
@@ -236,18 +236,16 @@ namespace OneDrive_Cloud_Player.ViewModels
             VideoLength = 0;
             PlayPauseButtonFontIcon = "\xE768";
 
-            // Create LibVLC instance and subscribe to events.
+            // Create LibVLC instance.
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
             MediaPlayer = new MediaPlayer(LibVLC);
 
+            // Subscribe to events only once.
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Paused += MediaPlayer_Paused;
             MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
-
-            // Subscribe to the timer events and start the reloadInterval timer.
-            fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
             reloadIntervalTimer.Elapsed += ReloadIntervalTimer_Elapsed;
-            reloadIntervalTimer.Start();
+            fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
 
             // Finally, play the media.
             await PlayMedia();
@@ -331,14 +329,21 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             CheckPreviousNextMediaInList();
 
-            FileName = MediaWrapper.CachedDriveItem.Name;
+            // If the starttime is not 0, a reload is performed, so the filename is
+            // already set and should stay hidden. The fileNameOverlayTimer should
+            // also not be reset.
+            if (startTime == 0)
+            {
+                FileName = MediaWrapper.CachedDriveItem.Name;
+                FileNameOverlayVisiblity = Visibility.Visible;
 
-            FileNameOverlayVisiblity = Visibility.Visible;
+                fileNameOverlayTimer.Interval = 5 * 1000;
+                fileNameOverlayTimer.Start();
+            }
 
-            // Reset the interval to 5 seconds again in case the next video is
-            // played within 5 seconds.
-            fileNameOverlayTimer.Interval = 5 * 1000;
-            fileNameOverlayTimer.Start();
+            // The reloadIntervalTimer should be reset regardless of a reload.
+            reloadIntervalTimer.Interval = 2 * 60 * 1000;
+            reloadIntervalTimer.Start();
 
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
             // Play the OneDrive file.
@@ -451,14 +456,12 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         //TODO: Implement a Dialog system that shows a dialog when there is an error.
         /// <summary>
-        /// Tries to restart the media that is currently playing.
+        /// Restart the media from the currently timestamp.
         /// </summary>
         private async void ReloadCurrentMedia()
         {
             await PlayMedia(TimeLineValue);
-            reloadIntervalTimer.Stop(); //In case a user reloads with the reload button. Stop the timer so we dont get multiple running.
             InvalidOneDriveSession = false;
-            reloadIntervalTimer.Start();
         }
 
         /// <summary>
