@@ -2,9 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Views;
-using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
