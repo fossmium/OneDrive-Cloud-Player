@@ -247,9 +247,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             reloadIntervalTimer.Elapsed += ReloadIntervalTimer_Elapsed;
             fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
 
-            // Start the filenameoverlay timer.
-            fileNameOverlayTimer.Start();
-
             // Finally, play the media.
             await PlayMedia();
         }
@@ -332,18 +329,19 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             CheckPreviousNextMediaInList();
 
-            // If the starttime is not 0, a reload is performed, so the filename
-            // is already set and should stay hidden.
+            // If the starttime is not 0, a reload is performed, so the filename is
+            // already set and should stay hidden. The fileNameOverlayTimer shoud
+            // also not be reset.
             if (startTime == 0)
             {
                 FileName = MediaWrapper.CachedDriveItem.Name;
                 FileNameOverlayVisiblity = Visibility.Visible;
+
+                fileNameOverlayTimer.Interval = 5 * 1000;
+                fileNameOverlayTimer.Start();
             }
 
-            // Reset the timer intervals. Only restart the reloadIntervalTimer,
-            // since the filename shouldn't be displayed in case of a reload of
-            // the current video.
-            fileNameOverlayTimer.Interval = 5 * 1000;
+            // The reloadIntervalTimer should be reset regardless of a reload.
             reloadIntervalTimer.Interval = 2 * 60 * 1000;
             reloadIntervalTimer.Start();
 
@@ -546,7 +544,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             MediaWrapper.CachedDriveItem = App.Current.MediaItemList[--MediaListIndex];
             await PlayMedia();
-            fileNameOverlayTimer.Start();
         }
 
         /// <summary>
@@ -561,7 +558,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             MediaWrapper.CachedDriveItem = App.Current.MediaItemList[++MediaListIndex];
             await PlayMedia();
-            fileNameOverlayTimer.Start();
         }
 
         /// <summary>
