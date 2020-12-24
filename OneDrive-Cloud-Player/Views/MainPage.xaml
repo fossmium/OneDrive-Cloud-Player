@@ -49,12 +49,12 @@
                     <ColumnDefinition Width="50*"/>
                 </Grid.ColumnDefinitions>
 
-                <!--Profile pictures should be here-->
-                <Ellipse Width="80" Height="80" Margin="0, 0, 20, 0">
-                    <Ellipse.Fill>
-                        <ImageBrush ImageSource="{Binding ProfileImage}"/>
-                    </Ellipse.Fill>
-                </Ellipse>
+                <!--Profile pictures should be here-->               
+                    <Ellipse Width="80" Height="80" Margin="0, 0, 20, 0">
+                        <Ellipse.Fill>
+                            <ImageBrush ImageSource="{Binding ProfileImage}"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
 
                 <TextBlock
                     Grid.Column="1"
@@ -66,6 +66,7 @@
                     Opacity="0.5"/>
             </Grid>
 
+
             <!-- Logout button -->
             <Grid Grid.Row="1" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
@@ -75,6 +76,10 @@
                 <Grid RequestedTheme="Dark"
                       BorderBrush="#1AFFFFFF"
                       BorderThickness="0,0,0,2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="50*"/>
+                        <ColumnDefinition Width="50*"/>
+                    </Grid.ColumnDefinitions>
                     <Button Style="{StaticResource ButtonRevealStyle}" 
                             Command="{Binding LogoutCommand}"
                             Grid.Column="0"
@@ -99,11 +104,33 @@
                             Foreground="White"/>
                         </Grid>
                     </Button>
+                    <Button Style="{StaticResource ButtonRevealStyle}"
+                            Command="{Binding ToSettingsPageCommand}"
+                            Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            FontSize="16"
+                            FontFamily="Arial"
+                            Foreground="White"
+                            BorderThickness="0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE713;"/>
+                            <TextBlock
+                            Grid.Column="1"
+                            Text="Settings"
+                            FontSize="16"
+                            FontFamily="Arial"
+                            Foreground="White"/>
+                        </Grid>
+                    </Button>
                 </Grid>
             </Grid>
             
             <TextBox
-                Text="Search..."
+                Text="[W.I.P] Search..."
                 Grid.Row="2"
                 FontSize="16"
                 FontFamily="Arial"

@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -24,7 +23,6 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// </summary>
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
-        private readonly ApplicationDataContainer localMediaVolumeLevelSetting;
         private readonly INavigationService _navigationService;
         private readonly GraphHelper graphHelper = GraphHelper.Instance();
         /// <summary>
@@ -210,15 +208,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             SeekForewardCommand = new RelayCommand<double>(SeekForeward);
             PlayPreviousVideoCommand = new RelayCommand(PlayPreviousVideo, CanExecuteCommand);
             PlayNextVideoCommand = new RelayCommand(PlayNextVideo, CanExecuteCommand);
-
-            this.localMediaVolumeLevelSetting = ApplicationData.Current.LocalSettings;
-
-            // Sets the MediaVolume setting to 100 when its not already set
-            // before in the setting. (This is part of an audio workaround).
-            if (localMediaVolumeLevelSetting.Values["MediaVolume"] is null)
-            {
-                localMediaVolumeLevelSetting.Values["MediaVolume"] = 100;
-            }
         }
 
         private bool CanExecuteCommand()
@@ -256,14 +245,20 @@ namespace OneDrive_Cloud_Player.ViewModels
             Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
             await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-                MediaVolumeLevel = (int)this.localMediaVolumeLevelSetting.Values["MediaVolume"];
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + this.localMediaVolumeLevelSetting.Values["MediaVolume"]);
+                MediaVolumeLevel = (int)App.Current.UserSettings.Values["MediaVolume"];
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + App.Current.UserSettings.Values["MediaVolume"]);
                 Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in our property: " + MediaVolumeLevel);
                 Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
                 //Sets the max value of the seekbar.
                 VideoLength = MediaPlayer.Length;
 
                 PlayPauseButtonFontIcon = "\xE769";
+                
+                //Enable or disable default subtitle based on user setting.
+                if (!(bool) App.Current.UserSettings.Values["ShowDefaultSubtitles"])
+                {
+                    MediaPlayer.SetSpu(-1);
+                }
             });
         }
 
@@ -313,7 +308,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <returns></returns>
         private async Task<string> RetrieveDownloadURLMedia(MediaWrapper mediaWrapper)
         {
-            var driveItem = await graphHelper.GetItemInformationAsync(mediaWrapper.DriveId, mediaWrapper.CachedDriveItem.ItemId);
+            var driveItem = await GraphHelper.Instance().GetItemInformationAsync(
+                mediaWrapper.DriveId,
+                mediaWrapper.CachedDriveItem.ItemId);
 
             //Retrieve a temporary download URL from the drive item.
             return (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
@@ -368,7 +365,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Debug.WriteLine("Error: Could not set the volume.");
                 return; // Return when the MediaPlayer is null so it does not cause exception.
             }
-            this.localMediaVolumeLevelSetting.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
+            App.Current.UserSettings.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
             MediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonFontIcon(volumeLevel);
         }

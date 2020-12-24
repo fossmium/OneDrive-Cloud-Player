@@ -2,9 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
-using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Views;
-using Windows.UI.Xaml;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -18,6 +16,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public const string MainPageKey = "MainPage";
         public const string VideoPlayerPageKey = "VideoPlayerPage";
         public const string LoginPageKey = "LoginPage";
+        public const string SettingsPageKey = "SettingsPage";
 
         /// <summary>
         /// Initializes a new instance of the ViewModelLocator class.
@@ -31,6 +30,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             nav.Configure(MainPageKey, typeof(MainPage));
             nav.Configure(VideoPlayerPageKey, typeof(VideoPlayerPage));
             nav.Configure(LoginPageKey, typeof(LoginPage));
+            nav.Configure(SettingsPageKey, typeof(SettingsPage));
 
             if (ViewModelBase.IsInDesignModeStatic)
             {
@@ -47,6 +47,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             SimpleIoc.Default.Register<VideoPlayerPageViewModel>();
             SimpleIoc.Default.Register<LoginPageViewModel>();
             SimpleIoc.Default.Register<MainPageViewModel>();
+            SimpleIoc.Default.Register<SettingsPageViewModel>();
 
         }
 
@@ -98,6 +99,19 @@ namespace OneDrive_Cloud_Player.ViewModels
             get
             {
                 return ServiceLocator.Current.GetInstance<MainPageViewModel>();
+            }
+        }
+        // <summary>
+        // Gets the SettingsPage view model.
+        // </summary>
+        // <value>
+        // The SettingsPage view model.
+        // </value>
+        public SettingsPageViewModel SettingsPageInstance
+        {
+            get
+            {
+                return ServiceLocator.Current.GetInstance<SettingsPageViewModel>();
             }
         }
 

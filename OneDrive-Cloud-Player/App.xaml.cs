@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.Storage;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -28,6 +29,18 @@ namespace OneDrive_Cloud_Player
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
+        public ApplicationDataContainer UserSettings { get; private set; }
+
+        /// <summary>
+        /// The current version of the application data structure.
+        /// </summary>
+        /// <remarks>
+        /// If the structure of the application data changes (which is currently determined by the
+        /// requiredSettings dictionary in <see cref="App.UpdateAppDataFormat(SetVersionRequest)"/>),
+        /// this number should be incremented at the very same time (meaning compile-time). If not,
+        /// the application data could enter an inconsistent state.
+        /// </remarks>
+        private const int appDataVersion = 1;
 
         private List<CachedDriveItem> mediaItemList;
         /// <summary>
@@ -51,9 +64,58 @@ namespace OneDrive_Cloud_Player
         {
             Core.Initialize();
             this.InitializeComponent();
+            this.LoadUserSettings();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
             this.CacheHelper = new CacheHelper();
+        }
+
+        /// <summary>
+        /// Load the user settings from disk and check if they contain all the required entries.
+        /// </summary>
+        private void LoadUserSettings()
+        {
+            // Load the saved settings from disk and check the version.
+            UserSettings = ApplicationData.Current.LocalSettings;
+            if (ApplicationData.Current.Version < appDataVersion)
+            {
+                ApplicationData.Current.SetVersionAsync(appDataVersion, UpdateAppDataFormat).AsTask().Wait();
+            }
+        }
+
+        /// <summary>
+        /// Update the application data format. Afterwards, the version will be incremented.
+        /// </summary>
+        /// <param name="request">Different upgrade paths are enabled by checking the current
+        /// and desired properties of this parameter.</param>
+        private void UpdateAppDataFormat(SetVersionRequest request)
+        {
+            // Create a dictionary with the required settings and their default values.
+            Dictionary<string, object> requiredSettings = new Dictionary<string, object>
+            {
+                { "MediaVolume", 100 },
+                { "ShowDefaultSubtitles", true }
+            };
+
+            // Verify disk settings against default settings.
+            foreach (string key in requiredSettings.Keys)
+            {
+                if (!UserSettings.Values.ContainsKey(key))
+                {
+                    // Required setting not found on disk, so add it.
+                    UserSettings.Values[key] = requiredSettings.GetValueOrDefault(key);
+                }
+            }
+
+            // Check disk settings for unneeded entries.
+            foreach (string diskEntry in UserSettings.Values.Keys)
+            {
+                if (!requiredSettings.ContainsKey(diskEntry))
+                {
+                    // Disk settings contain more info than needed.
+                    UserSettings.Values.Remove(diskEntry);
+                }
+            }
         }
 
         /// <summary>
