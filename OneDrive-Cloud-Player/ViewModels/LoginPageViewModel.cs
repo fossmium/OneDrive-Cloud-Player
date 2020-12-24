@@ -3,9 +3,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Services.Helpers;
-using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows.Input;
 
 namespace OneDrive_Cloud_Player.ViewModels
@@ -46,7 +43,6 @@ namespace OneDrive_Cloud_Player.ViewModels
                 IsLoginButtonEnabled = true;
                 return;
             }
-            Debug.WriteLine(LocalResult.Account.Username);
 
             // If the Cache.Count is not 0 upon login, this means that the user has logged out and is logging back in.
             // This is used to decide whether or not to read cache from disk. It prevents reading from old disk cache, since the cache is only written to disk upon application suspension.

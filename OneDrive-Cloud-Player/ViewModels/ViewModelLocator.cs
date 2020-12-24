@@ -66,7 +66,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         // Gets the VideoPlayer view model.
         // </summary>
         // <value>
-        // The StartPage view model.
+        // The VideoPlayerPage view model.
         // </value>
         public VideoPlayerPageViewModel VideoPlayerPageInstance
         {
@@ -80,7 +80,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         // Gets the LoginPage view model.
         // </summary>
         // <value>
-        // The StartPage view model.
+        // The LoginPage view model.
         // </value>
         public LoginPageViewModel LoginPageInstance
         {
@@ -94,7 +94,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         // Gets the MainPage view model.
         // </summary>
         // <value>
-        // The StartPage view model.
+        // The MainPage view model.
         // </value>
         public MainPageViewModel MainPageInstance
         {

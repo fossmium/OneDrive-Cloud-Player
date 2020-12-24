@@ -132,7 +132,7 @@
     <Compile Include="Models\GraphData\CachedDriveItem.cs" />
     <Compile Include="Models\GraphData\OneDriveCache.cs" />
     <Compile Include="Models\Interfaces\INavigable.cs" />
-    <Compile Include="Models\VideoPlayerArgumentWrapper.cs" />
+    <Compile Include="Models\MediaWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Converters\MainPageExplorerConverter.cs" />
     <Compile Include="Services\Converters\MediaTimeConverter.cs" />
@@ -178,6 +178,7 @@
     <Content Include="Assets\Icons\folder.png" />
     <Content Include="Assets\Icons\logout.png" />
     <Content Include="Assets\Icons\MultiMediaIcon.png" />
+    <Content Include="Assets\Icons\reloadDrives.png" />
     <Content Include="Assets\Icons\settings.png" />
     <Content Include="Assets\Icons\up-left.png" />
     <Content Include="Assets\LargeTile.scale-100.png" />

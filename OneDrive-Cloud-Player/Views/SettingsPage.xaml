@@ -25,7 +25,7 @@
                     <SolidColorBrush Color="#101519" Opacity="0.5"/>
                 </Grid.Background>
                 <Button Grid.Column="0" Style="{StaticResource NavigationBackButtonNormalStyle}"
-                        Command="{Binding NavigateToMainPageCommand}"/>
+                        Command="{Binding ToMainPageCommand}"/>
             </Grid>
             
             <Grid Grid.Row="1" Padding="20,0,20,0">

@@ -5,15 +5,15 @@ namespace OneDrive_Cloud_Player.Models
     /// <summary>
     /// Contains a <see cref="GraphData.CachedDriveItem"/> and a string that is the drive id.
     /// </summary>
-    public class VideoPlayerArgumentWrapper
+    public class MediaWrapper
     {
-        public readonly CachedDriveItem CachedDriveItem;
+        public CachedDriveItem CachedDriveItem { get; set; }
         public readonly string DriveId;
 
-        public VideoPlayerArgumentWrapper(CachedDriveItem CachedDriveItem, string DriveId)
+        public MediaWrapper(CachedDriveItem cachedDriveItem, string driveId)
         {
-            this.CachedDriveItem = CachedDriveItem;
-            this.DriveId = DriveId;
+            DriveId = driveId;
+            CachedDriveItem = cachedDriveItem;
         }
     }
 }

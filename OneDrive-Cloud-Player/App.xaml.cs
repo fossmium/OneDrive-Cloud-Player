@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Shared;
 using Microsoft.Identity.Client;
+using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
@@ -9,6 +10,8 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Storage;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -22,7 +25,7 @@ namespace OneDrive_Cloud_Player
     {
         //Other classes can now call this class with the use of 'App.Current'. 
         public static new App Current => (App)Application.Current;
-
+        public CoreDispatcher UIDispatcher { get; private set; }
         public IPublicClientApplication PublicClientApplication { get; private set; }
         public string[] Scopes { get; private set; }
         public CacheHelper CacheHelper { get; private set; }
@@ -38,6 +41,20 @@ namespace OneDrive_Cloud_Player
         /// the application data could enter an inconsistent state.
         /// </remarks>
         private const int appDataVersion = 1;
+
+        private List<CachedDriveItem> mediaItemList;
+        /// <summary>
+        /// This list holds a copy of the current item list with only playable media files.
+        /// The VideoPlayerPageViewmodel and the MainPageViewmodel communicate the current media list this way.
+        /// </summary>
+        public List<CachedDriveItem> MediaItemList
+        {
+            get { return mediaItemList; }
+            set {
+                // Filter the list for playable media.
+                mediaItemList = App.Current.CacheHelper.FilterPlayableMedia(value);
+            }
+        }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -158,6 +175,8 @@ namespace OneDrive_Cloud_Player
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            UIDispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
         }
 
         /// <summary>

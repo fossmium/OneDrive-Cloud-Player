@@ -1,6 +1,5 @@
 ﻿using OneDrive_Cloud_Player.ViewModels;
 using System;
-using System.Diagnostics;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -16,7 +15,7 @@ namespace OneDrive_Cloud_Player.Views
     public partial class VideoPlayerPage
     {
         private readonly DispatcherTimer pointerMovementDispatcherTimer;
-        private bool isPointerOverMediaControlGrid;
+        private bool isPointerOverMediaControl;
         private bool isPointerOverVideoPlayerPage = true;
 
         public VideoPlayerPage()
@@ -57,8 +56,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControlGrid = true;
-            Debug.WriteLine(" + Pointer entered control grid.");
+            isPointerOverMediaControl = true;
         }
 
         /// <summary>
@@ -66,8 +64,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControlGrid = false;
-            Debug.WriteLine(" + Pointer exited control grid.");
+            isPointerOverMediaControl = true;
         }
 
         /// <summary>
@@ -91,14 +88,54 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
+        /// Gets called when a pointer enters the previous media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PreviousMediaButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = true;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer exits the previous media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void PreviousMediaButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = false;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer enters the next media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NextMediaButton_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = true;
+        }
+
+        /// <summary>
+        /// Gets called when a pointer exits the next media button.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void NextMediaButton_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            isPointerOverMediaControl = false;
+        }
+
+        /// <summary>
         /// Gets called when a pointer moves across the mediaplayer.
         /// </summary>
         private void Grid_PointerMoved(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
-            if (MediaControlGrid.Visibility == Visibility.Collapsed)
+            if (OnScreenControls.Visibility == Visibility.Collapsed)
             {
-                MediaControlGrid.Visibility = Visibility.Visible;
+                OnScreenControls.Visibility = Visibility.Visible;
             }
             pointerMovementDispatcherTimer.Start();
         }
@@ -111,9 +148,9 @@ namespace OneDrive_Cloud_Player.Views
         /// <param name="e"></param>
         private void PointerMovementDispatcherTimer_Tick(object sender, object e)
         {
-            if (!isPointerOverMediaControlGrid)
+            if (!isPointerOverMediaControl)
             {
-                MediaControlGrid.Visibility = Visibility.Collapsed;
+                OnScreenControls.Visibility = Visibility.Collapsed;
 
                 // Only hide the cursor when it is over the videoplayer page.
                 if (isPointerOverVideoPlayerPage)
@@ -149,7 +186,6 @@ namespace OneDrive_Cloud_Player.Views
             {
                 EnterFullscreenMode();
             }
-            Debug.WriteLine(" + Switched screen mode.");
         }
 
         /// <summary>
@@ -161,7 +197,6 @@ namespace OneDrive_Cloud_Player.Views
             if (view.TryEnterFullScreenMode())
             {
                 ApplicationView.GetForCurrentView().FullScreenSystemOverlayMode = FullScreenSystemOverlayMode.Minimal;
-                // The SizeChanged event will be raised when the entry to full-screen mode is complete.
             }
         }
 
@@ -175,12 +210,15 @@ namespace OneDrive_Cloud_Player.Views
             {
                 view.ExitFullScreenMode();
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
-                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+                // The SizeChanged event will be raised when the exitfrom full-screen
+                // mode is complete.
             }
         }
 
         /// <summary>
-        /// Gets called when a user presses down a key on the videoplayer page. When the key is not listed in the switch case, it calls the view model to handle the key event.
+        /// Gets called when a user presses down a key on the videoplayer page.
+        /// When the key is not listed in the switch case, it calls the viewmodel
+        /// to handle the key event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="keyEvent"></param>
@@ -207,7 +245,8 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Executes after the user navigates to this page. This is used to add an event handler for the keydown event on this page.
+        /// Executes after the user navigates to this page. This is used to add an
+        /// event handler for the keydown event on this page.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -218,14 +257,16 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Executes before the user navigates away from this page. This is used to remove an event handler for the keydown event on this page,
-        /// and exit out of fullscreen if the app is still in fullscreen mode.
+        /// Executes before the user navigates away from this page. This is used to
+        /// remove an event handler for the keydown event on this page, and exit out
+        /// of fullscreen if the app is still in fullscreen mode.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             ExitFullscreenMode();
 
+            pointerMovementDispatcherTimer.Tick -= PointerMovementDispatcherTimer_Tick;
             Window.Current.CoreWindow.KeyDown -= VideoPlayerPage_KeyDown;
 
             base.OnNavigatingFrom(e);
