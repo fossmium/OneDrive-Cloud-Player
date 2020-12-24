@@ -24,7 +24,6 @@ namespace OneDrive_Cloud_Player.ViewModels
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
         private readonly INavigationService _navigationService;
-        private readonly GraphHelper graphHelper = GraphHelper.Instance();
         /// <summary>
         /// Fires every time the OneDrive download URL has expired (two minutes).
         /// </summary>

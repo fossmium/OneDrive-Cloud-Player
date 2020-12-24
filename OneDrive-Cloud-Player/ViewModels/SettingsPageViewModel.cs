@@ -71,12 +71,15 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             ContentDialog whatsNewDialog = new ContentDialog
             {
-                Title = $"Whats new in {PackageDisplayName}",
+                Title = $"What's new in {PackageDisplayName}",
                 PrimaryButtonText = "Ok",
                 DefaultButton = ContentDialogButton.Primary,
                 Background = new SolidColorBrush(Color.FromArgb(255, 30, 41, 49)),
             };
-            whatsNewDialog.Content += "* Added a settings page";
+            whatsNewDialog.Content += "* Added a settings page\n";
+            whatsNewDialog.Content += "* You can now go directly to the next or previous video from within the \n   videoplayer\n";
+            whatsNewDialog.Content += "* Added more hotkeys to the videoplayer\n";
+            whatsNewDialog.Content += "* The application is now licensed under GPLv2 only";
 
             await whatsNewDialog.ShowAsync();
         }
