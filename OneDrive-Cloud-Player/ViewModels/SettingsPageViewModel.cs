@@ -1,10 +1,8 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
-using OneDrive_Cloud_Player.Services.Utilities;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -49,8 +47,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             ShowDefaultSubtitles = (bool)settings.Values["ShowDefaultSubtitles"];
 
             Package package = Package.Current;
-            PackageId packageId = package.Id;
-            PackageVersion version = packageId.Version;
+            PackageVersion version = package.Id.Version;
 
             AppVersion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             PackageDisplayName = package.DisplayName;

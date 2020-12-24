@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
-using Windows.Storage;
 using Windows.System;
 using Windows.UI.Core;
 
@@ -24,7 +23,6 @@ namespace OneDrive_Cloud_Player.ViewModels
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
         private readonly INavigationService _navigationService;
-        private readonly GraphHelper graphHelper;
         private VideoPlayerArgumentWrapper videoPlayerArgumentWrapper = null;
         private bool InvalidOneDriveSession = false;
         private Timer reloadIntervalTimer;
@@ -134,7 +132,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         public VideoPlayerPageViewModel(INavigationService navigationService)
         {
             _navigationService = navigationService;
-            graphHelper = GraphHelper.Instance();
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
@@ -239,7 +236,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <returns></returns>
         private async Task<string> RetrieveDownloadURLMedia(VideoPlayerArgumentWrapper videoPlayerArgumentWrapper)
         {
-            var driveItem = await graphHelper.GetItemInformationAsync(videoPlayerArgumentWrapper.DriveId, videoPlayerArgumentWrapper.CachedDriveItem.ItemId);
+            var driveItem = await GraphHelper.Instance().GetItemInformationAsync(
+                videoPlayerArgumentWrapper.DriveId,
+                videoPlayerArgumentWrapper.CachedDriveItem.ItemId);
 
             //Retrieve a temporary download URL from the drive item.
             return (string)driveItem.AdditionalData["@microsoft.graph.downloadUrl"];
