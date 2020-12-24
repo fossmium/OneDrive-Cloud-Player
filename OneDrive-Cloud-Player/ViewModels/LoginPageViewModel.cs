@@ -3,9 +3,6 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Services.Helpers;
-using System;
-using System.Diagnostics;
-using System.Linq;
 using System.Windows.Input;
 
 namespace OneDrive_Cloud_Player.ViewModels
