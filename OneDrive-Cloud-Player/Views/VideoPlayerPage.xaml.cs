@@ -64,7 +64,7 @@ namespace OneDrive_Cloud_Player.Views
         /// </summary>
         private void MediaControlGrid_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            isPointerOverMediaControl = true;
+            isPointerOverMediaControl = false;
         }
 
         /// <summary>
