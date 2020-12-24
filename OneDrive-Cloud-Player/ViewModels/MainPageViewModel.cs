@@ -27,9 +27,9 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand LogoutCommand { get; set; }
         public ICommand ToParentFolderCommand { get; set; }
         public ICommand GetProfileInfoCommand { get; set; }
-        public ICommand NavigateToSettingsPageCommand { get; set; }
+        public ICommand ToSettingsPageCommand { get; set; }
 
-        private readonly GraphHelper graph;
+        private readonly GraphHelper graphHelper = GraphHelper.Instance();
         private readonly INavigationService _navigationService;
 
         // The list of the different drives
@@ -141,16 +141,13 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             _navigationService = navigationService;
 
-            DriveList = null;
-            this.graph = GraphHelper.Instance();
-            //DisplayMessageCommand = new RelayCommand(DisplayMessage, CanExecuteCommand);
             GetDrivesCommand = new RelayCommand(GetDrives, CanExecuteCommand);
             GetChildrenFomItemCommand = new RelayCommand(GetChildrenFomItem, CanExecuteCommand);
             GetChildrenFomDriveCommand = new RelayCommand(GetChildrenFomDrive, CanExecuteCommand);
             ReloadCommand = new RelayCommand(ReloadCache, CanExecuteCommand);
             LogoutCommand = new RelayCommand(Logout, CanExecuteCommand);
             ToParentFolderCommand = new RelayCommand(ToParentFolder, CanExecuteCommand);
-            NavigateToSettingsPageCommand = new RelayCommand(NavigateToSettingsPage, CanExecuteCommand);
+            ToSettingsPageCommand = new RelayCommand(ToSettingsPage, CanExecuteCommand);
 
             // OnLoad runs the login and gets the shared drives
             GetUserInformation();
@@ -164,11 +161,11 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public async void GetUserInformation()
         {
-            CurrentUsername = "Hi, " + (await graph.GetOneDriveUserInformationAsync()).GivenName;
+            CurrentUsername = "Hi, " + (await graphHelper.GetOneDriveUserInformationAsync()).GivenName;
             try
             {
                 var bitmapImage = new BitmapImage();
-                IRandomAccessStream imageRandomAccessStream = (await graph.GetOneDriveOwnerPhotoAsync()).AsRandomAccessStream();
+                IRandomAccessStream imageRandomAccessStream = (await graphHelper.GetOneDriveOwnerPhotoAsync()).AsRandomAccessStream();
                 await bitmapImage.SetSourceAsync(imageRandomAccessStream);
 
                 ProfileImage = bitmapImage;
@@ -337,7 +334,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
-        private void NavigateToSettingsPage()
+        private void ToSettingsPage()
         {
             _navigationService.NavigateTo("SettingsPage");
         }

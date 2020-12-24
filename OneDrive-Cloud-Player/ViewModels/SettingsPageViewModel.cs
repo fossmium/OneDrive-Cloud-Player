@@ -14,12 +14,12 @@ namespace OneDrive_Cloud_Player.ViewModels
 {
     public class SettingsPageViewModel : ViewModelBase, INotifyPropertyChanged
     {
-        public ICommand NavigateToMainPageCommand { get; set; }
+        public ICommand ToMainPageCommand { get; set; }
         public ICommand DisplayWhatsNewDialogCommand { get; set; }
         public string AppVersion { get; }
         public string PackageDisplayName { get; }
 
-        private readonly ApplicationDataContainer settings;
+        private readonly ApplicationDataContainer settings = App.Current.UserSettings;
 
         private bool showDefaultSubtitles;
 
@@ -41,8 +41,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         public SettingsPageViewModel(INavigationService navigationService)
         {
-            settings = App.Current.UserSettings;
-
             //Initialize settings
             ShowDefaultSubtitles = (bool)settings.Values["ShowDefaultSubtitles"];
 
@@ -52,7 +50,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             AppVersion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             PackageDisplayName = package.DisplayName;
             _navigationService = navigationService;
-            NavigateToMainPageCommand = new RelayCommand(NavigateToMainPage, CanExecuteCommand);
+            ToMainPageCommand = new RelayCommand(ToMainPage, CanExecuteCommand);
             DisplayWhatsNewDialogCommand = new RelayCommand(DisplayWhatsNewDialog, CanExecuteCommand);
         }
 
@@ -61,7 +59,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             return true;
         }
 
-        public void NavigateToMainPage()
+        public void ToMainPage()
         {
             _navigationService.NavigateTo("MainPage");
         }

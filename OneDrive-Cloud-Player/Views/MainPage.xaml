@@ -105,7 +105,7 @@
                         </Grid>
                     </Button>
                     <Button Style="{StaticResource ButtonRevealStyle}"
-                            Command="{Binding NavigateToSettingsPageCommand}"
+                            Command="{Binding ToSettingsPageCommand}"
                             Grid.Column="1"
                             HorizontalAlignment="Stretch"
                             FontSize="16"
