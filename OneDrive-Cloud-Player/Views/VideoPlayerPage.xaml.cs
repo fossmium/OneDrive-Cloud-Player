@@ -1,6 +1,5 @@
 ﻿using OneDrive_Cloud_Player.ViewModels;
 using System;
-using System.Diagnostics;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.ViewManagement;
@@ -211,12 +210,15 @@ namespace OneDrive_Cloud_Player.Views
             {
                 view.ExitFullScreenMode();
                 ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.Auto;
-                // The SizeChanged event will be raised when the exit from full-screen mode is complete.
+                // The SizeChanged event will be raised when the exitfrom full-screen
+                // mode is complete.
             }
         }
 
         /// <summary>
-        /// Gets called when a user presses down a key on the videoplayer page. When the key is not listed in the switch case, it calls the view model to handle the key event.
+        /// Gets called when a user presses down a key on the videoplayer page.
+        /// When the key is not listed in the switch case, it calls the viewmodel
+        /// to handle the key event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="keyEvent"></param>
@@ -243,7 +245,8 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Executes after the user navigates to this page. This is used to add an event handler for the keydown event on this page.
+        /// Executes after the user navigates to this page. This is used to add an
+        /// event handler for the keydown event on this page.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -254,14 +257,16 @@ namespace OneDrive_Cloud_Player.Views
         }
 
         /// <summary>
-        /// Executes before the user navigates away from this page. This is used to remove an event handler for the keydown event on this page,
-        /// and exit out of fullscreen if the app is still in fullscreen mode.
+        /// Executes before the user navigates away from this page. This is used to
+        /// remove an event handler for the keydown event on this page, and exit out
+        /// of fullscreen if the app is still in fullscreen mode.
         /// </summary>
         /// <param name="e"></param>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             ExitFullscreenMode();
 
+            pointerMovementDispatcherTimer.Tick -= PointerMovementDispatcherTimer_Tick;
             Window.Current.CoreWindow.KeyDown -= VideoPlayerPage_KeyDown;
 
             base.OnNavigatingFrom(e);
