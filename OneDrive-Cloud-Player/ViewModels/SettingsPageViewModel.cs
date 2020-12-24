@@ -41,7 +41,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         public SettingsPageViewModel(INavigationService navigationService)
         {
-            settings = ApplicationData.Current.LocalSettings;
+            settings = App.Current.UserSettings;
 
             //Initialize settings
             ShowDefaultSubtitles = (bool)settings.Values["ShowDefaultSubtitles"];
