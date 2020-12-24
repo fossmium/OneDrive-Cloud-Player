@@ -30,11 +30,14 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Fires every two minutes to indicate the OneDrive download URL has expired.
         /// </summary>
-        private readonly Timer reloadIntervalTimer = new Timer(120000);
+        private readonly Timer reloadIntervalTimer = new Timer(2 * 60 * 1000);
         /// <summary>
         /// Single-shot timer to hide the filename shortly after playing a video.
         /// </summary>
-        private readonly Timer fileNameOverlayTimer = new Timer(5000);
+        private readonly Timer fileNameOverlayTimer = new Timer()
+        {
+            AutoReset = false
+        };
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
         private MediaPlayer mediaPlayer;
@@ -332,7 +335,9 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             FileNameOverlayVisiblity = Visibility.Visible;
 
-            fileNameOverlayTimer.AutoReset = false;
+            // Reset the interval to 5 seconds again in case the next video is
+            // played within 5 seconds.
+            fileNameOverlayTimer.Interval = 5 * 1000;
             fileNameOverlayTimer.Start();
 
             string mediaDownloadURL = await RetrieveDownloadURLMedia(MediaWrapper);
