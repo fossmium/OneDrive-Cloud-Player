@@ -28,10 +28,6 @@
                         Command="{Binding NavigateToMainPageCommand}"/>
             </Grid>
             
-            <!--<Button Content="GoBack" Grid.Row="1" Click="Button_Click">
-                
-            </Button>-->
-
             <Grid Grid.Row="1" Padding="20,0,20,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
