@@ -6,6 +6,7 @@ using OneDrive_Cloud_Player.Services.Helpers;
 using OneDrive_Cloud_Player.Services.Utilities;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -454,8 +455,9 @@ namespace OneDrive_Cloud_Player.Services
                 return null;
             }
 
+            //TODO: Remove the mkv extension workaround when Graph is fixed or a better solution is implemented.
             // Check that files have the correct mimetype (either contains audio or video).
-            if (GraphItem.File != null && !(GraphItem.File.MimeType.Contains("video") || GraphItem.File.MimeType.Contains("audio")))
+            if (GraphItem.File != null && !(GraphItem.File.MimeType.Contains("video") || GraphItem.File.MimeType.Contains("audio") || Path.GetExtension(GraphItem.Name).Equals(".mkv")))
             {
                 return null;
             }
