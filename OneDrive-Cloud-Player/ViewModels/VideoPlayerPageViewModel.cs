@@ -24,10 +24,12 @@ namespace OneDrive_Cloud_Player.ViewModels
     public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
     {
         private readonly INavigationService _navigationService;
+
         /// <summary>
         /// Fires every time the OneDrive download URL has expired (two minutes).
         /// </summary>
         private readonly Timer reloadIntervalTimer = new Timer();
+
         /// <summary>
         /// Single-shot timer to hide the filename shortly after playing a video.
         /// </summary>
@@ -35,6 +37,17 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             AutoReset = false
         };
+
+        /// <summary>
+        /// Locks the volume-updater.
+        /// </summary>
+        private static object volumeLocker = new object();
+
+        /// <summary>
+        /// Indicates if the volume has been updated already.
+        /// </summary>
+        private static bool volumeUpdated = false;
+
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
         private MediaPlayer mediaPlayer;
@@ -232,6 +245,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Paused += MediaPlayer_Paused;
             MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+            MediaPlayer.VolumeChanged += UpdateInitialVolume;
             reloadIntervalTimer.Elapsed += ReloadIntervalTimer_Elapsed;
             fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
 
@@ -239,15 +253,42 @@ namespace OneDrive_Cloud_Player.ViewModels
             await PlayMedia();
         }
 
+        /// <summary>
+        /// When called, update the volume in the GUI and mediaplayer with the saved volume
+        /// in the user preferences. Ensures that unsubscribing only happens once using a lock.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void UpdateInitialVolume(object sender, MediaPlayerVolumeChangedEventArgs e)
+        {
+            // Ensure this only gets executed once by unsubscribing while holding the lock.
+            lock (volumeLocker)
+            {
+                if (volumeUpdated)
+                {
+                    return;
+                }
+                volumeUpdated = true;
+            }
+
+            // Unsubscribing and setting the volume need to happen on a different thread,
+            // because unsubscribing calls into LibVLC, as does setting the volume.
+            // Updating the GUI should happen on the dispatcher.
+            await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.High, () =>
+            {
+                MediaPlayer.VolumeChanged -= UpdateInitialVolume;
+                MediaVolumeLevel = (int)App.Current.UserSettings.Values["MediaVolume"];
+
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": UpdateInitialVolume: e.Volume: " + e.Volume);
+                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": UpdateInitialVolume: Setting to: " + MediaVolumeLevel);
+            });
+        }
+
         private async void MediaPlayer_Playing(object sender, EventArgs e)
         {
             Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
             await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-                MediaVolumeLevel = (int)App.Current.UserSettings.Values["MediaVolume"];
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in container: " + App.Current.UserSettings.Values["MediaVolume"]);
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Set volume in our property: " + MediaVolumeLevel);
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Actual volume: " + MediaPlayer.Volume);
                 //Sets the max value of the seekbar.
                 VideoLength = MediaPlayer.Length;
 
@@ -350,7 +391,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             if (MediaPlayer is null)
             {
-                Debug.WriteLine("Error: Could not set start time.");
+                Debug.WriteLine("PlayMedia: Error: Could not set start time.");
                 return;
             }
 
@@ -361,7 +402,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             if (MediaPlayer is null)
             {
-                Debug.WriteLine("Error: Could not set the volume.");
+                Debug.WriteLine("Error: SetMediaVolumeLevel: Could not set the volume.");
                 return; // Return when the MediaPlayer is null so it does not cause exception.
             }
             App.Current.UserSettings.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
