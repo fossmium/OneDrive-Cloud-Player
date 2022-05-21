@@ -86,12 +86,12 @@
                         </HyperlinkButton>
                     </Grid>
                     <Grid Grid.Row="3">
-                        <HyperlinkButton NavigateUri="https://github.com/GrandDynamo/OneDrive-Cloud-Player/issues">
+                        <HyperlinkButton NavigateUri="https://github.com/fossmium/OneDrive-Cloud-Player/issues">
                             <TextBlock Text="GitHub Issue Tracker" />
                         </HyperlinkButton>
                     </Grid>
                     <Grid Grid.Row="4">
-                        <HyperlinkButton NavigateUri="https://github.com/GrandDynamo/OneDrive-Cloud-Player/blob/master/LICENSE">
+                        <HyperlinkButton NavigateUri="https://github.com/fossmium/OneDrive-Cloud-Player/blob/master/LICENSE">
                             <TextBlock Text="License" />
                         </HyperlinkButton>
                     </Grid>
