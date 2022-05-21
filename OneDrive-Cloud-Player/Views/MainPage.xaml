@@ -129,7 +129,8 @@
                 </Grid>
             </Grid>
             
-            <TextBox
+            <!--Commented out as it is not functional so it would not make much sense to have in the UI.-->
+            <!--<TextBox
                 Text="[W.I.P] Search..."
                 Grid.Row="2"
                 FontSize="16"
@@ -140,7 +141,7 @@
                 BorderThickness="0"
                 Padding="20, 15, 15, 15"
                 Margin="0">
-            </TextBox>
+            </TextBox>-->
 
             <Grid Grid.Row="3" Margin="0, 0, 0, 0" RequestedTheme="Dark">
                 <Grid.ColumnDefinitions>
