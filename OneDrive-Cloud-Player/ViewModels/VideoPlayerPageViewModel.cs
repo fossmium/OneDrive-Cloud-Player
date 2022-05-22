@@ -39,12 +39,14 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <summary>
         /// Locks the volume-updater.
         /// </summary>
-        private static object volumeLocker = new object();
+        private readonly object volumeLocker = new object();
 
         /// <summary>
-        /// Indicates if the volume has been updated already.
+        /// Used to make sure that the volume is initialized once after starting video
+        /// playback. This needs to happen every time when creating a new LibVLC object,
+        /// so upon every navigation action to this page.
         /// </summary>
-        private static bool volumeUpdated = false;
+        private bool volumeUpdated = false;
 
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
@@ -231,6 +233,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="eventArgs"></param>
         private async void InitializeLibVLC(InitializedEventArgs eventArgs)
         {
+            Debug.Assert(volumeUpdated == false);
+
             // Reset properties.
             VideoLength = 0;
             PlayPauseButtonFontIcon = "\xE768";
@@ -243,6 +247,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             MediaPlayer.Playing += MediaPlayer_Playing;
             MediaPlayer.Paused += MediaPlayer_Paused;
             MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+            // Listen to the first volumechanged event, after which we can initialise the volume level correctly.
             MediaPlayer.VolumeChanged += UpdateInitialVolume;
             reloadIntervalTimer.Elapsed += ReloadIntervalTimer_Elapsed;
             fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
@@ -255,6 +260,13 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// When called, update the volume in the GUI and mediaplayer with the saved volume
         /// in the user preferences. Ensures that unsubscribing only happens once using a lock.
         /// </summary>
+        /// <remarks>
+        /// This function is called once after creating a new LibVLC object, and listens to the first
+        /// volumechanged event. The first time playback is started, LibVLC emits a volumechanged event
+        /// with the initial volume level. When we have received this event, we know we can apply our own
+        /// volume, since every write to the LibVLC volume before this event is thrown away when LibVLC
+        /// initializes itself.
+        /// </remarks>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private async void UpdateInitialVolume(object sender, MediaPlayerVolumeChangedEventArgs e)
@@ -651,6 +663,10 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public void Dispose()
         {
+            // TODO: Reproduce MediaPlayer == null
+            Debug.Assert(MediaPlayer != null);
+            Debug.Assert(LibVLC != null);
+
             // Unsubscribe from event handlers.
             MediaPlayer.Playing -= MediaPlayer_Playing;
             MediaPlayer.Paused -= MediaPlayer_Paused;
