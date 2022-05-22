@@ -257,7 +257,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibVLCSharp">
-      <Version>3.6.0</Version>
+      <Version>3.6.6</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Graph">
       <Version>3.19.0</Version>
