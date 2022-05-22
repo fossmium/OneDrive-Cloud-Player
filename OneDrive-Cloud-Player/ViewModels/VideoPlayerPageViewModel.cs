@@ -1,10 +1,10 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
-using LibVLCSharp.Platforms.UWP;
+﻿using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using OneDrive_Cloud_Player.Models;
 using OneDrive_Cloud_Player.Models.Interfaces;
+using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Services.Helpers;
 using System;
 using System.ComponentModel;
@@ -21,10 +21,8 @@ namespace OneDrive_Cloud_Player.ViewModels
     /// <summary>
     /// Main view model
     /// </summary>
-    public class VideoPlayerPageViewModel : ViewModelBase, INotifyPropertyChanged, IDisposable, INavigable
+    public class VideoPlayerPageViewModel : ObservableRecipient, IDisposable, INavigable, INotifyPropertyChanged
     {
-        private readonly INavigationService _navigationService;
-
         /// <summary>
         /// Fires every time the OneDrive download URL has expired (two minutes).
         /// </summary>
@@ -80,7 +78,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 timeLineValue = value;
-                RaisePropertyChanged("TimeLineValue");
+                OnPropertyChanged();
             }
         }
 
@@ -92,7 +90,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 videoLength = value;
-                RaisePropertyChanged("VideoLength");
+                OnPropertyChanged();
             }
         }
 
@@ -105,7 +103,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 SetMediaVolume(value);
                 mediaVolumeLevel = value;
-                RaisePropertyChanged("MediaVolumeLevel");
+                OnPropertyChanged();
             }
         }
 
@@ -117,7 +115,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 volumeButtonFontIcon = value;
-                RaisePropertyChanged("VolumeButtonFontIcon");
+                OnPropertyChanged();
             }
         }
 
@@ -129,7 +127,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             private set
             {
                 fileName = value;
-                RaisePropertyChanged("FileName");
+                OnPropertyChanged();
             }
         }
 
@@ -141,7 +139,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 fileNameOverlayVisiblity = value;
-                RaisePropertyChanged("FileNameOverlayVisiblity");
+                OnPropertyChanged();
             }
         }
 
@@ -153,7 +151,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 playPauseButtonFontIcon = value;
-                RaisePropertyChanged("PlayPauseButtonFontIcon");
+                OnPropertyChanged();
             }
         }
 
@@ -165,7 +163,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 mediaControlGridVisibility = value;
-                RaisePropertyChanged("MediaControlGridVisibility");
+                OnPropertyChanged();
             }
         }
 
@@ -177,7 +175,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 visibilityPreviousMediaBtn = value;
-                RaisePropertyChanged("VisibilityPreviousMediaBtn");
+                OnPropertyChanged();
             }
         }
 
@@ -189,7 +187,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 visibilityNextMediaBtn = value;
-                RaisePropertyChanged("VisibilityNextMediaBtn");
+                OnPropertyChanged();
             }
         }
 
@@ -199,15 +197,15 @@ namespace OneDrive_Cloud_Player.ViewModels
         public MediaPlayer MediaPlayer
         {
             get => mediaPlayer;
-            set => Set(nameof(MediaPlayer), ref mediaPlayer, value);
+            set => SetProperty(ref mediaPlayer, value);
         }
+
 
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>
-        public VideoPlayerPageViewModel(INavigationService navigationService)
+        public VideoPlayerPageViewModel()
         {
-            _navigationService = navigationService;
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
@@ -293,9 +291,9 @@ namespace OneDrive_Cloud_Player.ViewModels
                 VideoLength = MediaPlayer.Length;
 
                 PlayPauseButtonFontIcon = "\xE769";
-                
+
                 //Enable or disable default subtitle based on user setting.
-                if (!(bool) App.Current.UserSettings.Values["ShowDefaultSubtitles"])
+                if (!(bool)App.Current.UserSettings.Values["ShowDefaultSubtitles"])
                 {
                     MediaPlayer.SetSpu(-1);
                 }
@@ -524,7 +522,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             TimeLineValue = 0;
             Dispose();
             // Go back to the last page.
-            _navigationService.GoBack();
+            NavigationService.GoBack();
         }
 
         /// <summary>

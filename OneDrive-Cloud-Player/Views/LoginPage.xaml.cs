@@ -1,4 +1,6 @@
-﻿using Windows.UI.Xaml.Controls;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OneDrive_Cloud_Player.ViewModels;
+using Windows.UI.Xaml.Controls;
 
 namespace OneDrive_Cloud_Player.Views
 {
@@ -7,6 +9,8 @@ namespace OneDrive_Cloud_Player.Views
         public LoginPage()
         {
             this.InitializeComponent();
+            var container = App.Current.Container;
+            DataContext = ActivatorUtilities.GetServiceOrCreateInstance(container, typeof(LoginPageViewModel));
         }
     }
 }
