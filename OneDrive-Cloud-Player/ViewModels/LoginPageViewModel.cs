@@ -1,15 +1,15 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
-using Microsoft.Identity.Client;
+﻿using Microsoft.Identity.Client;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Views;
 using System.Windows.Input;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
-    public class LoginPageViewModel : ViewModelBase
+    public class LoginPageViewModel : ObservableRecipient
     {
-        private readonly INavigationService _navigationService;
         public ICommand LoginCommand { get; }
 
         private bool isLoginButtonEnabled = true;
@@ -18,13 +18,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             get { return isLoginButtonEnabled; }
             set {
                 isLoginButtonEnabled = value;
-                RaisePropertyChanged("IsReloadButtonEnabled");
+                OnPropertyChanged();
             }
         }
 
-        public LoginPageViewModel(INavigationService navigationService)
+        public LoginPageViewModel()
         {
-            _navigationService = navigationService;
             LoginCommand = new RelayCommand(Login, CanExecuteLoginButton);
         }
 
@@ -48,7 +47,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             // This is used to decide whether or not to read cache from disk. It prevents reading from old disk cache, since the cache is only written to disk upon application suspension.
             bool HasAlreadyLoggedIn = App.Current.CacheHelper.Cache.Count != 0;
             await App.Current.CacheHelper.Initialize(HasAlreadyLoggedIn);
-            _navigationService.NavigateTo("MainPage");
+            NavigationService.Navigate<MainPage>();
             IsLoginButtonEnabled = true;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using LibVLCSharp.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services;
@@ -31,6 +32,8 @@ namespace OneDrive_Cloud_Player
         public CacheHelper CacheHelper { get; private set; }
         public ApplicationDataContainer UserSettings { get; private set; }
 
+        public IServiceProvider Container { get; }
+
         /// <summary>
         /// The current version of the application data structure.
         /// </summary>
@@ -50,7 +53,8 @@ namespace OneDrive_Cloud_Player
         public List<CachedDriveItem> MediaItemList
         {
             get { return mediaItemList; }
-            set {
+            set
+            {
                 // Filter the list for playable media.
                 mediaItemList = App.Current.CacheHelper.FilterPlayableMedia(value);
             }
@@ -65,9 +69,19 @@ namespace OneDrive_Cloud_Player
             Core.Initialize();
             this.InitializeComponent();
             this.LoadUserSettings();
+            this.Container = ConfigureDependencyInjection();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
             this.CacheHelper = new CacheHelper();
+        }
+
+        IServiceProvider ConfigureDependencyInjection()
+        {
+            var serviceCollection = new ServiceCollection();
+
+            // Add services for dependency injection here.
+
+            return serviceCollection.BuildServiceProvider();
         }
 
         /// <summary>
@@ -163,12 +177,12 @@ namespace OneDrive_Cloud_Player
                     // configuring the new page by passing required information as a navigation
                     // parameter
                     if (await IsLoggedIn())
-					{
+                    {
                         await this.CacheHelper.Initialize(false);
                         rootFrame.Navigate(typeof(MainPage), e.Arguments);
                     }
                     else
-					{
+                    {
                         rootFrame.Navigate(typeof(LoginPage), e.Arguments);
                     }
                 }

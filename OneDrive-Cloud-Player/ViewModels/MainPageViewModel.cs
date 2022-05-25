@@ -1,10 +1,11 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
-using Microsoft.Graph;
+﻿using Microsoft.Graph;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using OneDrive_Cloud_Player.Models;
 using OneDrive_Cloud_Player.Models.GraphData;
+using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Services.Helpers;
+using OneDrive_Cloud_Player.Views;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,7 +18,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
-    public class MainPageViewModel : ViewModelBase
+    public class MainPageViewModel : ObservableRecipient
     {
         public ICommand GetDrivesCommand { get; set; }
         public ICommand GetSharedFolderChildrenCommand { get; set; }
@@ -30,7 +31,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand ToSettingsPageCommand { get; set; }
 
         private readonly GraphHelper graphHelper = GraphHelper.Instance();
-        private readonly INavigationService _navigationService;
 
         // The list of the different drives
         private List<CachedDrive> driveList;
@@ -41,7 +41,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 driveList = value;
-                RaisePropertyChanged("DriveList");
+                OnPropertyChanged();
             }
         }
 
@@ -54,7 +54,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 explorerItemsList = value;
-                RaisePropertyChanged("ExplorerItemsList");
+                OnPropertyChanged();
             }
         }
 
@@ -69,7 +69,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 selectedDriveFolder = value;
                 //Retrieve the items of the drive
                 GetChildrenFomDrive();
-                RaisePropertyChanged("SelectedDriveFolder");
+                OnPropertyChanged();
             }
         }
 
@@ -82,7 +82,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 selectedExplorerItem = value;
-                RaisePropertyChanged("SelectedExplorerItem");
+                OnPropertyChanged();
             }
         }
 
@@ -94,7 +94,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 isReloadButtonEnabled = value;
-                RaisePropertyChanged("IsReloadButtonEnabled");
+                OnPropertyChanged();
             }
         }
 
@@ -106,7 +106,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 currentUsername = value;
-                RaisePropertyChanged("CurrentUsername");
+                OnPropertyChanged();
             }
         }
 
@@ -119,7 +119,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 profileImage = value;
-                RaisePropertyChanged("ProfileImage");
+                OnPropertyChanged();
             }
         }
 
@@ -133,14 +133,12 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 parentItem = value;
-                RaisePropertyChanged("ParentItem");
+                OnPropertyChanged();
             }
         }
 
-        public MainPageViewModel(INavigationService navigationService)
+        public MainPageViewModel()
         {
-            _navigationService = navigationService;
-
             GetDrivesCommand = new RelayCommand(GetDrives, CanExecuteCommand);
             GetChildrenFomItemCommand = new RelayCommand(GetChildrenFomItem, CanExecuteCommand);
             GetChildrenFomDriveCommand = new RelayCommand(GetChildrenFomDrive, CanExecuteCommand);
@@ -214,10 +212,8 @@ namespace OneDrive_Cloud_Player.ViewModels
             GraphAuthHelper auth = new GraphAuthHelper();
             await auth.SignOut();
             App.Current.CacheHelper.ResetCache();
-            // Unregister this view model so when a person logs in as a new user it has reset the view model.
-            ViewModelLocator.ResetMainPageViewModel();
 
-            _navigationService.NavigateTo("LoginPage");
+            NavigationService.Navigate<LoginPage>();
         }
 
         /// <summary>
@@ -308,7 +304,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             MediaWrapper MediaWrapper = new MediaWrapper(SelectedExplorerItem, SelectedDriveId);
             // Navigate to the VideoPlayerPage
-            _navigationService.NavigateTo("VideoPlayerPage", MediaWrapper);
+            NavigationService.Navigate<VideoPlayerPage>(MediaWrapper);
         }
 
         /// <summary>
@@ -340,7 +336,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void ToSettingsPage()
         {
-            _navigationService.NavigateTo("SettingsPage");
+            NavigationService.Navigate<SettingsPage>();
         }
     }
 }

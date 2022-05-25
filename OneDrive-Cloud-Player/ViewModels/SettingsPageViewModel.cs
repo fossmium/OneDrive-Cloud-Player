@@ -1,8 +1,8 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
+using OneDrive_Cloud_Player.Services;
+using OneDrive_Cloud_Player.Views;
 using System;
-using System.ComponentModel;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 using Windows.Storage;
@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Media;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
-    public class SettingsPageViewModel : ViewModelBase, INotifyPropertyChanged
+    public class SettingsPageViewModel : ObservableRecipient
     {
         public ICommand ToMainPageCommand { get; set; }
         public ICommand DisplayWhatsNewDialogCommand { get; set; }
@@ -31,15 +31,11 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 settings.Values["ShowDefaultSubtitles"] = value;
                 showDefaultSubtitles = value;
-                RaisePropertyChanged("ShowDefaultSubtitles");
+                OnPropertyChanged();
             }
         }
 
-
-        private readonly INavigationService _navigationService;
-
-
-        public SettingsPageViewModel(INavigationService navigationService)
+        public SettingsPageViewModel()
         {
             //Initialize settings
             ShowDefaultSubtitles = (bool)settings.Values["ShowDefaultSubtitles"];
@@ -49,7 +45,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             AppVersion = string.Format("{0}.{1}.{2}.{3}", version.Major, version.Minor, version.Build, version.Revision);
             PackageDisplayName = package.DisplayName;
-            _navigationService = navigationService;
             ToMainPageCommand = new RelayCommand(ToMainPage, CanExecuteCommand);
             DisplayWhatsNewDialogCommand = new RelayCommand(DisplayWhatsNewDialog, CanExecuteCommand);
         }
@@ -61,7 +56,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         public void ToMainPage()
         {
-            _navigationService.NavigateTo("MainPage");
+            NavigationService.Navigate<MainPage>();
         }
 
         /// <summary>

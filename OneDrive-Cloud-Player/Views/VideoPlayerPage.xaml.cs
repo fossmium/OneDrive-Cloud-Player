@@ -1,4 +1,5 @@
-﻿using OneDrive_Cloud_Player.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using OneDrive_Cloud_Player.ViewModels;
 using System;
 using Windows.System;
 using Windows.UI.Core;
@@ -21,6 +22,8 @@ namespace OneDrive_Cloud_Player.Views
         public VideoPlayerPage()
         {
             this.InitializeComponent();
+            var container = App.Current.Container;
+            DataContext = ActivatorUtilities.GetServiceOrCreateInstance(container, typeof(VideoPlayerPageViewModel));
 
             SeekBar.AddHandler(PointerPressedEvent, new PointerEventHandler(SeekBar_PointerPressed), true);
 
