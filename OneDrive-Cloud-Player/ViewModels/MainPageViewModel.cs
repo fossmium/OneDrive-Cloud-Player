@@ -31,7 +31,6 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand ToSettingsPageCommand { get; set; }
 
         private readonly GraphHelper graphHelper = GraphHelper.Instance();
-        //private readonly INavigationService _navigationService;
 
         // The list of the different drives
         private List<CachedDrive> driveList;
@@ -42,7 +41,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             set
             {
                 driveList = value;
-
                 OnPropertyChanged();
             }
         }
@@ -307,7 +305,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             MediaWrapper MediaWrapper = new MediaWrapper(SelectedExplorerItem, SelectedDriveId);
             // Navigate to the VideoPlayerPage
             NavigationService.Navigate<VideoPlayerPage>(MediaWrapper);
-            //_navigationService.NavigateTo("VideoPlayerPage", MediaWrapper);
         }
 
         /// <summary>
@@ -339,7 +336,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         private void ToSettingsPage()
         {
-            //_navigationService.NavigateTo("SettingsPage");
             NavigationService.Navigate<SettingsPage>();
         }
     }

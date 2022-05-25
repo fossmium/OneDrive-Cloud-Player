@@ -57,7 +57,6 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         public void ToMainPage()
         {
-            Debug.WriteLine("returning");
             NavigationService.Navigate<MainPage>();
         }
 

@@ -202,7 +202,6 @@ namespace OneDrive_Cloud_Player.ViewModels
             set => SetProperty(ref mediaPlayer, value);
         }
 
-
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>

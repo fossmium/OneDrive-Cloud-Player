@@ -69,13 +69,11 @@ namespace OneDrive_Cloud_Player
             Core.Initialize();
             this.InitializeComponent();
             this.LoadUserSettings();
-            Container = ConfigureDependencyInjection();
+            this.Container = ConfigureDependencyInjection();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
             this.CacheHelper = new CacheHelper();
         }
-
-
 
         IServiceProvider ConfigureDependencyInjection()
         {
