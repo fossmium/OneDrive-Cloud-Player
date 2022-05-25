@@ -1,4 +1,5 @@
 ﻿using LibVLCSharp.Shared;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Models.GraphData;
 using OneDrive_Cloud_Player.Services;
@@ -15,7 +16,6 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace OneDrive_Cloud_Player
 {
