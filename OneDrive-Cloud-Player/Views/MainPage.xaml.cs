@@ -14,16 +14,24 @@ namespace OneDrive_Cloud_Player.Views
             DataContext = ActivatorUtilities.GetServiceOrCreateInstance(container, typeof(MainPageViewModel));
         }
 
+        /// <summary>
+        /// Gets called when navigating from this page.
+        /// </summary>
+        /// <param name="e"></param>
         protected override void OnNavigatingFrom(NavigatingCancelEventArgs e)
         {
             base.OnNavigatingFrom(e);
+
             if (e.SourcePageType == typeof(LoginPage))
             {
                 ResetPageCache();
             }
-          
+
         }
 
+        /// <summary>
+        /// Clears the cache of the pages that have "NavigationCacheMode" set to "enabled".
+        /// </summary>
         private void ResetPageCache()
         {
             var cacheSize = ((Frame)Parent).CacheSize;
