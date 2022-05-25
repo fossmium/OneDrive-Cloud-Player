@@ -3,7 +3,6 @@ using Microsoft.Toolkit.Mvvm.Input;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
-using System.Diagnostics;
 using System.Windows.Input;
 using Windows.ApplicationModel;
 using Windows.Storage;
