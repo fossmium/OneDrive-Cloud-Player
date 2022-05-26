@@ -71,8 +71,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 DefaultButton = ContentDialogButton.Primary,
                 Background = new SolidColorBrush(Color.FromArgb(255, 30, 41, 49)),
             };
-            whatsNewDialog.Content += "* Fixed an issue where sometimes the audio would be heard playing when \n   it was expected to be quiet\n";
-            whatsNewDialog.Content += "* Updated several libraries and dependencies to the latest version\n";
+            whatsNewDialog.Content += "* Bug fixes and stability improvements\n";
 
             await whatsNewDialog.ShowAsync();
         }
