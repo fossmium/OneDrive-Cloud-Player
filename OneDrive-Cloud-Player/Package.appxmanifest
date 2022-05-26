@@ -9,7 +9,7 @@
   <Identity
     Name="22674TimGels.OneDriveCloudPlayer"
     Publisher="CN=3095B4D2-D597-43C2-BFA6-AC26DB73293D"
-    Version="1.2.2.0" />
+    Version="1.3.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="329101d2-9ad1-4065-a890-d72be5ed3714" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
