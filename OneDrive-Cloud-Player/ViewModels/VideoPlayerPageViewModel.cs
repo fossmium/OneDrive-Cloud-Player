@@ -193,6 +193,18 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private bool isBackBtnEnabled = false;
+
+        public bool IsBackBtnEnabled
+        {
+            get { return isBackBtnEnabled; }
+            set
+            {
+                isBackBtnEnabled = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Gets the media player
         /// </summary>
@@ -287,9 +299,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 MediaPlayer.VolumeChanged -= UpdateInitialVolume;
                 MediaVolumeLevel = (int)App.Current.UserSettings.Values["MediaVolume"];
-
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": UpdateInitialVolume: e.Volume: " + e.Volume);
-                Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": UpdateInitialVolume: Setting to: " + MediaVolumeLevel);
+                IsBackBtnEnabled = true;
             });
         }
 
