@@ -640,11 +640,14 @@ namespace OneDrive_Cloud_Player.ViewModels
         {
             // Set the field so the playmedia method can use it.
             MediaWrapper = (MediaWrapper)mediaWrapper;
-            MediaListIndex = App.Current.MediaItemList.IndexOf(MediaWrapper.CachedDriveItem);
+            var list = App.Current.MediaItemList;
 
-            if (MediaListIndex < 0)
+            // TODO: fix underlying issue where all properties of MediaWrapper.CachedDriveItem match
+            // with an item in the list, but the hashcode doesn't. List.Contains works around this,
+            // where IndexOf would return -1.
+            if (list.Contains(MediaWrapper.CachedDriveItem))
             {
-                throw new InvalidOperationException(String.Format("Object of type '{0}' not found.", (MediaWrapper.CachedDriveItem).GetType()));
+                MediaListIndex = list.IndexOf(MediaWrapper.CachedDriveItem);
             }
         }
 
