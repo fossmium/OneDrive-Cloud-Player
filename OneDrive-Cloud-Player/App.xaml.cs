@@ -139,7 +139,25 @@ namespace OneDrive_Cloud_Player
         public async Task<bool> IsLoggedIn()
         {
             IEnumerable<IAccount> Accounts = await PublicClientApplication.GetAccountsAsync();
-            return Accounts.Count() != 0;
+            if (Accounts.Count() == 0)
+            {
+                return false;
+            }
+
+            // Check for the case where an account may be cached, but has expired or become
+            // invalid (logon blocked) in the meantime.
+            try
+            {
+                // Requesting a token will throw if the account is no longer valid.
+                PublicClientApplication.AcquireTokenSilent(App.Current.Scopes, Accounts.FirstOrDefault())
+                    .WithForceRefresh(true).ExecuteAsync().Wait();
+                return true;
+            }
+            catch (Exception)
+            {
+                // TODO: Show banner on login page, with message of the InnerException.
+                return false;
+            }
         }
 
         /// <summary>
