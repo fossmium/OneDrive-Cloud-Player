@@ -162,11 +162,9 @@ namespace OneDrive_Cloud_Player.ViewModels
             CurrentUsername = "Hi, " + (await graphHelper.GetOneDriveUserInformationAsync()).GivenName;
             try
             {
-                var bitmapImage = new BitmapImage();
                 IRandomAccessStream imageRandomAccessStream = (await graphHelper.GetOneDriveOwnerPhotoAsync()).AsRandomAccessStream();
-                await bitmapImage.SetSourceAsync(imageRandomAccessStream);
-
-                ProfileImage = bitmapImage;
+                ProfileImage = new BitmapImage();
+                await ProfileImage.SetSourceAsync(imageRandomAccessStream);
             }
             catch (ServiceException)
             {
