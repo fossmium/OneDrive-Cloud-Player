@@ -18,7 +18,8 @@
 * [Keyboard shortcuts](#keyboard-shortcuts)
 * [Visuals](#visuals)
 * [Contributing](#contributing)
-* [License](#License)
+* [Install](#install)
+* [License](#license)
 * [Maintainers](#maintainers)
 
 ## Features
@@ -56,7 +57,9 @@ If you'd like to contribute, feel free to help with the currently open [issues](
 
 
 
-[comment]: # (## Install)
+## Install
+
+See [INSTALL.md](INSTALL.md) for more info.
 
 [comment]: # (## Usage)
 
