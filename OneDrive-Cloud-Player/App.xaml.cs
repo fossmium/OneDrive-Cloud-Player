@@ -1,6 +1,5 @@
 ﻿using LibVLCSharp.Shared;
 using Microsoft.AppCenter;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;

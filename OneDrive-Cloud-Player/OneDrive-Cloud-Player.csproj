@@ -259,9 +259,6 @@
     <PackageReference Include="LibVLCSharp">
       <Version>3.6.6</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>4.5.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
       <Version>4.5.1</Version>
     </PackageReference>
