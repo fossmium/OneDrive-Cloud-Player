@@ -27,7 +27,7 @@
                 <Button Grid.Column="0" Style="{StaticResource NavigationBackButtonNormalStyle}"
                         Command="{Binding ToMainPageCommand}"/>
             </Grid>
-            
+
             <Grid Grid.Row="1" Padding="20,0,20,0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -36,9 +36,10 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                
-                 <!--Title--> 
+
+                <!--Title-->
                 <Grid Grid.Row="0">
                     <TextBlock Text="Settings" FontSize="40"/>
                 </Grid>
@@ -48,8 +49,8 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock FontSize="25" Margin="0,30,0,10" Text="Playback"/>
-                    <Grid Grid.Row="1">
+                    <TextBlock FontSize="25" Margin="0,20,0,10" Text="Playback"/>
+                    <Grid Grid.Row="1" Margin="0,0,0,10">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -59,8 +60,39 @@
                     </Grid>
                 </Grid>
 
-                <!--About-->
                 <Grid Grid.Row="2">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock FontSize="25" Margin="0,20,0,10" Text="Privacy"/>
+                    <Grid Grid.Row="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0" Margin="0,0,0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="Diagnostics"/>
+                            <TextBlock
+                                Grid.Row="1"
+                                TextWrapping="Wrap"
+                                MaxWidth="550"
+                                Opacity="0.8"
+                                HorizontalAlignment="Left"
+                                Text="Send diagnostic related data. This data is used to help with improving the stability of the application."
+                                />
+                            <ToggleSwitch Grid.Row="2" IsOn="{Binding EnableDiagnostics, Mode=TwoWay}"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                <!--About-->
+                <Grid Grid.Row="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
