@@ -35,10 +35,25 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private bool enableDiagnostics;
+
+        public bool EnableDiagnostics
+        {
+            get
+            { return enableDiagnostics; }
+            set
+            {
+                settings.Values["EnableDiagnostics"] = value;
+                enableDiagnostics = value;
+                OnPropertyChanged();
+            }
+        }
+
         public SettingsPageViewModel()
         {
             //Initialize settings
             ShowDefaultSubtitles = (bool)settings.Values["ShowDefaultSubtitles"];
+            EnableDiagnostics = (bool)settings.Values["EnableDiagnostics"];
 
             Package package = Package.Current;
             PackageVersion version = package.Id.Version;

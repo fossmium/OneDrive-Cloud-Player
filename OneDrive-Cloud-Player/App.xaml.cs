@@ -1,4 +1,6 @@
 ﻿using LibVLCSharp.Shared;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Models.GraphData;
@@ -10,8 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
-using Windows.Storage;
 using Windows.ApplicationModel.Core;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -43,7 +45,7 @@ namespace OneDrive_Cloud_Player
         /// this number should be incremented at the very same time (meaning compile-time). If not,
         /// the application data could enter an inconsistent state.
         /// </remarks>
-        private const int appDataVersion = 1;
+        private const int appDataVersion = 2;
 
         private List<CachedDriveItem> mediaItemList;
         /// <summary>
@@ -66,9 +68,10 @@ namespace OneDrive_Cloud_Player
         /// </summary>
         public App()
         {
-            Core.Initialize();
             this.InitializeComponent();
             this.LoadUserSettings();
+            this.LoadAppCenterSDK();
+            Core.Initialize();
             this.Container = ConfigureDependencyInjection();
             this.CreateScopedPublicClientApplicationInstance();
             this.Suspending += Application_Suspending;
@@ -108,7 +111,8 @@ namespace OneDrive_Cloud_Player
             Dictionary<string, object> requiredSettings = new Dictionary<string, object>
             {
                 { "MediaVolume", 100 },
-                { "ShowDefaultSubtitles", true }
+                { "ShowDefaultSubtitles", true },
+                { "EnableDiagnostics", true }
             };
 
             // Verify disk settings against default settings.
@@ -251,6 +255,23 @@ namespace OneDrive_Cloud_Player
             var deferral = e.SuspendingOperation.GetDeferral();
             await this.CacheHelper.WriteGraphCache();
             deferral.Complete();
+        }
+
+        /// <summary>
+        /// Configures and starts the <see cref="AppCenter"/> SDK.
+        /// </summary>
+        private void LoadAppCenterSDK()
+        {
+            AppCenter.Configure("APP_CENTER_APP_SECRET");
+            if (!AppCenter.Configured)
+            {
+                return;
+            }
+
+            if ((bool)UserSettings.Values["EnableDiagnostics"])
+            {
+                AppCenter.Start(typeof(Crashes));
+            }
         }
     }
 }
