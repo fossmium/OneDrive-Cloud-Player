@@ -446,6 +446,7 @@
                         <ColumnDefinition Width="6*"/>
                         <ColumnDefinition Width="3*"/>
                     </Grid.ColumnDefinitions>
+
                     <!--Left bottom controls-->
                     <Grid Grid.Column="0" Grid.Row="3" Margin="0,0,0,0">
                         <Grid.ColumnDefinitions>
@@ -453,9 +454,10 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
+
                         <!--Stop Button-->
                         <Button
-                        x:Name="StopButton" Grid.Column="1"
+                        Grid.Column="1" x:Name="StopButton"
                         HorizontalAlignment="Center" VerticalAlignment="Center" 
                         Margin="0,0,0,0" Width="50" Height="50"
                         Command="{Binding StopMediaCommand}"
@@ -463,6 +465,7 @@
                         Background="Transparent">
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xEB97;"/>
                         </Button>
+
                         <!--Reload Button-->
                         <Button 
                         Grid.Column="2" x:Name="ReloadButton" 
@@ -519,6 +522,7 @@
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED3D;"/>
                         </Button>
                     </Grid>
+
                     <!--Bottom right controls-->
                     <Grid Grid.Column="2" HorizontalAlignment="Right">
                         <Grid.ColumnDefinitions>
