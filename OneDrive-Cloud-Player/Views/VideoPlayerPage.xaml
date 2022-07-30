@@ -508,12 +508,12 @@
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="{Binding PlayPauseButtonFontIcon}"/>
                         </Button>
 
-                        <!--Skip foreward button-->
+                        <!--Skip forward button-->
                         <Button 
                         Grid.Column="3" HorizontalAlignment="Center" 
                         VerticalAlignment="Center" Margin="0,0,0,0" 
                         Width="50" Height="50" 
-                        Command="{Binding SeekForewardCommand}"
+                        Command="{Binding SeekForwardCommand}"
                         Background="Transparent">
                             <Button.CommandParameter>
                                 <x:Double>30000</x:Double>

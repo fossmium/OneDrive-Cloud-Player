@@ -68,7 +68,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand StopMediaCommand { get; }
         public ICommand KeyDownEventCommand { get; }
         public ICommand SeekBackwardCommand { get; }
-        public ICommand SeekForewardCommand { get; }
+        public ICommand SeekForwardCommand { get; }
         public ICommand PlayPreviousVideoCommand { get; }
         public ICommand PlayNextVideoCommand { get; }
 
@@ -228,7 +228,7 @@ namespace OneDrive_Cloud_Player.ViewModels
             StopMediaCommand = new RelayCommand(StopMedia, CanExecuteCommand);
             KeyDownEventCommand = new RelayCommand<KeyEventArgs>(KeyDownEvent);
             SeekBackwardCommand = new RelayCommand<double>(SeekBackward);
-            SeekForewardCommand = new RelayCommand<double>(SeekForeward);
+            SeekForwardCommand = new RelayCommand<double>(SeekForward);
             PlayPreviousVideoCommand = new RelayCommand(PlayPreviousVideo, CanExecuteCommand);
             PlayNextVideoCommand = new RelayCommand(PlayNextVideo, CanExecuteCommand);
         }
@@ -487,10 +487,10 @@ namespace OneDrive_Cloud_Player.ViewModels
         }
 
         /// <summary>
-        /// Seek foreward in the media by given miliseconds.
+        /// Seek forward in the media by given miliseconds.
         /// </summary>
         /// <param name="ms"></param>
-        public void SeekForeward(double ms)
+        public void SeekForward(double ms)
         {
             SetVideoTime(MediaPlayer.Time + ms);
         }
@@ -564,13 +564,13 @@ namespace OneDrive_Cloud_Player.ViewModels
                         SeekBackward(5000);
                         break;
                     case VirtualKey.Right:
-                        SeekForeward(5000);
+                        SeekForward(5000);
                         break;
                     case VirtualKey.J:
                         SeekBackward(10000);
                         break;
                     case VirtualKey.L:
-                        SeekForeward(10000);
+                        SeekForward(10000);
                         break;
                 }
 
