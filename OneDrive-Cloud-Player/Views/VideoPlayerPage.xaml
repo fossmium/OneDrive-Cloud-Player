@@ -453,6 +453,7 @@
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
                         <!--Stop Button-->
@@ -474,6 +475,19 @@
                         Command="{Binding ReloadCurrentMediaCommand}"
                         Background="Transparent">
                             <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE777;"/>
+                        </Button>
+                        <Button Grid.Column="3" Width="50" Height="50" Background="Transparent">
+                            <FontIcon FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xED1F;"/>
+                            <!--Flyout for changing subtitle and audio track-->
+                            <Button.Flyout>
+                                <Flyout x:Name="AudioSubtitleSelectorFlyout">
+                                    <!--Audio subtitle track selector-->
+                                    <local:SubtitleAudioTrackSelector SubtitleTracks="{Binding SubtitleTracks, Mode=OneWay}"
+                                                                      SelectedSubtitleTrack="{Binding SelectedSubtitleTrack, Mode=TwoWay}"
+                                                                      ItemClicked="SubtitleAudioTrackSelector_ItemClicked">
+                                    </local:SubtitleAudioTrackSelector>
+                                </Flyout>
+                            </Button.Flyout>
                         </Button>
                     </Grid>
                     <Grid Grid.Column="1">

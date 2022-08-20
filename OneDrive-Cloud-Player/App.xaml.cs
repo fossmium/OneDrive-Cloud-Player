@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Crashes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using OneDrive_Cloud_Player.Models.GraphData;
+using OneDrive_Cloud_Player.Models.Interfaces;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Views;
 using System;
@@ -83,6 +84,7 @@ namespace OneDrive_Cloud_Player
             var serviceCollection = new ServiceCollection();
 
             // Add services for dependency injection here.
+            serviceCollection.AddTransient<IMediaTrackService, MediaTrackService>();
 
             return serviceCollection.BuildServiceProvider();
         }

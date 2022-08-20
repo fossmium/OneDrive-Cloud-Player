@@ -1,5 +1,6 @@
 ﻿using LibVLCSharp.Platforms.UWP;
 using LibVLCSharp.Shared;
+using LibVLCSharp.Shared.Structures;
 using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.Toolkit.Mvvm.Input;
 using OneDrive_Cloud_Player.Models;
@@ -7,14 +8,17 @@ using OneDrive_Cloud_Player.Models.Interfaces;
 using OneDrive_Cloud_Player.Services;
 using OneDrive_Cloud_Player.Services.Helpers;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Input;
 using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Timer = System.Timers.Timer;
 
 namespace OneDrive_Cloud_Player.ViewModels
 {
@@ -41,17 +45,19 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private readonly object volumeLocker = new object();
 
+        private readonly IMediaTrackService _mediaTrackService;
         /// <summary>
         /// Used to make sure that the volume is initialized once after starting video
         /// playback. This needs to happen every time when creating a new LibVLC object,
         /// so upon every navigation action to this page.
         /// </summary>
         private bool volumeUpdated = false;
-
         private MediaWrapper MediaWrapper = null;
         private bool InvalidOneDriveSession = false;
-        private MediaPlayer mediaPlayer;
+        private MediaPlayer _mediaPlayer;
         private int MediaListIndex;
+        private bool _isFirstPlaying = true;
+        private bool _isReloading = false;
 
         public bool IsSeeking { get; set; }
         private LibVLC LibVLC { get; set; }
@@ -71,6 +77,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         public ICommand SeekForwardCommand { get; }
         public ICommand PlayPreviousVideoCommand { get; }
         public ICommand PlayNextVideoCommand { get; }
+        public ICommand OkClickedCommand { get; }
 
         private long timeLineValue;
 
@@ -205,20 +212,46 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private TrackDescription _selectedSubtitleTrack;
+
+        public TrackDescription SelectedSubtitleTrack
+        {
+            get { return _selectedSubtitleTrack; }
+            set
+            {
+                _selectedSubtitleTrack = value;
+                SetSubtitleTrackById(value.Id);
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<TrackDescription> _subtitleTracks = new ObservableCollection<TrackDescription>();
+
+        public ObservableCollection<TrackDescription> SubtitleTracks
+        {
+            get { return _subtitleTracks; }
+            set
+            {
+                _subtitleTracks = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Gets the media player
         /// </summary>
         public MediaPlayer MediaPlayer
         {
-            get => mediaPlayer;
-            set => SetProperty(ref mediaPlayer, value);
+            get => _mediaPlayer;
+            set => SetProperty(ref _mediaPlayer, value);
         }
 
         /// <summary>
         /// Initialized a new instance of <see cref="MainViewModel"/> class
         /// </summary>
-        public VideoPlayerPageViewModel()
+        public VideoPlayerPageViewModel(IMediaTrackService mediaTrackService)
         {
+            _mediaTrackService = mediaTrackService;
             InitializeLibVLCCommand = new RelayCommand<InitializedEventArgs>(InitializeLibVLC);
             StartedDraggingThumbCommand = new RelayCommand(StartedDraggingThumb, CanExecuteCommand);
             StoppedDraggingThumbCommand = new RelayCommand(StoppedDraggingThumb, CanExecuteCommand);
@@ -252,14 +285,15 @@ namespace OneDrive_Cloud_Player.ViewModels
 
             // Create LibVLC instance.
             LibVLC = new LibVLC(eventArgs.SwapChainOptions);
-            MediaPlayer = new MediaPlayer(LibVLC);
-
+            _mediaPlayer = new MediaPlayer(LibVLC);
+            _mediaTrackService.Initialize(ref _mediaPlayer);
             // Subscribe to events only once.
-            MediaPlayer.Playing += MediaPlayer_Playing;
-            MediaPlayer.Paused += MediaPlayer_Paused;
-            MediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+            _mediaPlayer.Playing += MediaPlayer_Playing;
+            _mediaPlayer.Paused += MediaPlayer_Paused;
+            _mediaPlayer.TimeChanged += MediaPlayer_TimeChanged;
+            _mediaPlayer.MediaChanged += MediaPlayer_MediaChanged;
             // Listen to the first volumechanged event, after which we can initialise the volume level correctly.
-            MediaPlayer.VolumeChanged += UpdateInitialVolume;
+            _mediaPlayer.VolumeChanged += UpdateInitialVolume;
             reloadIntervalTimer.Elapsed += ReloadIntervalTimer_Elapsed;
             fileNameOverlayTimer.Elapsed += FileNameOverlayTimer_Elapsed;
 
@@ -297,27 +331,69 @@ namespace OneDrive_Cloud_Player.ViewModels
             // Updating the GUI should happen on the dispatcher.
             await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
-                MediaPlayer.VolumeChanged -= UpdateInitialVolume;
+                _mediaPlayer.VolumeChanged -= UpdateInitialVolume;
                 MediaVolumeLevel = (int)App.Current.UserSettings.Values["MediaVolume"];
                 IsBackBtnEnabled = true;
             });
         }
 
+        /// <summary>
+        /// Media playing event handler. Gets called when the media player state is changed to playing.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void MediaPlayer_Playing(object sender, EventArgs e)
         {
             Debug.WriteLine(DateTime.Now.ToString("hh:mm:ss.fff") + ": Media is playing");
+
+            if (_isFirstPlaying || _isReloading)
+            {
+                TrackDescription[] subtitleTracks = null;
+                TrackDescription selectedSubtitleTrack = default;
+
+                await Task.Run(() =>
+                {
+                    subtitleTracks = _mediaTrackService.GetEmbeddedSubtitleTracks();
+                    selectedSubtitleTrack = _mediaTrackService.GetPreferredSubtitleTrack();
+                });
+
+                if (_isFirstPlaying)
+                {
+                    _isFirstPlaying = false;
+                }
+
+                if (_isReloading)
+                {
+                    _isReloading = false;
+
+                    // Check if there is a selected subtitle track, for re-selection, to begin with.
+                    if (_selectedSubtitleTrack.Id != 0 && _selectedSubtitleTrack.Name != null)
+                    {
+                        // Retrieve the same selected subtitle track again as the one that was used with the former subtitle tracks collection.
+                        selectedSubtitleTrack = subtitleTracks.FirstOrDefault(subtitleTrack => subtitleTrack.Id == _selectedSubtitleTrack.Id);
+                    }
+                }
+
+                await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    // Clear collection as we want to refill it with updated tracks from the new media source.
+                    SubtitleTracks.Clear();
+                    foreach (TrackDescription subtitleTrack in subtitleTracks)
+                    {
+                        SubtitleTracks.Add(subtitleTrack);
+                    }
+
+                    // Select the correct subtitle track.
+                    SelectedSubtitleTrack = selectedSubtitleTrack;
+                });
+            }
+
             await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.High, () =>
             {
                 //Sets the max value of the seekbar.
-                VideoLength = MediaPlayer.Length;
+                VideoLength = _mediaPlayer.Length;
 
                 PlayPauseButtonFontIcon = "\xE769";
-
-                //Enable or disable default subtitle based on user setting.
-                if (!(bool)App.Current.UserSettings.Values["ShowDefaultSubtitles"])
-                {
-                    MediaPlayer.SetSpu(-1);
-                }
             });
         }
 
@@ -337,14 +413,22 @@ namespace OneDrive_Cloud_Player.ViewModels
                 // when the user is not seeking.
                 if (!IsSeeking)
                 {
-                    // Sometimes the MediaPlayer is already null upon
+                    // Sometimes the _mediaPlayer is already null upon
                     // navigating away and this still gets called.
-                    if (MediaPlayer != null)
+                    if (_mediaPlayer != null)
                     {
-                        TimeLineValue = MediaPlayer.Time;
+                        TimeLineValue = _mediaPlayer.Time;
                     }
                 }
             });
+        }
+
+        private void MediaPlayer_MediaChanged(object sender, EventArgs e)
+        {
+            if (!_isReloading)
+            {
+                _isFirstPlaying = true;
+            }
         }
 
         private void ReloadIntervalTimer_Elapsed(object sender, ElapsedEventArgs e)
@@ -405,27 +489,36 @@ namespace OneDrive_Cloud_Player.ViewModels
             // Play the OneDrive file.
             using (Media media = new Media(LibVLC, new Uri(mediaDownloadURL)))
             {
-                MediaPlayer.Play(media);
+                _mediaPlayer.Play(media);
             }
 
-            if (MediaPlayer is null)
+            if (_mediaPlayer is null)
             {
                 Debug.WriteLine("PlayMedia: Error: Could not set start time.");
                 return;
             }
 
-            MediaPlayer.Time = startTime;
+            _mediaPlayer.Time = startTime;
+        }
+
+        /// <summary>
+        /// Set the subtitle track used in the <see cref="_mediaPlayer"/> by id.
+        /// </summary>
+        /// <param name="subtitleTrackId">Subtitle track id</param>
+        private void SetSubtitleTrackById(int subtitleTrackId)
+        {
+            _mediaPlayer.SetSpu(subtitleTrackId);
         }
 
         private void SetMediaVolume(int volumeLevel)
         {
-            if (MediaPlayer is null)
+            if (_mediaPlayer is null)
             {
                 Debug.WriteLine("Error: SetMediaVolumeLevel: Could not set the volume.");
-                return; // Return when the MediaPlayer is null so it does not cause exception.
+                return; // Return when the _mediaPlayer is null so it does not cause exception.
             }
             App.Current.UserSettings.Values["MediaVolume"] = volumeLevel; // Set the new volume in the MediaVolume setting.
-            MediaPlayer.Volume = volumeLevel;
+            _mediaPlayer.Volume = volumeLevel;
             UpdateVolumeButtonFontIcon(volumeLevel);
         }
 
@@ -483,7 +576,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="ms"></param>
         public void SeekBackward(double ms)
         {
-            SetVideoTime(MediaPlayer.Time - ms);
+            SetVideoTime(_mediaPlayer.Time - ms);
         }
 
         /// <summary>
@@ -492,7 +585,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// <param name="ms"></param>
         public void SeekForward(double ms)
         {
-            SetVideoTime(MediaPlayer.Time + ms);
+            SetVideoTime(_mediaPlayer.Time + ms);
         }
 
         /// <summary>
@@ -507,7 +600,7 @@ namespace OneDrive_Cloud_Player.ViewModels
                 Debug.WriteLine("   + Reloading media.");
                 ReloadCurrentMedia();
             }
-            MediaPlayer.Time = Convert.ToInt64(time);
+            _mediaPlayer.Time = Convert.ToInt64(time);
         }
 
         //TODO: Implement a Dialog system that shows a dialog when there is an error.
@@ -516,6 +609,7 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private async void ReloadCurrentMedia()
         {
+            _isReloading = true;
             await PlayMedia(TimeLineValue);
             InvalidOneDriveSession = false;
         }
@@ -531,7 +625,7 @@ namespace OneDrive_Cloud_Player.ViewModels
 
         public void StopMedia()
         {
-            MediaPlayer.Stop();
+            _mediaPlayer.Stop();
             TimeLineValue = 0;
             Dispose();
             // Go back to the last page.
@@ -667,20 +761,20 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         public void Dispose()
         {
-            // TODO: Reproduce MediaPlayer == null
-            Debug.Assert(MediaPlayer != null);
+            // TODO: Reproduce _mediaPlayer == null
+            Debug.Assert(_mediaPlayer != null);
             Debug.Assert(LibVLC != null);
 
             // Unsubscribe from event handlers.
-            MediaPlayer.Playing -= MediaPlayer_Playing;
-            MediaPlayer.Paused -= MediaPlayer_Paused;
-            MediaPlayer.TimeChanged -= MediaPlayer_TimeChanged;
+            _mediaPlayer.Playing -= MediaPlayer_Playing;
+            _mediaPlayer.Paused -= MediaPlayer_Paused;
+            _mediaPlayer.TimeChanged -= MediaPlayer_TimeChanged;
             reloadIntervalTimer.Elapsed -= ReloadIntervalTimer_Elapsed;
             fileNameOverlayTimer.Elapsed -= FileNameOverlayTimer_Elapsed;
 
             // Dispose of the LibVLC instance and the mediaplayer.
-            var mediaPlayer = MediaPlayer;
-            MediaPlayer = null;
+            var mediaPlayer = _mediaPlayer;
+            _mediaPlayer = null;
             mediaPlayer?.Dispose();
             LibVLC?.Dispose();
             LibVLC = null;
