@@ -7,7 +7,6 @@
   <p>
      <i>A dedicated player to stream content directly from OneDrive.</i>
   </p>
-  <a href='https://www.microsoft.com/store/apps/9NQ96Z5S1T3H'><img src='https://developer.microsoft.com/en-us/store/badges/images/English_get-it-from-MS.png' alt='Arabic badge' style='width: 127px; height: 52px;'/></a>
 </div>
 
 ---
