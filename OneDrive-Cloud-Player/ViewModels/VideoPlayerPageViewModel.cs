@@ -525,16 +525,8 @@ namespace OneDrive_Cloud_Player.ViewModels
         /// </summary>
         private void ChangePlayingState()
         {
-            bool isPlaying = MediaPlayer.IsPlaying;
-
-            if (isPlaying)
-            {
-                MediaPlayer.SetPause(true);
-            }
-            else if (!isPlaying)
-            {
-                MediaPlayer.SetPause(false);
-            }
+            bool pause = MediaPlayer.IsPlaying;
+            MediaPlayer.SetPause(pause);
         }
 
         public void StopMedia()
