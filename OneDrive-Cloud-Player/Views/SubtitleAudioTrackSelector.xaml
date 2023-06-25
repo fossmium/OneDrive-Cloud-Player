@@ -1,0 +1,62 @@
+﻿<UserControl
+    x:Class="OneDrive_Cloud_Player.Views.SubtitleAudioTrackSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:libvlcSharp="using:LibVLCSharp.Shared.Structures"
+    xmlns:converters="using:OneDrive_Cloud_Player.Services.Converters"
+    xmlns:convertersToolkit="using:Microsoft.Toolkit.Uwp.UI.Converters">
+
+    <UserControl.Resources>
+        <convertersToolkit:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:ValueConverterGroup x:Key="InvertBoolToVisibilityConverter">
+            <convertersToolkit:BoolNegationConverter/>
+            <convertersToolkit:BoolToVisibilityConverter />
+        </converters:ValueConverterGroup>
+    </UserControl.Resources>
+
+    <StackPanel>
+        <StackPanel Orientation="Horizontal" Padding="5">
+            <TextBlock Text="Subtitles" Opacity="0.7" FontSize="13"/>
+        </StackPanel>
+        <TextBlock Text="No Tracks"
+                   FontStyle="Italic"
+                   Visibility="{x:Bind Path=IsSubtitlesAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}, Mode=OneWay}">
+
+        </TextBlock>
+        <ListView Visibility="{x:Bind Path=IsSubtitlesAvailable, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
+                  ItemsSource="{x:Bind SubtitleTracks, Mode=OneWay}"
+                  SelectedItem="{Binding SelectedSubtitleTrack, Mode=TwoWay}"
+                  ItemClick="SubtitleTrackListView_ItemClick"
+                  Name="SubtitleTrackListView"
+                  IsItemClickEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="libvlcSharp:TrackDescription">
+                    <StackPanel>
+                        <TextBlock Text="{x:Bind Name}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <StackPanel Orientation="Horizontal" Padding="5">
+            <TextBlock Text="Audio" Opacity="0.7" FontSize="13"/>
+        </StackPanel>
+        <TextBlock Text="No Tracks"
+                   FontStyle="Italic"
+                   Visibility="{x:Bind Path=IsAudioAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}, Mode=OneWay}">
+        </TextBlock>
+        <ListView Visibility="{x:Bind Path=IsAudioAvailable, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
+                  ItemsSource="{x:Bind AudioTracks, Mode=OneWay}"
+                  SelectedItem="{Binding SelectedAudioTrack, Mode=TwoWay}"
+                  ItemClick="AudioTrackListView_ItemClick"
+                  Name="AudioTrackListView"
+                  IsItemClickEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="libvlcSharp:TrackDescription">
+                    <StackPanel>
+                        <TextBlock Text="{x:Bind Name}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</UserControl>

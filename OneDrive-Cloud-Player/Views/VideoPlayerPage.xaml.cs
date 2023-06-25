@@ -274,5 +274,15 @@ namespace OneDrive_Cloud_Player.Views
 
             base.OnNavigatingFrom(e);
         }
+
+        /// <summary>
+        /// Hide the subtitle audio track selector flyout when an item inside of it is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SubtitleAudioTrackSelector_ItemClicked(object sender, EventArgs e)
+        {
+            AudioSubtitleSelectorFlyout.Hide();
+        }
     }
 }
