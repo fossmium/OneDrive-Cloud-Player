@@ -130,15 +130,18 @@
     <Compile Include="Models\GraphData\CachedDrive.cs" />
     <Compile Include="Models\GraphData\CachedDriveItem.cs" />
     <Compile Include="Models\GraphData\OneDriveCache.cs" />
+    <Compile Include="Models\Interfaces\IMediaTrackService.cs" />
     <Compile Include="Models\Interfaces\INavigable.cs" />
     <Compile Include="Models\MediaWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Converters\MainPageExplorerConverter.cs" />
     <Compile Include="Services\Converters\MediaTimeConverter.cs" />
+    <Compile Include="Services\Converters\ValueConverterGroup.cs" />
     <Compile Include="Services\Helpers\CacheHelper.cs" />
     <Compile Include="Services\Helpers\GraphHelper.cs" />
     <Compile Include="Services\Helpers\GraphAuthHelper.cs" />
     <Compile Include="Services\NavigationService.cs" />
+    <Compile Include="Services\MediaTrackService.cs" />
     <Compile Include="Services\Utilities\JsonHandler.cs" />
     <Compile Include="ViewModels\LoginPageViewModel.cs" />
     <Compile Include="ViewModels\MainPageViewModel.cs" />
@@ -153,6 +156,9 @@
     </Compile>
     <Compile Include="Views\SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SubtitleAudioTrackSelector.xaml.cs">
+      <DependentUpon>SubtitleAudioTrackSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VideoPlayerPage.xaml.cs">
       <DependentUpon>VideoPlayerPage.xaml</DependentUpon>
@@ -250,6 +256,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\SubtitleAudioTrackSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\VideoPlayerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -276,6 +286,12 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Toolkit.Mvvm">
       <Version>7.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Toolkit.Uwp.UI">
+      <Version>7.1.3</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.UI.Xaml">
+      <Version>2.8.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Xaml.Behaviors.Uwp.Managed">
       <Version>2.0.1</Version>
