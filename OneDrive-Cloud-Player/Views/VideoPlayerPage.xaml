@@ -484,7 +484,9 @@
                                     <!--Audio subtitle track selector-->
                                     <local:SubtitleAudioTrackSelector SubtitleTracks="{Binding SubtitleTracks, Mode=OneWay}"
                                                                       SelectedSubtitleTrack="{Binding SelectedSubtitleTrack, Mode=TwoWay}"
-                                                                      ItemClicked="SubtitleAudioTrackSelector_ItemClicked">
+                                                                      ItemClicked="SubtitleAudioTrackSelector_ItemClicked"
+                                                                      SelectedAudioTrack="{Binding SelectedAudioTrack, Mode=TwoWay}"
+                                                                      AudioTracks="{Binding AudioTracks, Mode=OneWay}">
                                     </local:SubtitleAudioTrackSelector>
                                 </Flyout>
                             </Button.Flyout>

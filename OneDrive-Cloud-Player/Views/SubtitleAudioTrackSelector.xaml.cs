@@ -24,13 +24,45 @@ namespace OneDrive_Cloud_Player.Views
             }
         }
 
+        private bool _isAudioAvailable;
+
+        public bool IsAudioAvailable
+        {
+            get { return _isAudioAvailable; }
+            set
+            {
+                _isAudioAvailable = value;
+                OnPropertyChanged(nameof(IsAudioAvailable));
+            }
+        }
+
+        public ObservableCollection<TrackDescription> AudioTracks
+        {
+            get { return (ObservableCollection<TrackDescription>)GetValue(AudioTracksProperty); }
+            set { SetValue(AudioTracksProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for AudioTracks.
+        public static readonly DependencyProperty AudioTracksProperty =
+            DependencyProperty.Register("AudioTracks", typeof(ObservableCollection<TrackDescription>), typeof(SubtitleAudioTrackSelector), new PropertyMetadata(null, AudioTracksPropertyChangedCallback));
+
+        public TrackDescription SelectedAudioTrack
+        {
+            get { return (TrackDescription)GetValue(SelectedAudioTrackProperty); }
+            set { SetValue(SelectedAudioTrackProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for SelectedAudioTrack.
+        public static readonly DependencyProperty SelectedAudioTrackProperty =
+            DependencyProperty.Register("SelectedAudioTrack", typeof(TrackDescription), typeof(SubtitleAudioTrackSelector), new PropertyMetadata(null));
+
         public ObservableCollection<TrackDescription> SubtitleTracks
         {
             get { return (ObservableCollection<TrackDescription>)GetValue(SubtitleTracksProperty); }
             set { SetValue(SubtitleTracksProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SubtitleTracks. This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for SubtitleTracks.
         public static readonly DependencyProperty SubtitleTracksProperty =
             DependencyProperty.Register("SubtitleTracks", typeof(ObservableCollection<TrackDescription>), typeof(SubtitleAudioTrackSelector), new PropertyMetadata(null, SubtitleTracksPropertyChangedCallback));
 
@@ -40,13 +72,63 @@ namespace OneDrive_Cloud_Player.Views
             set { SetValue(SelectedSubtitleTrackProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SelectedTrack. This enables animation, styling, binding, etc...
+        // Using a DependencyProperty as the backing store for SelectedTrack.
         public static readonly DependencyProperty SelectedSubtitleTrackProperty =
             DependencyProperty.Register("SelectedSubtitleTrack", typeof(TrackDescription), typeof(SubtitleAudioTrackSelector), new PropertyMetadata(null));
 
         public SubtitleAudioTrackSelector()
         {
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Callback for AudioTracksProperty property changes.
+        /// </summary>
+        /// <param name="dependencyObject"></param>
+        /// <param name="eventArgs"></param>
+        private static void AudioTracksPropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
+        {
+            SubtitleAudioTrackSelector subtitleAudioTrackSelector = (SubtitleAudioTrackSelector)dependencyObject;
+            if (((ObservableCollection<TrackDescription>)eventArgs.NewValue).Count > 0)
+            {
+                subtitleAudioTrackSelector.IsAudioAvailable = true;
+            }
+
+            if (eventArgs.NewValue is INotifyCollectionChanged newCollection)
+            {
+                // Subscribe to changes inside the new collection.
+                newCollection.CollectionChanged += subtitleAudioTrackSelector.AudioTracks_CollectionChanged;
+            }
+
+            if (eventArgs.OldValue is INotifyCollectionChanged oldCollection)
+            {
+                // Unsubscribe to changes inside the old collection.
+                oldCollection.CollectionChanged -= subtitleAudioTrackSelector.AudioTracks_CollectionChanged;
+            }
+        }
+
+        /// <summary>
+        /// Hnadling changes that occur inside the audio tracks collection (i.e. added or removed).
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AudioTracks_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            // Check for Default value.
+            if (e.NewItems == null)
+            {
+                IsAudioAvailable = false;
+                return;
+            }
+
+            // Check if there are subtitles.
+            if (e.NewItems.Count <= 0)
+            {
+                IsAudioAvailable = false;
+                return;
+            }
+
+            IsAudioAvailable = true;
         }
 
         /// <summary>
@@ -107,6 +189,17 @@ namespace OneDrive_Cloud_Player.Views
         private void SubtitleTrackListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             Debug.WriteLine("Subtitle item clicked from listview.");
+            ItemClicked?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// Invoke the custom <see cref="ItemClicked"/> event when an audio item in the listview is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AudioTrackListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            Debug.WriteLine("Audio item clicked from listview.");
             ItemClicked?.Invoke(this, EventArgs.Empty);
         }
 

@@ -237,6 +237,31 @@ namespace OneDrive_Cloud_Player.ViewModels
             }
         }
 
+        private TrackDescription _selectedAudioTrack;
+
+        public TrackDescription SelectedAudioTrack
+        {
+            get { return _selectedAudioTrack; }
+            set
+            {
+                _selectedAudioTrack = value;
+                SetAudioTrackTrackById(value.Id);
+                OnPropertyChanged();
+            }
+        }
+
+        private ObservableCollection<TrackDescription> _audioTracks = new ObservableCollection<TrackDescription>();
+
+        public ObservableCollection<TrackDescription> AudioTracks
+        {
+            get { return _audioTracks; }
+            set
+            {
+                _audioTracks = value;
+                OnPropertyChanged();
+            }
+        }
+
         /// <summary>
         /// Gets the media player
         /// </summary>
@@ -350,11 +375,16 @@ namespace OneDrive_Cloud_Player.ViewModels
             {
                 TrackDescription[] subtitleTracks = null;
                 TrackDescription selectedSubtitleTrack = default;
+                TrackDescription[] audioTracks = null;
+                TrackDescription selectedAudioTrack = default;
 
                 await Task.Run(() =>
                 {
                     subtitleTracks = _mediaTrackService.GetEmbeddedSubtitleTracks();
                     selectedSubtitleTrack = _mediaTrackService.GetPreferredSubtitleTrack();
+                    audioTracks = _mediaTrackService.GetEmbeddedAudioTracks();
+                    selectedAudioTrack = _mediaTrackService.GetPreferredAudioTrack();
+
                 });
 
                 if (_isFirstPlaying)
@@ -372,19 +402,33 @@ namespace OneDrive_Cloud_Player.ViewModels
                         // Retrieve the same selected subtitle track again as the one that was used with the former subtitle tracks collection.
                         selectedSubtitleTrack = subtitleTracks.FirstOrDefault(subtitleTrack => subtitleTrack.Id == _selectedSubtitleTrack.Id);
                     }
+
+                    // Check if there is a selected audio track, for re-selection, to begin with.
+                    if (_selectedAudioTrack.Id != 0 && _selectedAudioTrack.Name != null)
+                    {
+                        // Retrieve the same selected audio track again as the one that was used with the former audio tracks collection.
+                        selectedAudioTrack = audioTracks.FirstOrDefault(audioTrack => audioTrack.Id == _selectedAudioTrack.Id);
+                    }
                 }
 
                 await App.Current.UIDispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     // Clear collection as we want to refill it with updated tracks from the new media source.
                     SubtitleTracks.Clear();
+                    AudioTracks.Clear();
                     foreach (TrackDescription subtitleTrack in subtitleTracks)
                     {
                         SubtitleTracks.Add(subtitleTrack);
                     }
 
-                    // Select the correct subtitle track.
+                    foreach (TrackDescription audioTrack in audioTracks)
+                    {
+                        AudioTracks.Add(audioTrack);
+                    }
+
+                    // Select the correct track.
                     SelectedSubtitleTrack = selectedSubtitleTrack;
+                    SelectedAudioTrack = selectedAudioTrack;
                 });
             }
 
@@ -508,6 +552,15 @@ namespace OneDrive_Cloud_Player.ViewModels
         private void SetSubtitleTrackById(int subtitleTrackId)
         {
             _mediaPlayer.SetSpu(subtitleTrackId);
+        }
+
+        /// <summary>
+        /// Set the subtitle track used in the <see cref="_mediaPlayer"/> by id.
+        /// </summary>
+        /// <param name="subtitleTrackId">Subtitle track id</param>
+        private void SetAudioTrackTrackById(int audioTrackId)
+        {
+            _mediaPlayer.SetAudioTrack(audioTrackId);
         }
 
         private void SetMediaVolume(int volumeLevel)

@@ -60,7 +60,7 @@ namespace OneDrive_Cloud_Player.Services
             CheckInitializationState();
             TrackDescription[] subtitleTracks = _mediaPlayer.SpuDescription;
 
-            if (_mediaPlayer.SpuCount <= 0)
+            if (_mediaPlayer.SpuCount <= 1)
             {
                 return default;
             }
@@ -85,6 +85,26 @@ namespace OneDrive_Cloud_Player.Services
         {
             CheckInitializationState();
             return _mediaPlayer.SpuDescription;
+        }
+
+        public TrackDescription GetPreferredAudioTrack()
+        {
+            CheckInitializationState();
+            TrackDescription[] audioTracks = _mediaPlayer.AudioTrackDescription;
+
+            if (_mediaPlayer.AudioTrackCount <= 1)
+            {
+                return default;
+            }
+
+            // Return the first actual audio track.
+            return _mediaPlayer.AudioTrackDescription.ElementAt(1);
+        }
+
+        public TrackDescription[] GetEmbeddedAudioTracks()
+        {
+            CheckInitializationState();
+            return _mediaPlayer.AudioTrackDescription;
         }
     }
 }

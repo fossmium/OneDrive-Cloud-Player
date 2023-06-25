@@ -42,8 +42,21 @@
         </StackPanel>
         <TextBlock Text="No Tracks"
                    FontStyle="Italic"
-                   Visibility="Visible">
-
+                   Visibility="{x:Bind Path=IsAudioAvailable, Converter={StaticResource InvertBoolToVisibilityConverter}, Mode=OneWay}">
         </TextBlock>
+        <ListView Visibility="{x:Bind Path=IsAudioAvailable, Converter={StaticResource BoolToVisibilityConverter}, Mode=OneWay}"
+                  ItemsSource="{x:Bind AudioTracks, Mode=OneWay}"
+                  SelectedItem="{Binding SelectedAudioTrack, Mode=TwoWay}"
+                  ItemClick="AudioTrackListView_ItemClick"
+                  Name="AudioTrackListView"
+                  IsItemClickEnabled="True">
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="libvlcSharp:TrackDescription">
+                    <StackPanel>
+                        <TextBlock Text="{x:Bind Name}"></TextBlock>
+                    </StackPanel>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </StackPanel>
 </UserControl>
